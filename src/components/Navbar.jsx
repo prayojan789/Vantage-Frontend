@@ -9,34 +9,12 @@ const NAV = [
 
 export default function Navbar() {
   return (
-    <header
-      className="glass"
-      style={{
-        position:'sticky', top:0, zIndex:200,
-        borderRadius: 0,
-        borderTop: 'none',
-        borderLeft: 'none',
-        borderRight: 'none',
-        borderBottom: '1px solid var(--border)',
-      }}
-    >
-      <div style={{
-        maxWidth: 1320, margin:'0 auto',
-        padding:'0 40px', height:64,
-        display:'flex', alignItems:'center', gap:8,
-      }}>
+    <header className="glass" style={{ position:'sticky', top:0, zIndex:200, borderRadius:0 }}>
+      <div className="container" style={{ height:64, display:'flex', alignItems:'center', gap:8 }}>
 
         {/* Brand */}
-        <NavLink to="/dashboard" style={{
-          display:'flex', alignItems:'center', gap:10, marginRight:24,
-          textDecoration:'none',
-        }}>
-          <span style={{
-            width:34, height:34, borderRadius:10,
-            background:'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent-3) 100%)',
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 8px 20px -8px rgba(99,102,241,0.7)',
-          }}>
+        <NavLink to="/dashboard" style={{ display:'flex', alignItems:'center', gap:10, marginRight:24, textDecoration:'none' }}>
+          <span style={{ width:34, height:34, borderRadius:10, background:'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%)', display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 8px 20px -8px rgba(99,102,241,0.35)' }}>
             <Sparkles size={16} color="white" />
           </span>
           <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
@@ -52,14 +30,7 @@ export default function Navbar() {
         {/* Nav links */}
         <nav style={{ display:'flex', gap:4 }}>
           {NAV.map(({ to, label, icon:Icon }) => (
-            <NavLink key={to} to={to} className={({ isActive }) =>
-              isActive ? 'nav-link active' : 'nav-link'
-            } style={{
-              display:'flex', alignItems:'center', gap:6,
-              padding:'9px 18px', borderRadius:12,
-              fontSize:'0.85rem', fontWeight:600,
-              textDecoration:'none',
-            }}>
+            <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'} style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 18px', borderRadius:12, fontSize:'0.85rem', fontWeight:600, textDecoration:'none' }}>
               <Icon size={14} />{label}
             </NavLink>
           ))}
@@ -67,16 +38,8 @@ export default function Navbar() {
 
         {/* Right side */}
         <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:16 }}>
-          <div className="glass" style={{
-            display:'flex', alignItems:'center', gap:8,
-            padding:'7px 14px', borderRadius:99,
-            fontSize:'0.72rem', fontWeight:600, color:'var(--text-soft)',
-          }}>
-            <span className="anim-pulse" style={{
-              width:8, height:8, borderRadius:'50%',
-              background:'linear-gradient(135deg, #10b981, #06b6d4)',
-              display:'inline-block',
-            }} />
+          <div className="glass" style={{ display:'flex', alignItems:'center', gap:8, padding:'7px 14px', borderRadius:99, fontSize:'0.72rem', fontWeight:600, color:'var(--muted)' }}>
+            <span className="anim-pulse" style={{ width:8, height:8, borderRadius:'50%', background:'linear-gradient(135deg, #10b981, #06b6d4)', display:'inline-block' }} />
             Pipeline active · 7 sources
           </div>
           <NavLink to="/live" className="btn-primary" style={{ padding:'9px 18px' }}>

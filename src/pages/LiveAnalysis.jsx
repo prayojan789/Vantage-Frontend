@@ -59,11 +59,8 @@ export default function LiveAnalysis() {
         <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:24 }}>
           <div style={{ maxWidth:560 }}>
             <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Developer Playground</p>
-            <h1 className="font-serif" style={{
-              fontSize:'2.4rem', color:'#f8fafc', lineHeight:1.05,
-              letterSpacing:'-0.02em', margin:'0 0 14px',
-            }}>
-              Live <em style={{ fontStyle:'italic', background:'linear-gradient(135deg, #67e8f9, #c4b5fd)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>ABSA</em> Analysis
+            <h1 className="font-serif" style={{ fontSize:'2.4rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px' }}>
+              Live <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>ABSA</em> Analysis
             </h1>
             <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.95rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
               Paste any English Nepali news paragraph. Our fine-tuned model extracts political entities and scores their sentiment — in under a second, running entirely on local FastAPI.
@@ -115,7 +112,7 @@ export default function LiveAnalysis() {
                 background:'var(--surface-2)', border:'1.5px solid transparent',
                 borderRadius:12, resize:'none', outline:'none',
                 color:'var(--text)', transition:'all .18s',
-                fontFamily:'DM Sans, sans-serif',
+                  /* inherit global professional system font */
               }}
               onFocus={e => { e.target.style.borderColor='var(--accent)'; e.target.style.background='white' }}
               onBlur={e => { e.target.style.borderColor='transparent'; e.target.style.background='var(--surface-2)' }}

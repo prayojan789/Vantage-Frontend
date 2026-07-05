@@ -21,7 +21,7 @@ export const MOCK_EVENT_DETAIL = {
       id:'art_001', source:'The Kathmandu Post',
       headline:'PM faces mounting pressure as coalition partners demand cabinet reshuffle',
       url:'https://kathmandupost.com', published_at:'2025-06-07T09:15:00Z',
-      sentiment:'negative', sentiment_score:0.82,
+      sentiment:'negative', sentiment_score: 0.82,
       entities:[
         { name:'KP Oli', sentiment:'negative', score:0.88 },
         { name:'UML',    sentiment:'neutral',  score:0.51 },

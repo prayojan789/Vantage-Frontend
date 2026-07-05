@@ -95,11 +95,8 @@ export default function BiasReport() {
         <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
           <div style={{ maxWidth:560 }}>
             <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Media Analysis</p>
-            <h1 className="font-serif" style={{
-              fontSize:'2.4rem', color:'#f8fafc', lineHeight:1.05,
-              letterSpacing:'-0.02em', margin:'0 0 12px',
-            }}>
-              Bias <em style={{ fontStyle:'italic', background:'linear-gradient(135deg, #f0abfc, #67e8f9)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Report Cards</em>
+            <h1 className="font-serif" style={{ fontSize:'2.4rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 12px' }}>
+              Bias <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Report Cards</em>
             </h1>
             <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.92rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
               Historical sentiment distribution across Nepal's top English news portals. Which outlets consistently favor which political actors?
@@ -191,10 +188,10 @@ export default function BiasReport() {
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barData} margin={{ top:10, right:0, left:-16, bottom:0 }} barCategoryGap="35%">
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize:11, fill:'var(--muted)', fontFamily:'DM Sans' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize:11, fill:'var(--muted)', fontFamily:'DM Sans' }} axisLine={false} tickLine={false} />
+                <XAxis dataKey="name" tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
                 <Tooltip content={<CustomTooltip />} cursor={{ fill:'rgba(99,102,241,0.05)' }} />
-                <Legend wrapperStyle={{ fontSize:12, fontFamily:'DM Sans', paddingTop:18 }} />
+                <Legend wrapperStyle={{ fontSize:12, paddingTop:18 }} />
                 <Bar dataKey="Positive" stackId="a" fill="#10b981" radius={[0,0,0,0]} />
                 <Bar dataKey="Neutral"  stackId="a" fill="#f59e0b" radius={[0,0,0,0]} />
                 <Bar dataKey="Negative" stackId="a" fill="#ef4444" radius={[6,6,0,0]} />
@@ -216,11 +213,11 @@ export default function BiasReport() {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart margin={{ top:4, right:20, left:-16, bottom:0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="date" type="category" allowDuplicatedCategory={false} tick={{ fontSize:11, fill:'var(--muted)', fontFamily:'DM Sans' }} axisLine={false} tickLine={false} />
-                <YAxis domain={[-1,1]} tick={{ fontSize:11, fill:'var(--muted)', fontFamily:'DM Sans' }} axisLine={false} tickLine={false} tickCount={5} />
+                <XAxis dataKey="date" type="category" allowDuplicatedCategory={false} tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
+                <YAxis domain={[-1,1]} tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} tickCount={5} />
                 <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="5 5" strokeWidth={1.5} label={{ value:'Neutral', position:'right', fill:'var(--muted)', fontSize:10 }} />
                 <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ fontSize:12, fontFamily:'DM Sans', paddingTop:18 }} />
+                <Legend wrapperStyle={{ fontSize:12, paddingTop:18 }} />
                 {data.media_houses.map((m, i) => (
                   <Line
                     key={m.name} data={m.trend} dataKey="score"
@@ -270,10 +267,10 @@ export default function BiasReport() {
                           <span style={{ width:10, height:10, borderRadius:'50%', background:dotColor, flexShrink:0, boxShadow:`0 0 10px ${dotColor}66` }} />
                           {m.name}
                         </td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'#047857', fontFamily:'JetBrains Mono', fontSize:'0.85rem', fontWeight:600 }}>{m.positive}</td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'var(--neg)', fontFamily:'JetBrains Mono', fontSize:'0.85rem', fontWeight:600 }}>{m.negative}</td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'#b45309', fontFamily:'JetBrains Mono', fontSize:'0.85rem', fontWeight:600 }}>{m.neutral}</td>
-                        <td style={{ padding:'14px', textAlign:'right', fontFamily:'JetBrains Mono', fontSize:'0.85rem', fontWeight:700, color:'var(--text)' }}>{total}</td>
+                        <td style={{ padding:'14px', textAlign:'right', color:'#047857', fontSize:'0.85rem', fontWeight:600 }}>{m.positive}</td>
+                        <td style={{ padding:'14px', textAlign:'right', color:'var(--neg)', fontSize:'0.85rem', fontWeight:600 }}>{m.negative}</td>
+                        <td style={{ padding:'14px', textAlign:'right', color:'#b45309', fontSize:'0.85rem', fontWeight:600 }}>{m.neutral}</td>
+                        <td style={{ padding:'14px', textAlign:'right', fontSize:'0.85rem', fontWeight:700, color:'var(--text)' }}>{total}</td>
                         <td style={{ padding:'14px', textAlign:'right' }}>
                           <span style={{
                             fontSize:'0.7rem', fontWeight:700, padding:'3px 10px', borderRadius:99,

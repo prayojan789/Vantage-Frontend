@@ -84,11 +84,8 @@ export default function Dashboard() {
             <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
               <span className="section-label" style={{ color:'#c7d2fe' }}>🇳🇵 News Intelligence</span>
             </div>
-            <h1 className="font-serif" style={{
-              fontSize:'2.6rem', color:'#f8fafc',
-              lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px',
-            }}>
-              Clustered <em style={{ fontStyle:'italic', background:'linear-gradient(135deg, #c4b5fd, #f0abfc, #67e8f9)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text' }}>Events</em>
+            <h1 className="font-serif" style={{ fontSize:'2.6rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px' }}>
+              Clustered <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Events</em>
             </h1>
             <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.95rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
               {total} events tracked today. Stories grouped by semantic similarity &gt;0.85 across {sources.length || 7} Nepali English outlets, refreshed every 5 minutes.
