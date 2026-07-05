@@ -61,12 +61,13 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--ink-300); }
 
   input, select, textarea, button { font-family: inherit; }
+  code, kbd, samp, pre { font-family: inherit; }
   a { text-decoration: none; color: inherit; }
 }
 
 /* ── Editorial typography helpers ── */
 .font-serif  { font-family: var(--font-family); }
-.font-mono   { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !important; }
+.font-mono   { font-family: var(--font-family) !important; }
 
 /* Utility font helpers */
 .font-syne { font-family: var(--font-family); }
