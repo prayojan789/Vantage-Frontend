@@ -1,8 +1,9 @@
+// Vivid, slightly desaturated palette aligned with the new design system
 export const sentimentPill = s =>
   s === 'positive' ? 'pill pill-positive' : s === 'negative' ? 'pill pill-negative' : 'pill pill-neutral'
 
 export const sentimentColor = s =>
-  s === 'positive' ? '#2a7a4b' : s === 'negative' ? '#c8423a' : '#e8a135'
+  s === 'positive' ? '#10b981' : s === 'negative' ? '#ef4444' : '#f59e0b'
 
 export const sentimentArrow = s =>
   s === 'positive' ? '↑' : s === 'negative' ? '↓' : '→'

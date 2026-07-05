@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, BarChart3, Zap } from 'lucide-react'
+import { LayoutDashboard, BarChart3, Zap, Sparkles } from 'lucide-react'
 
 const NAV = [
   { to:'/dashboard', label:'Dashboard',     icon:LayoutDashboard },
@@ -9,71 +9,78 @@ const NAV = [
 
 export default function Navbar() {
   return (
-    <header style={{
-      position:'sticky', top:0, zIndex:200,
-      background:'rgba(245,240,232,0.9)',
-      backdropFilter:'blur(16px)',
-      WebkitBackdropFilter:'blur(16px)',
-      borderBottom:'1.5px solid var(--border)',
-    }}>
+    <header
+      className="glass"
+      style={{
+        position:'sticky', top:0, zIndex:200,
+        borderRadius: 0,
+        borderTop: 'none',
+        borderLeft: 'none',
+        borderRight: 'none',
+        borderBottom: '1px solid var(--border)',
+      }}
+    >
       <div style={{
-        maxWidth:1280, margin:'0 auto',
-        padding:'0 48px', height:58,
+        maxWidth: 1320, margin:'0 auto',
+        padding:'0 40px', height:64,
         display:'flex', alignItems:'center', gap:8,
       }}>
 
-        {/* Logo */}
-        <div style={{ display:'flex', alignItems:'center', gap:8, marginRight:20 }}>
+        {/* Brand */}
+        <NavLink to="/dashboard" style={{
+          display:'flex', alignItems:'center', gap:10, marginRight:24,
+          textDecoration:'none',
+        }}>
           <span style={{
-            width:8, height:8, borderRadius:'50%',
-            background:'var(--accent)', display:'inline-block',
-          }} />
-          <span className="font-syne" style={{
-            fontWeight:800, fontSize:'1.1rem',
-            letterSpacing:'-0.025em', color:'var(--ink)',
-          }}>Vantage</span>
-          <span style={{
-            fontSize:'0.75rem', color:'var(--muted)',
-            fontWeight:400, marginLeft:2,
-          }}>🇳🇵 Nepal</span>
-        </div>
+            width:34, height:34, borderRadius:10,
+            background:'linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent-3) 100%)',
+            display:'flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 8px 20px -8px rgba(99,102,241,0.7)',
+          }}>
+            <Sparkles size={16} color="white" />
+          </span>
+          <div style={{ display:'flex', flexDirection:'column', lineHeight:1.1 }}>
+            <span className="font-syne" style={{ fontWeight:800, fontSize:'1.1rem', letterSpacing:'-0.02em', color:'var(--text)' }}>
+              Vantage
+            </span>
+            <span style={{ fontSize:'0.62rem', color:'var(--muted)', fontWeight:500, letterSpacing:'0.06em' }}>
+              NEPAL · NEWS INTEL
+            </span>
+          </div>
+        </NavLink>
 
         {/* Nav links */}
-        <nav style={{ display:'flex', gap:2 }}>
+        <nav style={{ display:'flex', gap:4 }}>
           {NAV.map(({ to, label, icon:Icon }) => (
             <NavLink key={to} to={to} className={({ isActive }) =>
               isActive ? 'nav-link active' : 'nav-link'
-            } style={({ isActive }) => ({
+            } style={{
               display:'flex', alignItems:'center', gap:6,
-              padding:'7px 16px', borderRadius:99,
-              fontSize:'0.82rem', fontWeight:isActive ? 600 : 500,
+              padding:'9px 18px', borderRadius:12,
+              fontSize:'0.85rem', fontWeight:600,
               textDecoration:'none',
-            })}>
-              <Icon size={13} />{label}
+            }}>
+              <Icon size={14} />{label}
             </NavLink>
           ))}
         </nav>
 
-        {/* Right: status + try demo */}
-        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:20 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:7, fontSize:'0.72rem', color:'var(--muted)' }}>
+        {/* Right side */}
+        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:16 }}>
+          <div className="glass" style={{
+            display:'flex', alignItems:'center', gap:8,
+            padding:'7px 14px', borderRadius:99,
+            fontSize:'0.72rem', fontWeight:600, color:'var(--text-soft)',
+          }}>
             <span className="anim-pulse" style={{
-              width:6, height:6, borderRadius:'50%',
-              background:'#2a7a4b', display:'inline-block',
+              width:8, height:8, borderRadius:'50%',
+              background:'linear-gradient(135deg, #10b981, #06b6d4)',
+              display:'inline-block',
             }} />
-            Pipeline active
+            Pipeline active · 7 sources
           </div>
-          <NavLink to="/live" style={{
-            display:'flex', alignItems:'center', gap:6,
-            background:'var(--ink)', color:'var(--paper)',
-            borderRadius:99, padding:'8px 18px',
-            fontSize:'0.78rem', fontWeight:600, letterSpacing:'0.01em',
-            transition:'background .18s',
-          }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--accent)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'var(--ink)'}
-          >
-            <Zap size={12} /> Try Live Demo
+          <NavLink to="/live" className="btn-primary" style={{ padding:'9px 18px' }}>
+            <Zap size={13} /> Try Live Demo
           </NavLink>
         </div>
       </div>

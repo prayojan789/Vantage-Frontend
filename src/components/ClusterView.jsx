@@ -8,7 +8,7 @@ export default function ClusterView({ articles = [] }) {
     <div style={{
       display:'grid',
       gridTemplateColumns:`repeat(${cols}, 1fr)`,
-      gap:16,
+      gap:18,
     }}>
       {articles.map((a, i) => (
         <ArticleColumn key={a.id} article={a} index={i} />
@@ -18,9 +18,9 @@ export default function ClusterView({ articles = [] }) {
 }
 
 function SentimentIcon({ s }) {
-  if (s === 'positive') return <TrendingUp size={13} style={{ color:'#2a7a4b' }} />
-  if (s === 'negative') return <TrendingDown size={13} style={{ color:'var(--accent)' }} />
-  return <Minus size={13} style={{ color:'var(--accent2)' }} />
+  if (s === 'positive') return <TrendingUp size={13} style={{ color:'var(--pos)' }} />
+  if (s === 'negative') return <TrendingDown size={13} style={{ color:'var(--neg)' }} />
+  return <Minus size={13} style={{ color:'var(--neu)' }} />
 }
 
 function ArticleColumn({ article, index }) {
@@ -29,73 +29,66 @@ function ArticleColumn({ article, index }) {
 
   return (
     <div
-      className={`card anim-fade-up-${index + 1}`}
+      className={`card anim-fade-up-${Math.min(index + 1, 4)}`}
       style={{ display:'flex', flexDirection:'column', overflow:'hidden' }}
     >
-      {/* Colored top bar */}
-      <div style={{ height:3, background:overallColor }} />
+      {/* Gradient top bar */}
+      <div style={{ height:4, background:`linear-gradient(90deg, ${overallColor}, ${overallColor}99)` }} />
 
       {/* Source header */}
       <div style={{
-        padding:'13px 18px', display:'flex',
+        padding:'14px 20px', display:'flex',
         alignItems:'center', justifyContent:'space-between',
-        background:'#faf8f4', borderBottom:'1.5px solid var(--border)',
+        background:'var(--surface-2)', borderBottom:'1px solid var(--border)',
       }}>
         <span style={{
           fontSize:'0.65rem', fontWeight:800, letterSpacing:'0.05em',
-          textTransform:'uppercase', padding:'3px 10px', borderRadius:6,
+          textTransform:'uppercase', padding:'4px 11px', borderRadius:6,
         }} className={sourceClass(source)}>{source}</span>
-        <span style={{ fontSize:'0.68rem', color:'var(--muted)', display:'flex', alignItems:'center', gap:4 }}>
-          <Clock size={10} />{fmtTime(published_at)}
+        <span style={{ fontSize:'0.7rem', color:'var(--muted)', display:'flex', alignItems:'center', gap:4 }}>
+          <Clock size={11} />{fmtTime(published_at)}
         </span>
       </div>
 
       {/* Body */}
-      <div style={{ padding:'18px 20px', flex:1, display:'flex', flexDirection:'column', gap:14 }}>
-        {/* Headline */}
-        <h4 className="font-syne" style={{ fontSize:'0.9rem', fontWeight:700, color:'var(--ink)', lineHeight:1.45, margin:0 }}>
+      <div style={{ padding:'20px 22px', flex:1, display:'flex', flexDirection:'column', gap:14 }}>
+        <h4 className="font-syne" style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', lineHeight:1.45, margin:0 }}>
           {headline}
         </h4>
 
-        {/* Overall sentiment pill */}
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
           <SentimentIcon s={sentiment} />
           <span className={sentimentPill(sentiment)}>{sentiment}</span>
-          <span className="font-mono" style={{ fontSize:'0.68rem', color:'var(--muted)' }}>
+          <span className="font-mono" style={{ fontSize:'0.7rem', color:'var(--muted)' }}>
             {Math.round(sentiment_score * 100)}% confidence
           </span>
         </div>
 
-        {/* Summary */}
         {summary && (
           <div style={{
-            background:'#faf8f4', borderRadius:10, padding:'12px 14px',
-            borderLeft:'3px solid var(--border)',
+            background:'var(--surface-2)', borderRadius:10, padding:'12px 14px',
+            borderLeft:`3px solid ${overallColor}66`,
           }}>
-            <p style={{ fontSize:'0.78rem', color:'var(--muted)', lineHeight:1.65, margin:0 }}>
+            <p style={{ fontSize:'0.8rem', color:'var(--text-soft)', lineHeight:1.65, margin:0 }}>
               {summary}
             </p>
           </div>
         )}
 
-        {/* Entity sentiment */}
-        <div style={{ marginTop:'auto', paddingTop:14, borderTop:'1.5px solid #f0ede8' }}>
-          <p className="section-label" style={{ marginBottom:12 }}>Entity-Level Sentiment</p>
+        <div style={{ marginTop:'auto', paddingTop:14, borderTop:'1px solid var(--border)' }}>
+          <p className="section-label" style={{ marginBottom:14 }}>Entity-Level Sentiment</p>
           {entities.map(e => <SentimentChart key={e.name} entity={e} />)}
         </div>
       </div>
 
-      {/* Footer */}
       <a
         href={url} target="_blank" rel="noopener noreferrer"
+        className="btn-ghost"
         style={{
-          display:'flex', alignItems:'center', justifyContent:'center', gap:6,
-          padding:'11px', borderTop:'1.5px solid var(--border)',
-          fontSize:'0.72rem', color:'var(--muted)', textDecoration:'none',
-          background:'#faf8f4', transition:'all .15s',
+          borderRadius:0, borderLeft:'none', borderRight:'none', borderBottom:'none',
+          justifyContent:'center', borderColor:'var(--border)',
+          padding:'12px', fontSize:'0.72rem',
         }}
-        onMouseEnter={e => { e.currentTarget.style.background='var(--ink)'; e.currentTarget.style.color='var(--paper)' }}
-        onMouseLeave={e => { e.currentTarget.style.background='#faf8f4'; e.currentTarget.style.color='var(--muted)' }}
       >
         <ExternalLink size={11} /> Read original article
       </a>
