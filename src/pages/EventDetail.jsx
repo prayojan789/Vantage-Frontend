@@ -72,10 +72,10 @@ export default function EventDetail() {
               <span className="orb orb-pink"   style={{ width:160, height:160, left:'20%', bottom:-60 }} />
 
               <div style={{ position:'relative', zIndex:1 }}>
-                <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Event Detail · Comparative Analysis</p>
-                <h1 className="font-syne" style={{
-                  fontSize:'1.5rem', fontWeight:800, color:'#f8fafc',
-                  letterSpacing:'-0.02em', lineHeight:1.35, margin:'0 0 16px',
+                <p className="section-label" style={{ color:'rgba(248,250,252,0.7)', marginBottom:12 }}>Event Detail · Comparative Analysis</p>
+                <h1 style={{
+                  fontSize:'1.5rem', fontWeight:700, color:'#ffffff',
+                  letterSpacing:'-0.01em', lineHeight:1.35, margin:'0 0 16px',
                 }}>{event.title}</h1>
                 <div style={{ display:'flex', alignItems:'center', gap:18, flexWrap:'wrap' }}>
                   <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:'0.78rem', color:'rgba(248,250,252,0.7)' }}>
@@ -97,7 +97,7 @@ export default function EventDetail() {
 
             <div style={{
               padding:'16px 32px',
-              background:'linear-gradient(135deg, #eef2ff, #faf5ff)',
+              background:'var(--surface-2)',
               borderTop:'1px solid var(--border)',
               display:'flex', alignItems:'center', gap:12,
             }}>
@@ -136,7 +136,7 @@ export default function EventDetail() {
                     background:'var(--surface-2)', border:'1px solid var(--border)',
                     borderRadius:12, padding:'16px 18px',
                   }}>
-                    <p className="font-mono" style={{ fontSize:'0.74rem', fontWeight:600, color:'var(--accent)', marginBottom:8 }}>{name}</p>
+                    <p style={{ fontSize:'0.74rem', fontWeight:600, color:'var(--accent)', marginBottom:8 }}>{name}</p>
                     <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
                       <span className={sentimentPill(dominant)} style={{ fontSize:'0.62rem' }}>{dominant}</span>
                     </div>

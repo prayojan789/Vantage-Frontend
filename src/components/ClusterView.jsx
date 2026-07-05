@@ -5,11 +5,7 @@ import SentimentChart from './SentimentChart.jsx'
 export default function ClusterView({ articles = [] }) {
   const cols = Math.min(articles.length, 3)
   return (
-    <div style={{
-      display:'grid',
-      gridTemplateColumns:`repeat(${cols}, 1fr)`,
-      gap:18,
-    }}>
+    <div style={{ display:'grid', gridTemplateColumns:`repeat(${cols}, 1fr)`, gap:18 }}>
       {articles.map((a, i) => (
         <ArticleColumn key={a.id} article={a} index={i} />
       ))}
@@ -41,10 +37,7 @@ function ArticleColumn({ article, index }) {
         alignItems:'center', justifyContent:'space-between',
         background:'var(--surface-2)', borderBottom:'1px solid var(--border)',
       }}>
-        <span style={{
-          fontSize:'0.65rem', fontWeight:800, letterSpacing:'0.05em',
-          textTransform:'uppercase', padding:'4px 11px', borderRadius:6,
-        }} className={sourceClass(source)}>{source}</span>
+        <span style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.03em', textTransform:'uppercase', padding:'4px 11px', borderRadius:6 }} className={sourceClass(source)}>{source}</span>
         <span style={{ fontSize:'0.7rem', color:'var(--muted)', display:'flex', alignItems:'center', gap:4 }}>
           <Clock size={11} />{fmtTime(published_at)}
         </span>
@@ -52,14 +45,14 @@ function ArticleColumn({ article, index }) {
 
       {/* Body */}
       <div style={{ padding:'20px 22px', flex:1, display:'flex', flexDirection:'column', gap:14 }}>
-        <h4 className="font-syne" style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', lineHeight:1.45, margin:0 }}>
+        <h4 style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', lineHeight:1.45, margin:0 }}>
           {headline}
         </h4>
 
         <div style={{ display:'flex', alignItems:'center', gap:8 }}>
           <SentimentIcon s={sentiment} />
           <span className={sentimentPill(sentiment)}>{sentiment}</span>
-          <span className="font-mono" style={{ fontSize:'0.7rem', color:'var(--muted)' }}>
+          <span style={{ fontSize:'0.7rem', color:'var(--muted)' }}>
             {Math.round(sentiment_score * 100)}% confidence
           </span>
         </div>

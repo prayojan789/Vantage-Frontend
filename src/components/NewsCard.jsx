@@ -15,19 +15,11 @@ export default function NewsCard({ event, delay = 0 }) {
           animationDelay:`${delay}s`,
         }}
       >
-        {/* Top gradient bar */}
-        <div style={{
-          height:4,
-          background:`linear-gradient(90deg, ${color}, ${color}66)`,
-        }} />
+        <div style={{ height:4, background:`linear-gradient(90deg, ${color}, ${color}66)` }} />
 
         <div style={{ padding:'22px 24px', display:'flex', flexDirection:'column', gap:14 }}>
-          {/* Title + sentiment */}
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:12 }}>
-            <h3 className="font-syne" style={{
-              fontSize:'0.95rem', fontWeight:700, color:'var(--text)',
-              lineHeight:1.45, margin:0,
-            }}>{title}</h3>
+            <h3 style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', lineHeight:1.45, margin:0 }}>{title}</h3>
             <span className={sentimentPill(dominant_sentiment)} style={{ flexShrink:0 }}>
               {dominant_sentiment}
             </span>
@@ -53,7 +45,7 @@ export default function NewsCard({ event, delay = 0 }) {
             <span style={{ display:'flex', alignItems:'center', gap:4 }}>
               <Clock size={11} />{fmtRelative(date)}
             </span>
-            <span className="font-mono" style={{ color:'var(--accent)', fontSize:'0.65rem', fontWeight:600 }}>
+            <span style={{ color:'var(--accent)', fontSize:'0.65rem', fontWeight:600 }}>
               {Math.round(similarity_score * 100)}% match
             </span>
           </div>
@@ -73,15 +65,7 @@ export default function NewsCard({ event, delay = 0 }) {
           {/* Entities + arrow */}
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:8, borderTop:'1px solid var(--border)' }}>
             <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
-              {entities.map(e => (
-                <span key={e} className="font-mono" style={{
-                  fontSize:'0.62rem', fontWeight:600,
-                  background:'linear-gradient(135deg, #eef2ff, #f5f3ff)',
-                  color:'var(--accent)',
-                  padding:'2px 8px', borderRadius:5,
-                  border:'1px solid #e0e7ff',
-                }}>{e}</span>
-              ))}
+              {entities.map(e => <span key={e} style={{ fontSize:'0.62rem', fontWeight:600, background:'var(--surface-2)', color:'var(--text-soft)', padding:'2px 8px', borderRadius:5, border:'1px solid var(--border)' }}>{e}</span>)}
             </div>
             <ArrowUpRight size={14} style={{ color:'var(--accent)', flexShrink:0 }} />
           </div>
