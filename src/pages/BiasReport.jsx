@@ -7,6 +7,7 @@ import {
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_BIAS } from '../utils/mockData.js'
 import { getBiasReport } from '../services/api.js'
+import PageMetadata from '../components/PageMetadata.jsx'
 
 const LINE_COLORS = ['#6366f1','#3b82f6','#a855f7','#10b981']
 const SOURCE_COLORS = {
@@ -79,6 +80,10 @@ export default function BiasReport() {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+      <PageMetadata
+        title="Bias Report | Vantage"
+        description="Review sentiment distribution and bias trends across Nepali media outlets."
+      />
 
       {/* ── Hero header ── */}
       <div

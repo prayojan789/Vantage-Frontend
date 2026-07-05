@@ -5,6 +5,7 @@ import { USE_MOCK } from '../utils/config.js'
 import { MOCK_ANALYZE } from '../utils/mockData.js'
 import { analyzeText } from '../services/api.js'
 import { sentimentPill, sentimentColor } from '../utils/helpers.js'
+import PageMetadata from '../components/PageMetadata.jsx'
 
 const EXAMPLES = [
   { label:'Coalition Tensions', text:"PM Dahal met with RSP leader Rabi Lamichhane today, where both parties agreed to review the coalition's six-month agenda. Critics from NC called the meeting unproductive and a distraction from governance." },
@@ -43,6 +44,10 @@ export default function LiveAnalysis() {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
+      <PageMetadata
+        title="Live Analysis | Vantage"
+        description="Run live aspect-based sentiment analysis on Nepali news text and inspect extracted entities."
+      />
 
       {/* ── Hero ── */}
       <div

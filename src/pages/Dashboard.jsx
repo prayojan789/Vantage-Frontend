@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, ArrowRight, Sparkles } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import NewsCard from '../components/NewsCard.jsx'
+import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENTS, MOCK_SOURCES } from '../utils/mockData.js'
 import { getEvents, getSources } from '../services/api.js'
@@ -66,6 +67,10 @@ export default function Dashboard() {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+      <PageMetadata
+        title="Vantage Dashboard | Nepal News Intelligence"
+        description="Explore clustered news events, source coverage, and AI-assisted intelligence in the Vantage dashboard."
+      />
 
       {/* ── Page Hero ── */}
       <div

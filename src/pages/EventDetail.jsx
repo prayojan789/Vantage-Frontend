@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, AlertCircle, Layers, Calendar, GitBranch } from 'lucide-react'
 import ClusterView from '../components/ClusterView.jsx'
+import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL } from '../utils/mockData.js'
 import { getEventById } from '../services/api.js'
@@ -30,6 +31,10 @@ export default function EventDetail() {
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
+      <PageMetadata
+        title={event ? `${event.title} | Vantage` : 'Event Detail | Vantage'}
+        description="Compare multiple articles covering the same event and inspect sentiment, framing, and entity treatment."
+      />
 
       <Link to="/dashboard" style={{
         display:'inline-flex', alignItems:'center', gap:7,
