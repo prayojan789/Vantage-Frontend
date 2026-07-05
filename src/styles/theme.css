@@ -1,0 +1,142 @@
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: #f6f7fb;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-surface-elevated: #ffffff;
+  --color-text: #0f172a;
+  --color-text-muted: #475569;
+  --color-border: #dbe2ee;
+  --color-primary: #4f46e5;
+  --color-secondary: #0284c7;
+  --color-success: #059669;
+  --color-warning: #b45309;
+  --color-danger: #dc2626;
+  --color-info: #2563eb;
+  --color-focus: rgba(79, 70, 229, 0.35);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 30px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 24px 60px rgba(15, 23, 42, 0.16);
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.5rem;
+  --radius-full: 9999px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Legacy aliases used by the current app shell */
+  --ink-0: var(--color-surface);
+  --ink-50: var(--color-bg);
+  --ink-100: #eef2f7;
+  --ink-200: var(--color-border);
+  --ink-300: #c9d2e3;
+  --ink-400: #94a3b8;
+  --ink-500: #64748b;
+  --ink-600: var(--color-text-muted);
+  --ink-700: #334155;
+  --ink-800: #1e293b;
+  --ink-900: var(--color-text);
+  --ink-950: #020617;
+  --pos: var(--color-success);
+  --pos-bg: #ecfdf5;
+  --pos-line: #bbf7d0;
+  --neg: var(--color-danger);
+  --neg-bg: #fef2f2;
+  --neg-line: #fecaca;
+  --neu: var(--color-warning);
+  --neu-bg: #fffbeb;
+  --neu-line: #fde68a;
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --surface-1: var(--color-surface);
+  --surface-2: var(--color-surface-muted);
+  --surface-3: #eef2f7;
+  --accent: var(--color-primary);
+  --accent-2: var(--color-secondary);
+  --accent-3: #8b5cf6;
+  --accent-hot: #ec4899;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0b1220;
+  --color-surface: #0f172a;
+  --color-surface-muted: #111827;
+  --color-surface-elevated: #172036;
+  --color-text: #e5eefb;
+  --color-text-muted: #94a3b8;
+  --color-border: #233047;
+  --color-primary: #818cf8;
+  --color-secondary: #38bdf8;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #60a5fa;
+  --color-focus: rgba(129, 140, 248, 0.35);
+  --shadow-xs: 0 1px 2px rgba(2, 6, 23, 0.2);
+  --shadow-sm: 0 1px 3px rgba(2, 6, 23, 0.24);
+  --shadow-md: 0 6px 16px rgba(2, 6, 23, 0.3);
+  --shadow-lg: 0 12px 30px rgba(2, 6, 23, 0.36);
+  --shadow-xl: 0 24px 60px rgba(2, 6, 23, 0.44);
+  --ink-0: var(--color-surface);
+  --ink-50: var(--color-bg);
+  --ink-100: #111a2b;
+  --ink-200: var(--color-border);
+  --ink-300: #334155;
+  --ink-400: #475569;
+  --ink-500: #64748b;
+  --ink-600: var(--color-text-muted);
+  --ink-700: #cbd5e1;
+  --ink-800: #e2e8f0;
+  --ink-900: var(--color-text);
+  --ink-950: #f8fafc;
+  --surface-1: var(--color-surface);
+  --surface-2: var(--color-surface-muted);
+  --surface-3: #172036;
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --accent: var(--color-primary);
+  --accent-2: var(--color-secondary);
+  --accent-3: #a78bfa;
+  --glass-bg: rgba(15, 23, 42, 0.75);
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
