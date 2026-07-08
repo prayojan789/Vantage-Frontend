@@ -312,6 +312,65 @@
 .anim-fade-up-3 { animation: fadeUp .35s .12s ease both; }
 .anim-fade-up-4 { animation: fadeUp .35s .16s ease both; }
 .anim-spin      { animation: spin 1s linear infinite; }
+.anim-fade-rise  { animation: fadeUp .6s ease both; }
+
+@keyframes drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(18px, -12px, 0) scale(1.08); }
+}
+
+@keyframes shimmerSweep {
+  0% { transform: translateX(-35%) rotate(12deg); opacity: 0; }
+  20% { opacity: 0.35; }
+  100% { transform: translateX(35%) rotate(12deg); opacity: 0; }
+}
+
+.landing-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(54px);
+  opacity: 0.85;
+  animation: drift 12s ease-in-out infinite alternate;
+}
+
+.landing-orb-a {
+  top: -120px;
+  left: -100px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.22), transparent 60%);
+}
+
+.landing-orb-b {
+  top: 180px;
+  right: -80px;
+  width: 300px;
+  height: 300px;
+  animation-delay: -4s;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.18), transparent 60%);
+}
+
+.landing-orb-c {
+  bottom: 8%;
+  left: 22%;
+  width: 220px;
+  height: 220px;
+  animation-delay: -8s;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.18), transparent 60%);
+}
+
+.landing-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent 78%);
+  opacity: 0.24;
+}
+
+.animate-pulse-slow {
+  animation: fadeIn 1.2s ease both, shimmerSweep 5.5s ease-in-out infinite;
+}
 
 .skeleton {
   background: linear-gradient(90deg, var(--ink-100) 25%, var(--ink-200) 50%, var(--ink-100) 75%);

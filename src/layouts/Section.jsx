@@ -14,6 +14,7 @@ import { cn } from '../lib/utils.js'
 export const Section = forwardRef(function Section(
   {
     as: Tag = 'section',
+    eyebrow,
     title,
     description,
     actions,
@@ -38,9 +39,12 @@ export const Section = forwardRef(function Section(
       className={cn(SPACING[spacing] ?? SPACING.lg, bordered && 'pb-6 border-b border-border', className)}
       {...rest}
     >
-      {(title || description || actions) ? (
+      {(eyebrow || title || description || actions) ? (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0">
+            {eyebrow ? (
+              <p className="section-label mb-2 text-text-muted">{eyebrow}</p>
+            ) : null}
             {title ? (
               <h2 className="text-lg font-semibold tracking-tight text-text">{title}</h2>
             ) : null}

@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom'
+import Landing from '../pages/Landing.jsx'
 import AppLayout from '../layouts/AppLayout.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
 import Events from '../pages/Events.jsx'
@@ -18,9 +18,12 @@ import Settings from '../pages/Settings.jsx'
 
 export const appRoutes = [
   {
+    index: true,
+    element: <Landing />,
+  },
+  {
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
       { path: 'dashboard', element: <Dashboard />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'events', element: <Events />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'articles', element: <Articles />, handle: { layout: 'default', pageWidth: 'wide' } },
