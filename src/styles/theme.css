@@ -140,3 +140,21 @@ body {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+
+html[data-theme-transitioning='true'],
+html[data-theme-transitioning='true'] *,
+html[data-theme-transitioning='true'] *::before,
+html[data-theme-transitioning='true'] *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow, text-decoration-color, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-transitioning='true'],
+  html[data-theme-transitioning='true'] *,
+  html[data-theme-transitioning='true'] *::before,
+  html[data-theme-transitioning='true'] *::after {
+    transition-duration: 0ms;
+  }
+}
