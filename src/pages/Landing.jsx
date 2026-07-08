@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   ArrowRight,
   BarChart3,
@@ -201,7 +202,12 @@ export default function Landing() {
         <section>
           <PageContainer width="wide" className="pt-14 lg:pt-20">
             <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="space-y-8">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="space-y-8"
+              >
                 <div className="space-y-4">
                   <Badge tone="primary" className="animate-pulse-slow">Premium intelligence workspace</Badge>
                   <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-7xl">
@@ -228,25 +234,44 @@ export default function Landing() {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  {TOPICS.map(topic => (
-                    <Badge key={topic} tone="neutral" className="bg-surface/80 backdrop-blur-sm">
-                      {topic}
-                    </Badge>
+                  {TOPICS.map((topic, i) => (
+                    <motion.div
+                      key={topic}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.2 + i * 0.1 }}
+                    >
+                      <Badge tone="neutral" className="bg-surface/80 backdrop-blur-sm">
+                        {topic}
+                      </Badge>
+                    </motion.div>
                   ))}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                  {RESEARCH.map(item => (
-                    <Card key={item.label} className="animate-fade-rise border-border/80 bg-surface/80 p-4 backdrop-blur-md">
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-muted">{item.label}</p>
-                      <p className="mt-3 text-2xl font-semibold tracking-tight text-text">{item.value}</p>
-                      <p className="mt-2 text-sm text-text-muted">{item.description}</p>
-                    </Card>
+                  {RESEARCH.map((item, i) => (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 + i * 0.1 }}
+                    >
+                      <Card className="animate-fade-rise border-border/80 bg-surface/80 p-4 backdrop-blur-md">
+                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-text-muted">{item.label}</p>
+                        <p className="mt-3 text-2xl font-semibold tracking-tight text-text">{item.value}</p>
+                        <p className="mt-2 text-sm text-text-muted">{item.description}</p>
+                      </Card>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
-              <div className="relative">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+                className="relative"
+              >
                 <div className="absolute -inset-6 rounded-[2rem] bg-primary/10 blur-3xl" />
                 <Card className="relative overflow-hidden border-border/70 bg-surface/85 p-5 shadow-2xl shadow-primary/10 backdrop-blur-xl lg:p-6">
                   <div className="flex items-center justify-between border-b border-border/80 pb-4">
@@ -262,8 +287,11 @@ export default function Landing() {
                       {ARCHITECTURE.map((item, index) => {
                         const Icon = item.icon
                         return (
-                          <div
+                          <motion.div
                             key={item.title}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6 + index * 0.1 }}
                             className={cn(
                               'rounded-2xl border border-border/80 bg-bg/60 p-4 shadow-sm transition-transform duration-300 hover:-translate-y-1',
                               index === 1 && 'sm:translate-y-3',
@@ -274,7 +302,7 @@ export default function Landing() {
                             </div>
                             <p className="mt-4 text-sm font-semibold text-text">{item.title}</p>
                             <p className="mt-2 text-sm leading-6 text-text-muted">{item.note}</p>
-                          </div>
+                          </motion.div>
                         )
                       })}
                     </div>
@@ -335,18 +363,26 @@ export default function Landing() {
                 {ARCHITECTURE.map((item, index) => {
                   const Icon = item.icon
                   return (
-                    <Panel key={item.title} className="group border-border/80 bg-surface/85 backdrop-blur-sm" padded={false}>
-                      <div className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-transform duration-300 group-hover:-translate-y-0.5">
-                            <Icon size={20} />
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <Panel className="group border-border/80 bg-surface/85 backdrop-blur-sm" padded={false}>
+                        <div className="p-6">
+                          <div className="flex items-center justify-between">
+                            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-transform duration-300 group-hover:-translate-y-0.5">
+                              <Icon size={20} />
+                            </div>
+                            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">0{index + 1}</span>
                           </div>
-                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">0{index + 1}</span>
+                          <h3 className="mt-6 text-xl font-semibold tracking-tight text-text">{item.title}</h3>
+                          <p className="mt-3 text-sm leading-7 text-text-muted">{item.note}</p>
                         </div>
-                        <h3 className="mt-6 text-xl font-semibold tracking-tight text-text">{item.title}</h3>
-                        <p className="mt-3 text-sm leading-7 text-text-muted">{item.note}</p>
-                      </div>
-                    </Panel>
+                      </Panel>
+                    </motion.div>
                   )
                 })}
               </PanelLayout>
@@ -365,18 +401,26 @@ export default function Landing() {
                 {FEATURES.map((feature, index) => {
                   const Icon = feature.icon
                   return (
-                    <Panel key={feature.title} className="animate-fade-rise border-border/80 bg-surface/85 backdrop-blur-sm" padded={false}>
-                      <div className="p-6">
-                        <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                          <Icon size={18} />
+                    <motion.div
+                      key={feature.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                    >
+                      <Panel className="animate-fade-rise border-border/80 bg-surface/85 backdrop-blur-sm" padded={false}>
+                        <div className="p-6">
+                          <div className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                            <Icon size={18} />
+                          </div>
+                          <p className="mt-5 text-lg font-semibold tracking-tight text-text">{feature.title}</p>
+                          <p className="mt-3 text-sm leading-7 text-text-muted">{feature.description}</p>
+                          <p className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
+                            Learn more <ArrowRight size={14} />
+                          </p>
                         </div>
-                        <p className="mt-5 text-lg font-semibold tracking-tight text-text">{feature.title}</p>
-                        <p className="mt-3 text-sm leading-7 text-text-muted">{feature.description}</p>
-                        <p className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-primary">
-                          Learn more <ArrowRight size={14} />
-                        </p>
-                      </div>
-                    </Panel>
+                      </Panel>
+                    </motion.div>
                   )
                 })}
               </PanelLayout>
@@ -393,11 +437,19 @@ export default function Landing() {
             >
               <div className="grid gap-4 lg:grid-cols-4">
                 {WORKFLOW.map((item, index) => (
-                  <Card key={item.step} className={cn('animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm', index % 2 === 1 && 'lg:translate-y-4')}>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">{item.step}</p>
-                    <h3 className="mt-4 text-xl font-semibold tracking-tight text-text">{item.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-text-muted">{item.text}</p>
-                  </Card>
+                  <motion.div
+                    key={item.step}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <Card className={cn('animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm', index % 2 === 1 && 'lg:translate-y-4')}>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">{item.step}</p>
+                      <h3 className="mt-4 text-xl font-semibold tracking-tight text-text">{item.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-text-muted">{item.text}</p>
+                    </Card>
+                  </motion.div>
                 ))}
               </div>
             </Section>
@@ -412,57 +464,78 @@ export default function Landing() {
               description="Vantage organizes the platform around repeatable research tasks rather than generic content browsing."
             >
               <div className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-                <Card className="animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm lg:p-8">
-                  <div className="flex flex-wrap gap-2">
-                    {['Comparative reporting', 'Bias tracking', 'Coverage audits', 'Briefing notes'].map(tag => (
-                      <Badge key={tag} tone="neutral">{tag}</Badge>
-                    ))}
-                  </div>
-                  <p className="mt-6 text-2xl font-semibold tracking-tight text-text sm:text-3xl">
-                    The landing page is not just a marketing surface. It is the first step in a research workflow.
-                  </p>
-                  <p className="mt-5 max-w-2xl text-sm leading-7 text-text-muted">
-                    Users arrive, orient themselves through the architecture, then step into dashboards, report cards, and model playgrounds. That sequence reduces friction and makes the product easier to trust.
-                  </p>
-                  <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                    {[
-                      'Compare the same event across publishers',
-                      'Inspect entity-level sentiment on live text',
-                      'Read source trends in one uninterrupted view',
-                      'Move from discovery to analysis without context loss',
-                    ].map(point => (
-                      <div key={point} className="flex items-start gap-3 rounded-2xl border border-border/70 bg-bg/70 p-4">
-                        <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-success" />
-                        <p className="text-sm leading-6 text-text-muted">{point}</p>
-                      </div>
-                    ))}
-                  </div>
-                </Card>
-
-                <div className="grid gap-4">
-                  <Card className="animate-fade-rise border-border/80 bg-text p-6 text-bg backdrop-blur-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-bg/70">What it helps with</p>
-                    <div className="mt-5 space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <Card className="animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm lg:p-8">
+                    <div className="flex flex-wrap gap-2">
+                      {['Comparative reporting', 'Bias tracking', 'Coverage audits', 'Briefing notes'].map(tag => (
+                        <Badge key={tag} tone="neutral">{tag}</Badge>
+                      ))}
+                    </div>
+                    <p className="mt-6 text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+                      The landing page is not just a marketing surface. It is the first step in a research workflow.
+                    </p>
+                    <p className="mt-5 max-w-2xl text-sm leading-7 text-text-muted">
+                      Users arrive, orient themselves through the architecture, then step into dashboards, report cards, and model playgrounds. That sequence reduces friction and makes the product easier to trust.
+                    </p>
+                    <div className="mt-8 grid gap-4 sm:grid-cols-2">
                       {[
-                        'Find what changed in a story, not just what was published.',
-                        'See when an outlet diverges from the consensus.',
-                        'Move from headline to evidence with fewer clicks.',
-                      ].map(line => (
-                        <div key={line} className="flex items-start gap-3">
-                          <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs font-semibold">+</span>
-                          <p className="text-sm leading-6 text-bg/80">{line}</p>
+                        'Compare the same event across publishers',
+                        'Inspect entity-level sentiment on live text',
+                        'Read source trends in one uninterrupted view',
+                        'Move from discovery to analysis without context loss',
+                      ].map(point => (
+                        <div key={point} className="flex items-start gap-3 rounded-2xl border border-border/70 bg-bg/70 p-4">
+                          <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-success" />
+                          <p className="text-sm leading-6 text-text-muted">{point}</p>
                         </div>
                       ))}
                     </div>
                   </Card>
+                </motion.div>
 
-                  <Card className="animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm">
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">Recent signal</p>
-                    <p className="mt-3 text-lg font-semibold tracking-tight text-text">The workflow is built around the analyst, not the dataset.</p>
-                    <p className="mt-3 text-sm leading-7 text-text-muted">
-                      That means fast orientation, legible sections, and a clear path into live analysis when the user is ready to dig deeper.
-                    </p>
-                  </Card>
+                <div className="grid gap-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <Card className="animate-fade-rise border-border/80 bg-text p-6 text-bg backdrop-blur-sm">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-bg/70">What it helps with</p>
+                      <div className="mt-5 space-y-4">
+                        {[
+                          'Find what changed in a story, not just what was published.',
+                          'See when an outlet diverges from the consensus.',
+                          'Move from headline to evidence with fewer clicks.',
+                        ].map(line => (
+                          <div key={line} className="flex items-start gap-3">
+                            <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-xs font-semibold">+</span>
+                            <p className="text-sm leading-6 text-bg/80">{line}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.4 }}
+                  >
+                    <Card className="animate-fade-rise border-border/80 bg-surface/85 p-6 backdrop-blur-sm">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">Recent signal</p>
+                      <p className="mt-3 text-lg font-semibold tracking-tight text-text">The workflow is built around the analyst, not the dataset.</p>
+                      <p className="mt-3 text-sm leading-7 text-text-muted">
+                        That means fast orientation, legible sections, and a clear path into live analysis when the user is ready to dig deeper.
+                      </p>
+                    </Card>
+                  </motion.div>
                 </div>
               </div>
             </Section>
@@ -471,38 +544,51 @@ export default function Landing() {
 
         <section>
           <PageContainer width="wide">
-            <Card className="animate-fade-rise overflow-hidden border-border/80 bg-text p-8 text-bg shadow-2xl shadow-primary/10 lg:p-10">
-              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <Badge tone="primary" className="border-transparent bg-white/10 text-white">Start here</Badge>
-                  <h2 className="mt-5 max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl">
-                    Open the workspace and move from narrative to evidence in one step.
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-base leading-8 text-bg/75">
-                    Use the dashboard for overview, the live playground for model inspection, and the research views for deeper analysis.
-                  </p>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <Card className="animate-fade-rise overflow-hidden border-border/80 bg-text p-8 text-bg shadow-2xl shadow-primary/10 lg:p-10">
+                <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+                  <div className="space-y-5">
+                    <Badge tone="primary" className="border-transparent bg-white/10 text-white">Start here</Badge>
+                    <h2 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl">
+                      Open the workspace and move from narrative to evidence in one step.
+                    </h2>
+                    <p className="max-w-2xl text-base leading-8 text-bg/75">
+                      Use the dashboard for overview, the live playground for model inspection, and the research views for deeper analysis.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-3">
+                    <Link
+                      to="/dashboard"
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-text transition-transform duration-300 hover:-translate-y-0.5"
+                    >
+                      Open Dashboard <ArrowRight size={15} />
+                    </Link>
+                    <Link
+                      to="/live"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/15"
+                    >
+                      Launch Live Analysis
+                    </Link>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <Link
-                    to="/dashboard"
-                    className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-text transition-transform duration-300 hover:-translate-y-0.5"
-                  >
-                    Open Dashboard <ArrowRight size={15} />
-                  </Link>
-                  <Link
-                    to="/live"
-                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/15"
-                  >
-                    Launch Live Analysis
-                  </Link>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </motion.div>
           </PageContainer>
         </section>
       </main>
 
-      <footer className="relative z-10 border-t border-border bg-surface/80 backdrop-blur-xl">
+      <motion.footer 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 border-t border-border bg-surface/80 backdrop-blur-xl"
+      >
         <PageContainer width="wide" className="py-10 lg:py-12">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_repeat(3,_0.8fr)]">
             <div className="space-y-4">
@@ -541,7 +627,7 @@ export default function Landing() {
             </span>
           </div>
         </PageContainer>
-      </footer>
+      </motion.footer>
     </div>
   )
 }

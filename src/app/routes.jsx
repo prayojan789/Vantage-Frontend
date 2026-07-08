@@ -13,7 +13,7 @@ import AIPlayground from '../pages/AIPlayground.jsx'
 import AIInsights from '../pages/AIInsights.jsx'
 import KnowledgeGraph from '../pages/KnowledgeGraph.jsx'
 import Search from '../pages/Search.jsx'
-import Notifications from '../pages/Notifications.jsx'
+import Notifications from '../pages/Notifications.jsx' 
 import Settings from '../pages/Settings.jsx'
 
 export const appRoutes = [

@@ -40,7 +40,7 @@ function AppLayoutProvider({ value, children }) {
  * Pages are mounted inside the main scroll area via React Router's
  * `<Outlet />`.
  */
-export default function AppLayout({ variant: variantProp }) {
+export function AppLayout({ variant: variantProp }) {
   const location = useLocation()
   const matches = useMatches()
   const [drawerOpen, setDrawerOpen] = useState(false)
@@ -131,3 +131,4 @@ export default function AppLayout({ variant: variantProp }) {
     </AppLayoutProvider>
   )
 }
+export default AppLayout;
