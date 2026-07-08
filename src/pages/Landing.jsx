@@ -18,6 +18,14 @@ import {
   ShieldCheck,
   Sparkles,
   Workflow,
+  Users,
+  Calendar,
+  Cpu,
+  AlertCircle,
+  MessageSquare,
+  Mail,
+  Phone,
+  MapPin,
 } from 'lucide-react'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
@@ -145,7 +153,103 @@ const FOOTER_LINKS = [
   },
 ]
 
-export default function Landing() {
+const STATS = [
+  { label: 'Articles Processed', value: '12k+', description: 'Across all tracked outlets' },
+  { label: 'Entity Relations', value: '4.2k', description: 'Mapped in knowledge graph' },
+  { label: 'Analysis Accuracy', value: '94%', description same: 'Validated ABSA performance' },
+  { label: 'Daily Insights', value: '150+', description: 'New event clusters detected' },
+]
+
+const TIMELINE = [
+  { date: 'Q1 2025', title: 'Foundation', text: 'Core ingestion pipeline and basic NER implementation.' },
+  { date: 'Q3 2025', title: 'Intelligence', text: 'Introduction of ABSA and event clustering algorithms.' },
+  { date: 'Q1 2026', title: 'Scale', text: 'Expansion to multiple publishers and knowledge graph integration.' },
+  { date: 'Q3 2026', title: 'Refinement', text: 'Advanced bias reporting and research-ready export tools.' },
+]
+
+const TECH_STACK = [
+  { category: 'Frontend', items: ['React', 'Tailwind CSS', 'Framer Motion', 'Vite'] },
+  { category: 'Analysis', items: ['Python', 'PyTorch', 'HuggingFace', 'Spacy'] },
+  { category: 'Data', items: ['PostgreSQL', 'Redis', 'S3', 'ElasticSearch'] },
+  { category: 'Infrastructure', items: ['Docker', 'Kubernetes', 'AWS', 'GitHub Actions'] },
+]
+
+const PROBLEM_STATEMENT = {
+  title: 'The Noise Problem',
+  description: 'In the digital age, news is no longer a stream of information but a flood of fragmented narratives. For analysts, the challenge isn\'t finding information, but synthesizing it across divergent sources without losing context or introducing bias.',
+  points: [
+    'Fragmented coverage across multiple outlets',
+    'Lack of structured sentiment analysis',
+    'Difficulty in tracking entity-level narratives',
+    'High manual effort for comparative research',
+  ]
+}
+
+const USE_CASES = [
+  {
+    title: 'Policy Research',
+    text: 'Analyze how different political parties are framed across media houses to identify systemic bias.',
+    icon: Compass,
+  },
+  {
+    title: 'Journalistic Audit',
+    text: 'Verify the consistency of a story\'s evolution across multiple sources to detect narrative shifts.',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Market Intelligence',
+    text: 'Track institutional sentiment and public perception of key political actors in real-time.',
+    icon: BarChart3,
+  },
+]
+
+const FAQ = [
+  { q: 'What is ABSA?', a: 'Aspect-Based Sentiment Analysis (ABSA) allows Vantage to identify sentiment towards specific entities within a sentence, rather than just a general sentiment for the whole article.' },
+  { q: 'How are events clustered?', a: 'We use a combination of semantic similarity, entity overlap, and temporal proximity to group articles into cohesive event clusters.' },
+  { q: 'Is the data real-time?', a: 'Our pipeline refreshes on a rolling schedule, typically surfacing new content within minutes of publication.' },
+]
+
+const TEAM = [
+  { name: 'Dr. Arpan Das', role: 'Lead AI Researcher', bio: 'Specialist in NLP and Sentiment Analysis.' },
+  { name: 'Sita Kumari', role: 'Frontend Architect', bio: 'Expert in data visualization and UX.' },
+  { name: 'Rajesh Hamal', role: 'Data Engineer', la: 'Specialist in high-throughput pipelines.' },
+]
+
+const CONTACT_INFO = {
+  email: 'contact@vantage.np',
+  phone: '+977-1-4XXXXXXX',
+  address: 'Kathmandu, Nepal',
+}
+
+const FOOTER_LINKS = [
+  {
+    title: 'Explore',
+    links: [
+      { to: '/dashboard', label: 'Dashboard' },
+      { to: '/events', label: 'Events' },
+      { to: '/bias', label: 'Bias Report' },
+      { to: '/analytics', label: 'Analytics' },
+    ],
+  },
+  {
+    title: 'Build',
+    links: [
+      { to: '/live', label: 'Live Analysis' },
+      { to: '/playground', label: 'AI Playground' },
+      { to: '/graphs', label: 'Knowledge Graph' },
+      { to: '/insights', label: 'AI Insights' },
+    ],
+  },
+  {
+    title: 'Research',
+    links: [
+      { to: '/entities', label: 'Entity Explorer' },
+      { to: '/publishers', label: 'Media Houses' },
+      { to: '/articles', label: 'Articles' },
+      { to: '/search', label: 'Search' },
+    ],
+  },
+]
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg text-text">
       <PageMetadata
@@ -537,6 +641,357 @@ export default function Landing() {
                     </Card>
                   </motion.div>
                 </div>
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="statistics">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">Impact</span>}
+              title="Intelligence at scale"
+              description="Vantage processes thousands of articles daily to provide a high-fidelity map of the news landscape."
+            >
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {STATS.map((stat, i) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
+                    <Card className="border-border/80 bg-surface/85 p-6 backdrop-blur-sm text-center">
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-text-muted">{stat.label}</p>
+                      <p className="mt-3 text-3xl font-bold tracking-tight text-text">{stat.value}</p>
+                      <p className="mt-2 text-sm text-text-muted">{stat.description}</p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="timeline">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">Roadmap</span>}
+              title="The evolution of Vantage"
+              description="From a simple ingestion pipeline to a comprehensive research intelligence surface."
+            >
+              <div className="relative space-y-8 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-border lg:before:left-1/2">
+                {TIMELINE.map((item, index) => (
+                  <motion.div
+                    key={item.date}
+                    initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className={cn(
+                      'relative grid gap-4 sm:grid-cols-2',
+                      index % 2 === 0 ? 'sm:text-right sm:pr-12' : 'sm:pl-12'
+                    )}
+                  >
+                    <div className={cn(
+                      'flex items-center gap-3',
+                      index % 2 === 0 ? 'sm:justify-end' : 'sm:justify-start'
+                    )}>
+                      <span className="text-sm font-bold text-primary">{item.date}</span>
+                      <div className="absolute left-0 top-1/2 -translate-x-1/2 h-4 w-4 rounded-full bg-primary border-4 border-bg lg:left-1/2" />
+                    </div>
+                    <Card className="border-border/80 bg-surface/85 p-6 backdrop-blur-sm">
+                      <h3 className="text-lg font-semibold text-text">{item.title}</h3>
+                      <p className="mt-2 text-sm leading-7 text-text-muted">{item.text}</p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="tech-stack">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">Technology</span>}
+              title="Built for precision and speed"
+              description="Our stack is chosen for its ability to handle unstructured text at scale and provide millisecond-latency inference."
+            >
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {TECH_STACK.map((stack, i) => (
+                  <motion.div
+                    key={stack.category}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
+                    <Card className="border-border/80 bg-surface/85 p-6 backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <Cpu size={18} className="text-primary" />
+                        <p className="text-sm font-semibold text-text">{stack.category}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {stack.items.map(item => (
+                          <Badge key={item} tone="neutral" className="bg-bg/50">{item}</Badge>
+                        ))}
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="problem">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">The Challenge</span>}
+              title={PROBLEM_STATEMENT.title}
+              description={PROBLEM_STATEMENT.description}
+            >
+              <div className="grid gap-10 lg:grid-cols-2 items-center">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="space-y-6"
+                >
+                  <div className="p-6 rounded-3xl border border-border/80 bg-surface/85 backdrop-blur-sm">
+                    <div className="flex items-center gap-3 mb-6">
+                      <AlertCircle className="text-primary" size={24} />
+                      <h3 className="text-xl font-semibold text-text">Why Vantage exists</h3>
+                    </div>
+                    <div className="space-y-4">
+                      {PROBLEM_STATEMENT.points.map((point, i) => (
+                        <motion.div 
+                          key={point}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 + i * 0.1 }}
+                          className="flex items-start gap-3 p-3 rounded-xl bg-bg/50 border border-border/50"
+                        >
+                          <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                          <p className="text-sm text-text-muted">{point}</p>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="relative p-8 rounded-3xl border border-border/80 bg-surface/85 backdrop-blur-sm"
+                >
+                  <div className="absolute -top-4 -right-4 h-24 w-24 bg-primary/10 blur-3xl rounded-full" />
+                  <p className="text-lg italic leading-relaxed text-text/90">
+                    "The challenge isn't finding information, but synthesizing it across divergent sources without losing context or introducing bias."
+                  </p>
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">V</div>
+                    <div>
+                      <p className="text-sm font-semibold text-text">Vantage Intelligence</p>
+                      <p className="text-xs text-text-muted">Core Philosophy</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="use-cases">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">Applications</span>}
+              title="From raw data to actionable intelligence"
+              description="Vantage is designed to fit into various high-stakes research and monitoring workflows."
+            >
+              <div className="grid gap-6 sm:grid-cols-3">
+                {USE_CASES.map((useCase, i) => {
+                  const Icon = useCase.icon
+                  return (
+                    <motion.div
+                      key={useCase.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: i * 0.1 }}
+                    >
+                      <Card className="group border-border/80 bg-surface/85 p-8 backdrop-blur-sm hover:border-primary/40 transition-colors">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-6 group-hover:scale-110 transition-transform">
+                          <Icon size={24} />
+                        </div>
+                        <h3 className="text-xl font-semibold text-text mb-3">{useCase.title}</h3>
+                        <p className="text-sm leading-7 text-text-muted">{useCase.text}</p>
+                      </Card>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="faq">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">FAQ</span>}
+              title="Common questions"
+              description="Everything you need to know about the Vantage intelligence pipeline."
+            >
+              <div className="grid gap-4 max-w-3xl mx-auto">
+                {FAQ.map((item, i) => (
+                  <motion.div
+                    key={item.q}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
+                    <Card className="border-border/80 bg-surface/85 p-6 backdrop-blur-sm">
+                      <div className="flex items-start gap-4">
+                        <div className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
+                          {i + 1}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-text">{item.q}</p>
+                          <p className="mt-2 text-sm leading-6 text-text-muted">{item.a}</p>
+                        </div>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="team">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">The Team</span>}
+              title="Built by researchers and engineers"
+              description="A multidisciplinary team dedicated to bringing transparency to the news landscape."
+            >
+              <div className="grid gap-6 sm:grid-cols-3">
+                {TEAM.map((member, i) => (
+                  <motion.div
+                    key={member.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
+                    <Card className="border-border/80 bg-surface/85 p-6 backdrop-blur-sm text-center">
+                      <div className="mx-auto h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl mb-4">
+                        {member.name[0]}
+                      </div>
+                      <p className="font-semibold text-text">{member.name}</p>
+                      <p className="text-xs font-medium text-primary uppercase tracking-wider mb-3">{member.role}</p>
+                      <p className="text-sm text-text-muted leading-6">{member.bio}</p>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </Section>
+          </PageContainer>
+        </section>
+
+        <section id="contact">
+          <PageContainer width="wide">
+            <Section
+              eyebrow={<span className="text-text-muted">Get in touch</span>}
+              title="Ready to explore the news landscape?"
+              description="Whether you are a researcher, journalist, or policy analyst, we'd love to hear from you."
+            >
+              <div className="grid gap-10 lg:grid-cols-[1fr_0.8fr]">
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="space-y-8"
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="flex items-center gap-4 p-4 rounded-2xl border border-border/80 bg-surface/85 backdrop-blur-sm">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                        <Mail size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-text-muted uppercase">Email</p>
+                        <p className="text-sm font-medium text-text">{CONTACT_INFO.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 rounded-2xl border border-border/80 bg-surface/85 backdrop-blur-sm">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                        <Phone size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-text-muted uppercase">Phone</p>
+                        <p className="text-sm font-medium text-text">{CONTACT_INFO.phone}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 rounded-2xl border border-border/80 bg-surface/85 backdrop-blur-sm sm:col-span-2">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                        <MapPin size={20} />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-text-muted uppercase">Location</p>
+                        <p className="text-sm font-medium text-text">{CONTACT_INFO.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-8 rounded-3xl border border-border/80 bg-text text-bg shadow-xl">
+                    <h3 className="text-xl font-semibold mb-4">Join the waitlist</h3>
+                    <p className="text-sm text-bg/70 mb-6">Get notified when we release new research tools and expanded coverage.</p>
+                    <div className="flex gap-3">
+                      <input 
+                        type="email" 
+                        placeholder="Enter your email" 
+                        className="flex-1 rounded-full bg-bg/50 border border-white/20 px-4 py-2 text-sm text-white placeholder:text-bg/40 focus:outline-none focus:ring-2 focus:ring-primary"
+                      />
+                      <button className="rounded-full bg-white text-text px-4 py-2 text-sm font-semibold hover:bg-bg transition-colors">
+                        Join
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="relative p-8 rounded-3xl border border-border/80 bg-surface/85 backdrop-blur-sm"
+                >
+                  <div className="absolute -top-4 -right-4 h-24 w-24 bg-primary/10 blur-3xl rounded-full" />
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 mb-6">
+                      <MessageSquare className="text-primary" size={24} />
+                      <h3 className="text-xl font-semibold text-text">Send a message</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <input type="text" placeholder="Name" className="rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary" />
+                        <input type="email" placeholder="Email" className="rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-s-primary" />
+                      </div>
+                      <textarea 
+                        placeholder="Your message" 
+                        rows={4} 
+                        className="w-full rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary"
+                      ></textarea>
+                      <button className="w-full rounded-xl bg-primary p-3 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                        Send Message
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
             </Section>
           </PageContainer>
