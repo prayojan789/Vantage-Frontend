@@ -7,13 +7,18 @@
  * (no API call when USE_MOCK is true — reads MOCK_EVENTS directly).
  */
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp } from 'lucide-react'
+import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, LayoutGrid, List, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import NewsCard from '../components/NewsCard.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENTS, MOCK_SOURCES } from '../utils/mockData.js'
 import { getEvents, getSources } from '../services/api.js'
 import { sentimentColor } from '../utils/helpers.js'
+import { Card } from '../components/ui/Card.jsx'
+import { Badge } from '../components/ui/Badge.jsx'
+import { PageContainer, Section, PanelLayout, Panel } from '../layouts/index.js'
+import { cn } from '../lib/utils.js'
 
 const STAT_ICONS = [Layers, Newspaper, Activity, TrendingUp]
 const STAT_COLORS = ['#6366f1', '#3b82f6', '#10b981', '#a855f7']
@@ -27,6 +32,10 @@ export default function Events() {
   const [search, setSearch]       = useState('')
   const [sourceFilter, setSource] = useState('all')
   const [sentFilter, setSent]     = useState('all')
+  const [viewMode, setViewMode]     = useState('grid') // 'grid' | 'table'
+  const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' })
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 12
 
   const load = async () => {
     setLoading(true); setError(null)
@@ -72,6 +81,32 @@ export default function Events() {
     const src = sourceFilter === 'all' || (e.sources || []).includes(sourceFilter)
     return q && s && src
   })
+
+  const sorted = useMemo(() => {
+    const items = [...filtered]
+    items.sort((a, b) => {
+      const aVal = a[sortConfig.key]
+      const bVal = b[sortConfig.key]
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1
+      return 0
+    })
+    return items
+  }, [filtered, sortConfig])
+
+  const paginated = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage
+    return sorted.slice(start, start + itemsPerPage)
+  }, [sorted, currentPage])
+
+  const totalPages = Math.ceil(sorted.length / itemsPerPage)
+
+  const handleSort = (key) => {
+    setSortConfig(prev => ({
+      key,
+      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
+    }))
+  }
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
@@ -165,7 +200,7 @@ export default function Events() {
       <div className="anim-fade-up-2 card" style={{ padding:'16px 18px', display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
         <div style={{ position:'relative', flex:1, minWidth:240 }}>
           <Search size={14} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <input value={search} onChange={e => setSearch(e.target.value)}
+          <input value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="Search events…"
             style={{
               width:'100%', paddingLeft:40, paddingRight:14, paddingTop:11, paddingBottom:11,
@@ -180,7 +215,7 @@ export default function Events() {
 
         <div style={{ position:'relative' }}>
           <Filter size={12} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <select value={sourceFilter} onChange={e => setSource(e.target.value)} style={{
+          <select value={sourceFilter} onChange={e => { setSource(e.target.value); setCurrentPage(1); }} style={{
             paddingLeft:34, paddingRight:32, paddingTop:11, paddingBottom:11,
             fontSize:'0.85rem', background:'var(--surface-2)',
             border:'1.5px solid transparent', borderRadius:11,
@@ -194,11 +229,27 @@ export default function Events() {
 
         <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
           {['all','positive','negative','neutral'].map(s => (
-            <button key={s} className={`chip ${sentFilter === s ? 'active' : ''}`} onClick={() => setSent(s)} style={{ textTransform:'capitalize' }}>
+            <button key={s} className={`chip ${sentFilter === s ? 'active' : ''}`} onClick={() => { setSent(s); setCurrentPage(1); }} style={{ textTransform:'capitalize' }}>
               {s}
             </button>
           ))}
         </div>
+
+        <div className="flex items-center gap-2 ml-auto border-l border-border pl-4">
+          <button 
+            onClick={() => setViewMode('table')} 
+            className={cn("p-2 rounded-lg transition-colors", viewMode === 'table' ? "bg-primary text-white" : "bg-surface text-text-muted hover:text-text")}
+          >
+            <List size={16} />
+          </button>
+          <button 
+            onClick={() => setViewMode('grid')} 
+            className={cn("p-2 rounded-lg transition-colors", viewMode === 'grid' ? "bg-primary text-white" : "bg-surface text-text-muted hover:text-text")}
+          >
+            <LayoutGrid size={16} />
+          </button>
+        </div>
+      </div>
       </div>
 
       {/* ── Error ── */}
@@ -218,7 +269,7 @@ export default function Events() {
         </div>
       )}
 
-      {/* ── Events grid ── */}
+      {/* ── Events View ── */}
       {!loading && !error && (
         filtered.length === 0
           ? (
@@ -228,12 +279,86 @@ export default function Events() {
             </div>
           )
           : (
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:16 }}>
-              {filtered.map((ev, i) => (
-                <NewsCard key={ev.id} event={ev} delay={i * 0.05} />
-              ))}
+            <div className="space-y-6">
+              {viewMode === 'grid' ? (
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:16 }}>
+                  {paginated.map((ev, i) => (
+                    <NewsCard key={ev.id} event={ev} delay={i * 0.05} />
+                  ))}
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-2xl border border-border/80 bg-surface/85 backdrop-blur-sm">
+                  <table className="w-full text-left border-collapse">
+                    <thead className="bg-bg/50">
+                      <tr className="border-b border-border/80">
+                        {[
+                          { label: 'Event Title', key: 'title' },
+                          { label: 'Sentiment', key: 'dominant_sentiment' },
+                          { label: 'Articles', key: 'article_count' },
+                          { label: 'Sources', key: 'sources' },
+                          { label: 'Date', key: 'date' },
+                        ].map(col => (
+                          <th 
+                            key={col.key} 
+                            onClick={() => handleSort(col.key)}
+                            className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted cursor-pointer hover:text-text transition-colors"
+                          >
+                            <div className="flex items-center gap-2">
+                              {col.label}
+                              <ArrowUpDown size={12} className={sortConfig.key === col.key ? 'text-primary' : 'opacity-50'} />
+                            </div>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {paginated.map((ev, i) => (
+                        <motion.tr 
+                          key={ev.id}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: i * 0.05 }}
+                          className="border-b border-border/50 last:border-none hover:bg-bg/30 transition-colors"
+                        >
+                          <td className="px-6 py-4 text-sm font-medium text-text">{ev.title}</td>
+                          <td className="px-6 py-4">
+                            <Badge tone={ev.dominant_sentiment === 'positive' ? 'success' : ev.dominant_sentiment === 'negative' ? 'danger' : 'neutral'} className="text-[10px]">
+                              {ev.dominant_sentiment}
+                            </Badge>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-text-muted">{ev.article_count}</td>
+                          <td className="px-6 py-4 text-sm text-text-muted">{ev.sources?.length || 0}</td>
+                          <td className="px-6 py-4 text-sm text-text-muted">{ev.date}</td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* ── Pagination ── */}
+              <div className="flex items-center justify-center gap-4 py-6">
+                <button 
+                  disabled={currentPage === 1} 
+                  onClick={() => setCurrentPage(p => p - 1)}
+                  className="p-2 rounded-lg border border-border/80 bg-surface text-text-muted disabled:opacity-50 hover:text-text transition-colors"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="text-xs font-medium text-text-muted">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button 
+                  disabled={currentPage === totalPages} 
+                  onClick={() => setCurrentPage(p => p + 1)}
+                  className="p-2 rounded-lg border border-border/80 bg-surface text-text-muted disabled:opacity-50 hover:text-text transition-colors"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
             </div>
           )
+        }
       )}
     </div>
   )
