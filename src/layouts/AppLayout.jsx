@@ -25,15 +25,9 @@ export const LAYOUT_VARIANTS = ['default', 'rail', 'full', 'focus']
 
 const AppLayoutContext = createContext(null)
 
-export function AppLayoutProvider({ value, children }) {
+function AppLayoutProvider({ value, children }) {
   const ctx = useMemo(() => value, [value])
   return <AppLayoutContext.Provider value={ctx}>{children}</AppLayoutContext.Provider>
-}
-
-export function useAppLayout() {
-  const ctx = useContext(AppLayoutContext)
-  if (!ctx) return null
-  return ctx
 }
 
 /**

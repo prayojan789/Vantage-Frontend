@@ -17,7 +17,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, FileText, Layers, User, SearchX, Sparkles, Clock, Newspaper } from 'lucide-react'
 import PageMetadata from '../components/PageMetadata.jsx'
-import EmptyState from '../components/ui/EmptyState.jsx'
+import { EmptyState } from '../components/ui/EmptyState.jsx'
 import { MOCK_EVENTS } from '../utils/mockData.js'
 import { sentimentPill, fmtRelative } from '../utils/helpers.js'
 
@@ -249,7 +249,7 @@ export default function SearchPage() {
             Search the <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Archive</em>
           </h1>
           <p style={{ color:'rgba(248,250,252,0.72)', fontSize:'0.95rem', fontWeight:300, maxWidth:520, lineHeight:1.7 }}>
-            Full-text search across {MOCK_EVENTS.events.length} clustered events, {SYNTHIC_ARTICLES.length} ingested articles, and {ENTITY_POOL.length} named entities.
+            Full-text search across {MOCK_EVENTS.events.length} clustered events, {SYNTHETIC_ARTICLES.length} ingested articles, and {ENTITY_POOL.length} named entities.
             Results stream in as you type.
           </p>
         </div>

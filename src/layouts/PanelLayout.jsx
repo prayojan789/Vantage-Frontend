@@ -116,10 +116,3 @@ export function PanelRow({ gap = 'md', className, children, ...rest }) {
   )
 }
 
-/**
- * Attach metadata to children so PanelLayout can render consistent headers
- * when the consumer passes simple nodes.
- */
-PanelLayout.withPanels = function withPanels(panels) {
-  return panels
-}
