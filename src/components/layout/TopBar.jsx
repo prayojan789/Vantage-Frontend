@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import {
   Menu,
   Search,
@@ -13,7 +13,6 @@ import {
 } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 import { useTheme } from '../../providers/ThemeProvider.jsx'
-import MobileNav from './MobileNav.jsx'
 
 /**
  * TopBar
@@ -37,10 +36,8 @@ const QUICK_LINKS = [
 
 export default function TopBar({ onMenuClick, className }) {
   const { theme, setTheme } = useTheme()
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [themeOpen, setThemeOpen] = useState(false)
   const themeRef = useRef(null)
-  const location = useLocation()
 
   // close the theme popover when clicking outside
   useEffect(() => {
@@ -54,29 +51,23 @@ export default function TopBar({ onMenuClick, className }) {
     return () => document.removeEventListener('mousedown', handler)
   }, [themeOpen])
 
-  // close mobile drawer on route change
-  useEffect(() => {
-    setDrawerOpen(false)
-  }, [location.pathname])
-
   return (
-    <>
-      <header
-        className={cn(
-          'sticky top-0 z-40 h-14 bg-surface/85 backdrop-blur border-b border-border',
-          className,
-        )}
-      >
-        <div className="h-full max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center gap-3">
-          {/* Mobile menu trigger */}
-          <button
-            type="button"
-            onClick={onMenuClick ?? (() => setDrawerOpen(true))}
-            aria-label="Open navigation"
-            className="inline-flex md:hidden h-9 w-9 items-center justify-center rounded-md text-text-muted hover:text-text hover:bg-surface-muted"
-          >
-            <Menu size={18} />
-          </button>
+    <header
+      className={cn(
+        'sticky top-0 z-40 h-14 bg-surface/85 backdrop-blur border-b border-border',
+        className,
+      )}
+    >
+      <div className="h-full max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center gap-3">
+        {/* Mobile menu trigger */}
+        <button
+          type="button"
+          onClick={onMenuClick}
+          aria-label="Open navigation"
+          className="inline-flex md:hidden h-9 w-9 items-center justify-center rounded-md text-text-muted hover:text-text hover:bg-surface-muted"
+        >
+          <Menu size={18} />
+        </button>
 
           {/* Brand */}
           <Link
@@ -208,11 +199,8 @@ export default function TopBar({ onMenuClick, className }) {
             <Zap size={13} />
             Try Live
           </Link>
-        </div>
-      </header>
-
-      <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-    </>
+      </div>
+    </header>
   )
 }
 

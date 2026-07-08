@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useMatches } from 'react-router-dom'
 import { useEffect } from 'react'
 import TopBar from '../components/layout/TopBar.jsx'
 import Sidebar from '../components/layout/Sidebar.jsx'
@@ -8,6 +8,7 @@ import BottomBar from '../components/layout/BottomBar.jsx'
 import Footer from '../components/layout/Footer.jsx'
 import MobileNav from '../components/layout/MobileNav.jsx'
 import { cn } from '../lib/utils.js'
+import { PageContainer } from './PageContainer.jsx'
 
 /**
  * AppLayout variants
@@ -47,33 +48,36 @@ export function useAppLayout() {
  */
 export default function AppLayout({ variant: variantProp }) {
   const location = useLocation()
+  const matches = useMatches()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  // Optional: if a route handle sets `layout: 'full'`, use that variant.
-  // We resolve the variant here so consumers can also force a variant
-  // directly via the prop (used in tests / storybook).
-  const variant =
-    variantProp ??
-    (typeof window !== 'undefined'
-      ? null
-      : null)
+  const routeHandle = [...matches].reverse().find(match => match.handle)?.handle ?? {}
+  const variant = variantProp ?? routeHandle.layout ?? 'default'
+  const pageWidth = routeHandle.pageWidth ?? 'default'
+  const pageFlush = routeHandle.pageFlush ?? false
+  const showFooter = routeHandle.footer !== false && variant !== 'focus'
 
   // Scroll to top on route change so page transitions feel fresh
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    window.scrollTo({ top: 0, left: 0 })
   }, [location.pathname])
 
   const renderChrome = () => {
+    const outlet = (
+      <PageContainer width={pageWidth} flush={pageFlush}>
+        <Outlet />
+      </PageContainer>
+    )
+
     switch (variant) {
       case 'full':
         return (
           <>
             <TopBar onMenuClick={() => setDrawerOpen(true)} />
-            <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
             <main className="flex-1 min-w-0">
-              <Outlet />
+              {outlet}
             </main>
-            <Footer />
+            {showFooter ? <Footer /> : null}
             <BottomBar />
           </>
         )
@@ -84,9 +88,8 @@ export default function AppLayout({ variant: variantProp }) {
               <NavRail />
               <div className="flex-1 min-w-0 flex flex-col">
                 <TopBar onMenuClick={() => setDrawerOpen(true)} />
-                <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
                 <main className="flex-1 min-w-0 pb-16 md:pb-0">
-                  <Outlet />
+                  {outlet}
                 </main>
               </div>
             </div>
@@ -99,10 +102,9 @@ export default function AppLayout({ variant: variantProp }) {
             <div className="flex flex-1 min-h-0">
               <Sidebar />
               <main className="flex-1 min-w-0 pb-16 md:pb-0">
-                <Outlet />
+                {outlet}
               </main>
             </div>
-            <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
             <BottomBar />
           </>
         )
@@ -114,11 +116,10 @@ export default function AppLayout({ variant: variantProp }) {
               <Sidebar />
               <div className="flex-1 min-w-0 flex flex-col">
                 <TopBar onMenuClick={() => setDrawerOpen(true)} />
-                <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
                 <main className="flex-1 min-w-0 pb-16 md:pb-0">
-                  <Outlet />
+                  {outlet}
                 </main>
-                <Footer />
+                {showFooter ? <Footer /> : null}
               </div>
             </div>
             <BottomBar />
@@ -130,6 +131,7 @@ export default function AppLayout({ variant: variantProp }) {
   return (
     <AppLayoutProvider value={{ variant, drawerOpen, setDrawerOpen }}>
       <div className={cn('min-h-screen flex flex-col bg-bg text-text')}>
+        <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
         {renderChrome()}
       </div>
     </AppLayoutProvider>

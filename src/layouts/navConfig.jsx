@@ -98,6 +98,13 @@ export const SIDEBAR_GROUPS = [
   { id: 'ai',        label: 'AI',         items: AI_NAV },
 ]
 
+export const PAGE_WIDTHS = {
+  default: 'default',
+  wide: 'wide',
+  full: 'full',
+  narrow: 'narrow',
+}
+
 /**
  * Tracked publishers surfaced in the sidebar's "sources" footer block.
  * This is editorial metadata, not navigation; it lives in this file so the

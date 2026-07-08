@@ -43,7 +43,7 @@ export default function Sidebar({ className }) {
       aria-label="Primary navigation"
       data-collapsed={collapsed || undefined}
       className={cn(
-        'group/sidebar relative flex flex-col h-screen sticky top-0 z-30',
+        'group/sidebar hidden md:flex flex-col h-screen sticky top-0 z-30',
         'bg-surface border-r border-border',
         'transition-[width] duration-200 ease-out',
         collapsed ? 'w-[72px]' : 'w-64',

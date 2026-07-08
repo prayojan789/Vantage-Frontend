@@ -1,19 +1,41 @@
 import { Navigate } from 'react-router-dom'
 import AppLayout from '../layouts/AppLayout.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
+import Events from '../pages/Events.jsx'
+import Articles from '../pages/Articles.jsx'
+import EntityExplorer from '../pages/EntityExplorer.jsx'
+import MediaHouses from '../pages/MediaHouses.jsx'
 import EventDetail from '../pages/EventDetail.jsx'
 import BiasReport from '../pages/BiasReport.jsx'
+import Analytics from '../pages/Analytics.jsx'
 import LiveAnalysis from '../pages/LiveAnalysis.jsx'
+import AIPlayground from '../pages/AIPlayground.jsx'
+import AIInsights from '../pages/AIInsights.jsx'
+import KnowledgeGraph from '../pages/KnowledgeGraph.jsx'
+import Search from '../pages/Search.jsx'
+import Notifications from '../pages/Notifications.jsx'
+import Settings from '../pages/Settings.jsx'
 
 export const appRoutes = [
   {
     element: <AppLayout />,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <Dashboard /> },
-      { path: 'event/:id', element: <EventDetail /> },
-      { path: 'bias', element: <BiasReport /> },
-      { path: 'live', element: <LiveAnalysis /> },
+      { path: 'dashboard', element: <Dashboard />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'events', element: <Events />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'articles', element: <Articles />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'entities', element: <EntityExplorer />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'publishers', element: <MediaHouses />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'event/:id', element: <EventDetail />, handle: { layout: 'full', pageWidth: 'full', pageFlush: true, footer: false } },
+      { path: 'bias', element: <BiasReport />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'analytics', element: <Analytics />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'live', element: <LiveAnalysis />, handle: { layout: 'focus', pageWidth: 'wide', footer: false } },
+      { path: 'playground', element: <AIPlayground />, handle: { layout: 'focus', pageWidth: 'wide', footer: false } },
+      { path: 'insights', element: <AIInsights />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'graphs', element: <KnowledgeGraph />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'search', element: <Search />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'notifications', element: <Notifications />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'settings', element: <Settings />, handle: { layout: 'default', pageWidth: 'wide' } },
     ],
   },
 ]
