@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Clock, ExternalLink, Tag, Info, Share2, Bookmark, MessageSquare } from 'lucide-react'
+import { ArrowLeft, Clock, ExternalLink, Tag, Info, Share2, Bookmark, MessageSquare, Quote, ListOrdered, Link2, History } from 'lucide-react'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL } from '../utils/mockData.js'
@@ -51,6 +51,25 @@ export default function ArticleDetail() {
 
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto px-4 pb-20">
+      {/* Sticky Summary Bar */}
+      <div className="sticky top-0 z-30 bg-bg/80 backdrop-blur-md border-b border-border py-3 px-4 flex items-center justify-between rounded-b-2xl shadow-sm">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+          <p className="text-xs font-medium text-text truncate">
+            <span className="text-muted mr-2">Summary:</span> 
+            {article?.summary.slice(0, 120)}...
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={sentimentPill(article?.sentiment)} style={{ fontSize: '0.6rem' }}>
+            {article?.sentiment}
+          </span>
+          <Link to="/articles" className="text-[10px] font-bold text-primary hover:underline ml-2">
+            Archive
+          </Link>
+        </div>
+      </div>
+
       <PageMetadata 
         title={`${article.headline} | Vantage Reader`} 
         description={article.summary} 
@@ -97,6 +116,30 @@ export default function ArticleDetail() {
             </div>
           </header>
 
+          {/* Article Timeline Context */}
+          <div className="card p-6 bg-surface-2/50 border-border/40 space-y-4">
+            <div className="flex items-center gap-2 mb-2">
+              <History size={14} className="text-primary" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-text">Contextual Timeline</h3>
+            </div>
+            <div className="flex items-center gap-4 overflow-x-auto pb-2 no-scrollbar">
+              {([
+                { label: 'Initial Report', date: '09:15 AM', active: false },
+                { label: 'Current Article', date: '10:00 AM', active: true },
+                { label: 'Follow-up', date: '11:10 AM', active: false },
+              ]).map((step, i) => (
+                <div key={i} className="flex items-center gap-3 flex-shrink-0">
+                  <div className={`h-2 w-2 rounded-full ${step.active ? 'bg-primary' : 'bg-border'}`} />
+                  <div className="flex flex-col">
+                    <span className={`text-[10px] font-bold ${step.active ? 'text-text' : 'text-muted'}`}>{step.label}</span>
+                    <span className="text-[9px] text-muted">{step.date}</span>
+                  </div>
+                  {i < 2 && <div className="w-8 h-px bg-border" />}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="card p-8 md:p-12 space-y-6 bg-white shadow-sm border-border/50">
             <div className="prose prose-sm max-w-none text-text-soft leading-relaxed space-y-4">
               <p className="text-lg font-medium text-text italic border-l-4 border-primary pl-4">
@@ -111,6 +154,23 @@ export default function ArticleDetail() {
               <p>
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab horea sit voluptatem accusantium doloremque laudantium.
               </p>
+            </div>
+
+            {/* Citation Section */}
+            <div className="pt-8 border-t border-border space-y-4">
+              <div className="flex items-center gap-2 text-text font-bold text-xs uppercase tracking-wider">
+                <Quote size={14} /> Citations & Sources
+              </div>
+              <div className="space-y-2">
+                <div className="p-3 rounded-lg bg-surface-2 border border-border/40 text-[11px] text-text-soft flex justify-between items-center">
+                  <span>"The coalition partners demand cabinet reshuffle..."</span>
+                  <ExternalLink size={12} className="text-muted" />
+                </div>
+                <div className="p-3 rounded-lg bg-surface-2 border border-border/40 text-[11px] text-text-soft flex justify-between items-center">
+                  <span>"Analysts see the reshuffle as normal coalition mechanics..."</span>
+                  <ExternalLink size={12} className="text-muted" />
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center justify-between pt-8 border-t border-border">
@@ -132,6 +192,26 @@ export default function ArticleDetail() {
         {/* Sidebar Metadata */}
         <div className="lg:col-span-4 space-y-6">
           <div className="card p-6 space-y-6">
+            {/* Entity Highlights */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 mb-3">
+                <Tag size={14} className="text-primary" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-text">Entity Highlights</h3>
+              </div>
+              <div className="space-y-2">
+                {article.entities.map(e => (
+                  <div key={e.name} className="group flex items-center justify-between p-2 rounded-md bg-bg/50 border border-border/40 hover:border-primary/50 transition-colors cursor-pointer">
+                    <span className="text-xs font-medium text-text group-hover:text-primary transition-colors">{e.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={sentimentPill(e.sentiment)} style={{ fontSize: '0.6rem' }}>{e.sentiment}</span>
+                      <div className="h-1 w-1 rounded-full bg-muted" />
+                      <span className="text-[10px] text-muted">{Math.round(e.score * 100)}%</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Info size={14} className="text-primary" />
@@ -148,21 +228,6 @@ export default function ArticleDetail() {
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Tag size={14} className="text-primary" />
-                <h3 className="text-xs font-bold uppercase tracking-wider text-text">Entity Analysis</h3>
-              </div>
-              <div className="space-y-2">
-                {article.entities.map(e => (
-                  <div key={e.name} className="flex items-center justify-between p-2 rounded-md bg-bg/50 border border-border/40">
-                    <span className="text-xs font-medium text-text">{e.name}</span>
-                    <span className={sentimentPill(e.sentiment)} style={{ fontSize: '0.6rem' }}>{e.sentiment}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 space-y-2">
               <div className="flex items-center gap-2 text-primary">
                 <MessageSquare size={14} />
@@ -171,6 +236,23 @@ export default function ArticleDetail() {
               <p className="text-[11px] text-text-soft leading-relaxed">
                 This article uses a <span className="font-bold text-text">{article.sentiment}</span> framing, focusing heavily on the actions of {article.entities[0]?.name}.
               </p>
+            </div>
+
+            <div className="card p-6 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Link2 size={14} className="text-primary" />
+                <h3 className="text-xs font-bold uppercase tracking-wider text-text">Related Coverage</h3>
+              </div>
+              <div className="space-y-3">
+                {[1,2].map(i => (
+                  <Link key={i} to={`/article/art_00${i}`} className="block p-3 rounded-lg bg-surface-2 border border-border/60 hover:border-primary/50 transition-all group">
+                    <p className="text-[11px] font-bold text-text group-hover:text-primary transition-colors line-clamp-2">
+                      {article.headline.replace('PM faces', 'Analysis of ')}
+                    </p>
+                    <span className="text-[9px] text-muted uppercase mt-1 block">{article.source}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
