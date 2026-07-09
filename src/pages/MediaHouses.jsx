@@ -149,7 +149,7 @@ function PublisherCard({ house, index }) {
             {latest > 0.1 ? 'Critical of Govt' : latest < -0.1 ? 'Critical of Opposition' : 'Balanced'}
           </strong>
         </span>
-        <a href="#" style={{
+        <a href={`/publisher/${house.name.toLowerCase().replace(/ /g, '-')}`} style={{
           display:'inline-flex', alignItems:'center', gap:4,
           fontSize:'0.72rem', fontWeight:600, color:'var(--accent)',
           textDecoration:'none',

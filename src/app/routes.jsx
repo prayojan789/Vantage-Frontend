@@ -6,6 +6,7 @@ import Articles from '../pages/Articles.jsx'
 import ArticleDetail from '../pages/ArticleDetail.jsx'
 import EntityExplorer from '../pages/EntityExplorer.jsx'
 import MediaHouses from '../pages/MediaHouses.jsx'
+import PublisherProfile from '../pages/PublisherProfile.jsx'
 import EventDetail from '../pages/EventDetail.jsx'
 import BiasReport from '../pages/BiasReport.jsx'
 import Analytics from '../pages/Analytics.jsx'
@@ -31,6 +32,7 @@ export const appRoutes = [
       { path: 'article/:id', element: <ArticleDetail />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'entities', element: <EntityExplorer />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'publishers', element: <MediaHouses />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'publisher/:id', element: <PublisherProfile />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'event/:id', element: <EventDetail />, handle: { layout: 'full', pageWidth: 'full', pageFlush: true, footer: false } },
       { path: 'bias', element: <BiasReport />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'analytics', element: <Analytics />, handle: { layout: 'default', pageWidth: 'wide' } },
