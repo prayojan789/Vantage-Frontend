@@ -32,7 +32,15 @@ function deriveArticlesFromEvents(events) {
   events.forEach((ev, idx) => {
     let articles
     if (idx === 0 && MOCK_EVENT_DETAIL?.articles?.length) {
-      articles = MOCK_EVENT_DETAIL.articles
+      articles = MOCK_EVENT_DETAIL.articles.map(a => ({
+        ...a,
+        tags: ['Politics', 'Nepal', 'Analysis'],
+        publisher_info: {
+          location: 'Kathmandu',
+          verified: true,
+          reach: 'High'
+        }
+      }))
     } else {
       // Generate 2 lightweight synthetic articles per event
       const sources = ev.sources?.length ? ev.sources : MOCK_SOURCES.sources.slice(0, 2)
@@ -55,6 +63,12 @@ function deriveArticlesFromEvents(events) {
           score,
         })) || [],
         summary: 'Auto-derived summary stub for the article archive view. Real backend payloads will populate this field.',
+        tags: ['Politics', 'Nepal', 'Analysis'],
+        publisher_info: {
+          location: 'Kathmandu',
+          verified: true,
+          reach: 'Medium'
+        }
       }))
     }
     groups.push({ event: ev, articles })

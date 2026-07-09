@@ -3,6 +3,7 @@ import AppLayout from '../layouts/AppLayout.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
 import Events from '../pages/Events.jsx'
 import Articles from '../pages/Articles.jsx'
+import ArticleDetail from '../pages/ArticleDetail.jsx'
 import EntityExplorer from '../pages/EntityExplorer.jsx'
 import MediaHouses from '../pages/MediaHouses.jsx'
 import EventDetail from '../pages/EventDetail.jsx'
@@ -27,6 +28,7 @@ export const appRoutes = [
       { path: 'dashboard', element: <Dashboard />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'events', element: <Events />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'articles', element: <Articles />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'article/:id', element: <ArticleDetail />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'entities', element: <EntityExplorer />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'publishers', element: <MediaHouses />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'event/:id', element: <EventDetail />, handle: { layout: 'full', pageWidth: 'full', pageFlush: true, footer: false } },
