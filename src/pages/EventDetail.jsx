@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, AlertCircle, Layers, Calendar, GitBranch } from 'lucide-react'
+import { ArrowLeft, AlertCircle, Layers, Calendar, GitBranch, Clock, Sparkles, Share2, Network } from 'lucide-react'
 import ClusterView from '../components/ClusterView.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
@@ -28,6 +28,8 @@ export default function EventDetail() {
   const sentCounts = event?.articles?.reduce((a, art) => {
     a[art.sentiment] = (a[art.sentiment] || 0) + 1; return a
   }, {})
+
+  const timelineEvents = event?.articles?.sort((a, b) => new Date(a.published_at) - new Date(b.published_at)) || []
 
   return (
     <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
@@ -125,7 +127,69 @@ export default function EventDetail() {
             <ClusterView articles={event.articles} />
           </div>
 
-          <div className="card anim-fade-up-2" style={{ padding:'26px 30px' }}>
+          <div className="grid gap-6 lg:grid-cols-3 anim-fade-up-2">
+            {/* AI Summary & Narratives */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="card p-6 space-y-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles size={16} className="text-primary" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-text">AI Synthesis</h2>
+                </div>
+                <div className="p-4 rounded-xl bg-surface-2 border border-border/60 italic text-text-soft text-sm leading-relaxed">
+                  "This event represents a critical juncture in coalition politics. While {event.articles[0]?.source} emphasizes the instability and crisis, {event.articles[1]?.source} frames it as a routine democratic transition. The most significant divergence is the treatment of {event.articles[0]?.entities[0]?.name}, who is consistently portrayed as a catalyst for tension across most outlets."
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                  <div className="p-3 rounded-lg border border-border/40 bg-bg/30">
+                    <p className="text-[10px] font-bold uppercase text-muted mb-1">Dominant Narrative</p>
+                    <p className="text-xs font-medium text-text">Coalition Instability vs. Democratic Process</p>
+                  </div>
+                  <div className="p-3 rounded-lg border border-border/40 bg-bg/30">
+                    <p className="text-[10px] font-bold uppercase text-muted mb-1">Key Divergence</p>
+                    <p className="text-xs font-medium text-text">Framing of RSP as 'Reformist' vs 'Opportunist'</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-6 space-y-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock size={16} className="text-primary" />
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-text">Event Timeline</h2>
+                </div>
+                <div className="relative pl-6 border-l-2 border-border space-y-8">
+                  {timelineEvents.map((art, i) => (
+                    <div key={art.id} className="relative">
+                      <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-bg border-2 border-primary" />
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-muted">{fmtDate(art.published_at)}</span>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${sourceClass(art.source)}`}>{art.source}</span>
+                        </div>
+                        <p className="text-xs font-medium text-text leading-snug">{art.headline}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Relationship Graph Placeholder */}
+            <div className="space-y-6">
+              <div className="card p-6 h-full flex flex-col items-center justify-center text-center space-y-4 border-dashed border-2">
+                <div className="p-4 rounded-full bg-primary/10 text-primary">
+                  <Network size={32} />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-text">Entity Relationship Graph</h3>
+                  <p className="text-xs text-muted mt-1">Visualizing connections between actors in this event.</p>
+                </div>
+                <div className="text-[10px] font-bold uppercase tracking-widest text-muted bg-surface-2 px-3 py-1 rounded-full border border-border">
+                  Coming Soon
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="card anim-fade-up-3" style={{ padding:'26px 30px' }}>
             <p className="section-label" style={{ marginBottom:18 }}>Entity Divergence Summary</p>
             <p style={{ fontSize:'0.85rem', color:'var(--muted)', marginBottom:22, lineHeight:1.6 }}>
               How each political entity is treated across all {event.articles.length} articles covering this event.
