@@ -123,40 +123,10 @@ const TOPICS = [
   'Entity extraction',
 ]
 
-const FOOTER_LINKS = [
-  {
-    title: 'Explore',
-    links: [
-      { to: '/dashboard', label: 'Dashboard' },
-      { to: '/events', label: 'Events' },
-      { to: '/bias', label: 'Bias Report' },
-      { to: '/analytics', label: 'Analytics' },
-    ],
-  },
-  {
-    title: 'Build',
-    links: [
-      { to: '/live', label: 'Live Analysis' },
-      { to: '/playground', label: 'AI Playground' },
-      { to: '/graphs', label: 'Knowledge Graph' },
-      { to: '/insights', label: 'AI Insights' },
-    ],
-  },
-  {
-    title: 'Research',
-    links: [
-      { to: '/entities', label: 'Entity Explorer' },
-      { to: '/publishers', label: 'Media Houses' },
-      { to: '/articles', label: 'Articles' },
-      { to: '/search', label: 'Search' },
-    ],
-  },
-]
-
 const STATS = [
   { label: 'Articles Processed', value: '12k+', description: 'Across all tracked outlets' },
   { label: 'Entity Relations', value: '4.2k', description: 'Mapped in knowledge graph' },
-  { label: 'Analysis Accuracy', value: '94%', description same: 'Validated ABSA performance' },
+  { label: 'Analysis Accuracy', value: '94%', description: 'Validated ABSA performance' },
   { label: 'Daily Insights', value: '150+', description: 'New event clusters detected' },
 ]
 
@@ -212,7 +182,7 @@ const FAQ = [
 const TEAM = [
   { name: 'Dr. Arpan Das', role: 'Lead AI Researcher', bio: 'Specialist in NLP and Sentiment Analysis.' },
   { name: 'Sita Kumari', role: 'Frontend Architect', bio: 'Expert in data visualization and UX.' },
-  { name: 'Rajesh Hamal', role: 'Data Engineer', la: 'Specialist in high-throughput pipelines.' },
+  { name: 'Rajesh Hamal', role: 'Data Engineer', bio: 'Specialist in high-throughput pipelines.' },
 ]
 
 const CONTACT_INFO = {
@@ -250,6 +220,8 @@ const FOOTER_LINKS = [
     ],
   },
 ]
+
+export default function Landing() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg text-text">
       <PageMetadata
@@ -451,7 +423,7 @@ const FOOTER_LINKS = [
                     </div>
                   </div>
                 </Card>
-              </div>
+              </motion.div>
             </div>
           </PageContainer>
         </section>
@@ -979,7 +951,7 @@ const FOOTER_LINKS = [
                     <div className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <input type="text" placeholder="Name" className="rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary" />
-                        <input type="email" placeholder="Email" className="rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-s-primary" />
+                        <input type="email" placeholder="Email" className="rounded-xl border border-border/80 bg-bg p-3 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary" />
                       </div>
                       <textarea 
                         placeholder="Your message" 

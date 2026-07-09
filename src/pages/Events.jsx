@@ -107,8 +107,7 @@ export default function Events() {
       direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
     }))
   }
-
-  return (
+return (
     <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
       <PageMetadata
         title="Events Archive | Vantage"
@@ -250,7 +249,6 @@ export default function Events() {
           </button>
         </div>
       </div>
-      </div>
 
       {/* ── Error ── */}
       {error && (
@@ -358,7 +356,6 @@ export default function Events() {
               </div>
             </div>
           )
-        }
       )}
     </div>
   )

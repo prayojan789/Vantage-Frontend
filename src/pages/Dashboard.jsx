@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, ArrowRight, Sparkles, Pin, Zap, Clock, MessageSquare } from 'lucide-react'
+import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, ArrowRight, Sparkles, Pin, Zap, Clock, MessageSquare, FileSearch } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import NewsCard from '../components/NewsCard.jsx'
@@ -255,7 +255,7 @@ export default function Dashboard() {
                     <div className="h-10 w-10 rounded-xl bg-bg text-text flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
                       <FileSearch size={18} />
                     </div>
-                    <div={
+                    <div>
                       <p className="text-sm font-semibold text-text">{report.title}</p>
                       <p className="text-xs text-text-muted">{report.date}</p>
                     </div>
