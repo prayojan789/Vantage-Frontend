@@ -1,14 +1,20 @@
 import { useState } from 'react'
 import { cn } from '../../lib/utils.js'
 
-export function Tooltip({ label, side = 'top', children, className }) {
+/**
+ * Tooltip
+ *
+ * Lightweight hover tooltip in the Chakra style.
+ */
+export function Tooltip({ label, children, placement = 'top', className }) {
   const [open, setOpen] = useState(false)
-  const placement = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
+
+  const positionClass = {
+    top:    'bottom-full left-1/2 -translate-x-1/2 mb-2',
     bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
-    left: 'right-full top-1/2 -translate-y-1/2 mr-2',
-    right: 'left-full top-1/2 -translate-y-1/2 ml-2',
-  }[side]
+    left:   'right-full top-1/2 -translate-y-1/2 mr-2',
+    right:  'left-full top-1/2 -translate-y-1/2 ml-2',
+  }[placement]
 
   return (
     <span
@@ -19,18 +25,28 @@ export function Tooltip({ label, side = 'top', children, className }) {
       onBlur={() => setOpen(false)}
     >
       {children}
-      {open && (
+      {open && label ? (
         <span
           role="tooltip"
           className={cn(
-            'pointer-events-none absolute z-50 px-2.5 py-1.5 text-xs font-medium rounded-md whitespace-nowrap shadow-md bg-text text-white',
-            placement,
+            'pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-[var(--text)] px-2.5 py-1 text-xs font-medium text-[var(--surface)] shadow-lg',
+            'anim-scale-in',
+            positionClass,
             className,
           )}
         >
           {label}
+          <span
+            className={cn(
+              'absolute h-2 w-2 rotate-45 bg-[var(--text)]',
+              placement === 'top'    && 'bottom-[-3px] left-1/2 -translate-x-1/2',
+              placement === 'bottom' && 'top-[-3px]    left-1/2 -translate-x-1/2',
+              placement === 'left'   && 'right-[-3px]  top-1/2 -translate-y-1/2',
+              placement === 'right'  && 'left-[-3px]   top-1/2 -translate-y-1/2',
+            )}
+          />
         </span>
-      )}
+      ) : null}
     </span>
   )
 }

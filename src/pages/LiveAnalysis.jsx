@@ -1,151 +1,185 @@
+/**
+ * LiveAnalysis.jsx — Live ABSA analysis
+ */
 import { useState } from 'react'
-import { Zap, AlertCircle, Clock, Terminal, ChevronRight, Cpu } from 'lucide-react'
-import SentimentChart from '../components/SentimentChart.jsx'
+import {
+  Zap,
+  Link as LinkIcon,
+  AlertCircle,
+  Clock,
+  Terminal,
+  ChevronRight,
+  Cpu,
+  Sparkles,
+  Globe,
+  Play,
+  RotateCcw,
+} from 'lucide-react'
+import PageHero from '../components/PageHero.jsx'
+import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_ANALYZE } from '../utils/mockData.js'
 import { analyzeText } from '../services/api.js'
-import { sentimentPill, sentimentColor } from '../utils/helpers.js'
-import PageMetadata from '../components/PageMetadata.jsx'
+import { sentimentColor, sentimentPill } from '../utils/helpers.js'
+import { Button } from '../components/ui/Button.jsx'
+import { Badge } from '../components/ui/Badge.jsx'
+import { Alert, AlertIcon, AlertTitle, AlertDescription } from '../components/ui/Alert.jsx'
+import { EmptyState } from '../components/ui/EmptyState.jsx'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const EXAMPLES = [
-  { label:'Coalition Tensions', text:"PM Dahal met with RSP leader Rabi Lamichhane today, where both parties agreed to review the coalition's six-month agenda. Critics from NC called the meeting unproductive and a distraction from governance." },
-  { label:'UML Congress', text:"KP Oli addressed thousands of UML cadres in Kathmandu, claiming the party was stronger than ever. Independent mayor Balen Shah dismissed the speech as empty rhetoric from a crumbling establishment." },
-  { label:'Economic Report', text:"Nepal's GDP is projected to grow at 5.1% according to the World Bank. Finance Minister praised the NRB's monetary policy while opposition leaders questioned whether citizens would feel the benefits." },
+  { label: 'Kathmandu Post · Cabinet', url: 'https://kathmandupost.com/politics/cabinet-reshuffle', text: "PM Dahal faces mounting pressure as coalition partners demand cabinet reshuffle ahead of winter session." },
+  { label: 'Republica · UML',           url: 'https://myrepublica.nagariknetwork.com/uml-congress',   text: "KP Oli re-elected UML chair unanimously at the party's central convention, calling for renewed party unity." },
+  { label: 'OnlineKhabar · Economy',     url: 'https://english.onlinekhabar.com/gdp-forecast',        text: "Nepal's GDP is projected to grow at 5.1% according to the World Bank, raising cautious optimism among investors." },
 ]
 
 const MODEL_INFO = [
-  { label:'Model',     value:'distilbert-vantage-v1' },
-  { label:'Task',      value:'Aspect-Based Sentiment' },
-  { label:'Entities',  value:'Nepali Political NER' },
-  { label:'Inference', value:'Local FastAPI · PyTorch' },
-  { label:'Avg Latency', value:'~320ms' },
+  { label: 'Model',         value: 'distilbert-vantage-v1' },
+  { label: 'Task',          value: 'Aspect-Based Sentiment' },
+  { label: 'Entities',      value: 'Nepali Political NER' },
+  { label: 'Inference',     value: 'Local FastAPI · PyTorch' },
+  { label: 'Avg latency',   value: '~320ms' },
 ]
 
 export default function LiveAnalysis() {
-  const [text, setText]       = useState('')
-  const [result, setResult]   = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(null)
-  const [ran, setRan]         = useState(false)
+  const [text, setText]         = useState('')
+  const [url, setUrl]           = useState('')
+  const [result, setResult]     = useState(null)
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState(null)
+  const [latency, setLatency]   = useState(null)
 
   const run = async () => {
-    if (!text.trim()) return
-    setLoading(true); setError(null); setResult(null)
+    if (!text.trim() && !url.trim()) return
+    setLoading(true); setError(null); setResult(null); setLatency(null)
+    const t0 = performance.now()
     try {
+      const input = text || (url + ' This is a fallback body used in mock mode when a URL is supplied but the live scraper is offline.')
       const data = USE_MOCK
-        ? await new Promise(res => setTimeout(() => res(MOCK_ANALYZE(text)), 600 + Math.random()*400))
-        : await analyzeText(text)
-      setResult(data); setRan(true)
-    } catch(e) { setError(e.message) }
+        ? await new Promise(res => setTimeout(() => res(MOCK_ANALYZE(input)), 600 + Math.random() * 400))
+        : await analyzeText(input)
+      setLatency(Math.round(performance.now() - t0))
+      setResult(data)
+    } catch (e) { setError(e.message) }
     finally { setLoading(false) }
   }
 
-  const overallColor = result ? sentimentColor(result.overall_sentiment) : '#6366f1'
+  const overallColor = result ? sentimentColor(result.overall_sentiment) : '#2563eb'
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
         title="Live Analysis | Vantage"
-        description="Run live aspect-based sentiment analysis on Nepali news text and inspect extracted entities."
+        description="Run aspect-based sentiment analysis on a live URL or pasted text."
       />
 
-      {/* ── Hero ── */}
-      <div
-        className="hero-gradient anim-fade-up anim-gradient"
-        style={{
-          borderRadius:24, padding:'40px 44px',
-          position:'relative', overflow:'hidden',
-          boxShadow:'0 24px 60px -24px rgba(11,16,32,0.45)',
-        }}
-      >
-        <span className="orb orb-cyan"   style={{ width:240, height:240, right:-40, top:-60 }} />
-        <span className="orb orb-purple" style={{ width:200, height:200, left:-40,  bottom:-80 }} />
+      <PageHero
+        variant="dark"
+        eyebrow={<><Zap size={11} /> Live</>}
+        title={<>Live <span className="text-white/70">ABSA</span> analysis</>}
+        description="Drop in a URL or paste article text — our fine-tuned model extracts political entities and scores their sentiment in under a second."
+        actions={
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1.5 text-xs font-semibold text-emerald-200">
+            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
+            distilbert-vantage-v1
+          </span>
+        }
+      />
 
-        <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:24 }}>
-          <div style={{ maxWidth:560 }}>
-            <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Developer Playground</p>
-            <h1 className="font-serif" style={{ fontSize:'2.4rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px' }}>
-              Live <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>ABSA</em> Analysis
-            </h1>
-            <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.95rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
-              Paste any English Nepali news paragraph. Our fine-tuned model extracts political entities and scores their sentiment — in under a second, running entirely on local FastAPI.
-            </p>
-          </div>
-          <div className="glass-dark" style={{
-            padding:'18px 22px', borderRadius:16, minWidth:240,
-          }}>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
-              <Cpu size={14} color="#67e8f9" />
-              <p style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(248,250,252,0.5)' }}>Model Specs</p>
+      <div className="grid gap-6 xl:grid-cols-3">
+        <div className="space-y-4 xl:col-span-1">
+          <div className="card-elevated overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-4 py-3">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-600)] text-white">
+                <Terminal size={13} />
+              </span>
+              <p className="eyebrow text-[var(--brand-700)]">Input</p>
             </div>
-            {MODEL_INFO.map(({ label, value }) => (
-              <div key={label} style={{ display:'flex', alignItems:'center', gap:8, fontSize:'0.72rem', padding:'4px 0' }}>
-                <span style={{ color:'rgba(248,250,252,0.4)', minWidth:78 }}>{label}</span>
-                <span className="font-mono" style={{ color:'rgba(248,250,252,0.85)', background:'rgba(255,255,255,0.06)', padding:'2px 8px', borderRadius:5 }}>{value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Main two-column layout ── */}
-      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
-
-        {/* ── Input panel ── */}
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <div className="card anim-fade-up-1" style={{ padding:'24px 26px', flex:1 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
-              <div style={{
-                width:32, height:32, borderRadius:9,
-                background:'linear-gradient(135deg, var(--accent), var(--accent-2))',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                boxShadow:'0 6px 16px -6px rgba(99,102,241,0.5)',
-              }}>
-                <Terminal size={14} color="white" />
-              </div>
+            <div className="space-y-3 p-4">
               <div>
-                <p className="section-label" style={{ margin:0 }}>Input Text</p>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">URL</label>
+                <div className="mt-1.5 flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-muted)] px-3 focus-within:border-[var(--brand-500)] focus-within:bg-[var(--surface)] focus-within:ring-2 focus-within:ring-[var(--brand-500)]/20">
+                  <LinkIcon size={13} className="text-[var(--text-muted)]" />
+                  <input
+                    value={url}
+                    onChange={e => setUrl(e.target.value)}
+                    placeholder="https://kathmandupost.com/..."
+                    className="h-9 flex-1 bg-transparent text-sm text-[var(--text)] outline-none placeholder:text-[var(--text-muted)]"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 text-[10px] uppercase tracking-wider text-[var(--text-muted)]">
+                <span className="flex-1 border-t border-[var(--border)]" />
+                or paste text
+                <span className="flex-1 border-t border-[var(--border)]" />
+              </div>
+              <textarea
+                value={text}
+                onChange={e => setText(e.target.value)}
+                rows={8}
+                placeholder="Paste the article body…"
+                className="w-full resize-none rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface-muted)] p-3 font-mono text-sm leading-relaxed text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--brand-500)] focus:bg-[var(--surface)] focus:ring-2 focus:ring-[var(--brand-500)]/20"
+              />
+              <div className="flex items-center justify-between">
+                <p className="text-[11px] text-[var(--text-muted)]">{text.length || url.length} chars</p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => { setText(''); setUrl(''); setResult(null) }}
+                    variant="outline"
+                    size="sm"
+                    leftIcon={<RotateCcw size={12} />}
+                  >
+                    Reset
+                  </Button>
+                  <Button
+                    onClick={run}
+                    isLoading={loading}
+                    disabled={!text.trim() && !url.trim()}
+                    leftIcon={<Play size={12} />}
+                    size="sm"
+                  >
+                    Run ABSA
+                  </Button>
+                </div>
               </div>
             </div>
-            <textarea
-              value={text} onChange={e => setText(e.target.value)}
-              rows={9}
-              placeholder="Paste any Nepali English news paragraph here…"
-              style={{
-                width:'100%', padding:'16px 18px',
-                fontSize:'0.88rem', lineHeight:1.7,
-                background:'var(--surface-2)', border:'1.5px solid transparent',
-                borderRadius:12, resize:'none', outline:'none',
-                color:'var(--text)', transition:'all .18s',
-                  /* inherit global professional system font */
-              }}
-              onFocus={e => { e.target.style.borderColor='var(--accent)'; e.target.style.background='white' }}
-              onBlur={e => { e.target.style.borderColor='transparent'; e.target.style.background='var(--surface-2)' }}
-            />
-            <button onClick={run} disabled={loading || !text.trim()} className="btn-primary" style={{ width:'100%', marginTop:14, justifyContent:'center', borderRadius:12, padding:'13px' }}>
-              {loading
-                ? <><span className="anim-spin" style={{ width:14, height:14, border:'2px solid rgba(255,255,255,0.3)', borderTopColor:'white', borderRadius:'50%', display:'inline-block' }} /> Analyzing…</>
-                : <><Zap size={14} /> Run ABSA Analysis</>
-              }
-            </button>
           </div>
 
-          <div className="card anim-fade-up-2" style={{ padding:'20px 22px' }}>
-            <p className="section-label" style={{ marginBottom:14 }}>Try an Example</p>
-            <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+          <div className="card-elevated overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-4 py-3">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--blue-50)] text-[var(--blue-600)]">
+                <Cpu size={13} />
+              </span>
+              <p className="eyebrow text-[var(--brand-700)]">Model specs</p>
+            </div>
+            <ul className="divide-y divide-[var(--border-subtle)] text-xs">
+              {MODEL_INFO.map(({ label, value }) => (
+                <li key={label} className="flex items-center justify-between px-4 py-2.5">
+                  <span className="text-[var(--text-muted)]">{label}</span>
+                  <span className="rounded-md bg-[var(--surface-muted)] px-2 py-0.5 font-mono text-[var(--text)]">{value}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="card-elevated overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-4 py-3">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--yellow-50)] text-[var(--yellow-600)]">
+                <Globe size={13} />
+              </span>
+              <p className="eyebrow text-[var(--brand-700)]">Try a URL</p>
+            </div>
+            <div className="divide-y divide-[var(--border-subtle)]">
               {EXAMPLES.map(ex => (
-                <button key={ex.label} onClick={() => { setText(ex.text); setResult(null) }} style={{
-                  textAlign:'left', background:'var(--surface-2)', border:'1.5px solid transparent',
-                  borderRadius:11, padding:'12px 14px', cursor:'pointer', transition:'all .15s',
-                  display:'flex', alignItems:'flex-start', gap:10,
-                }}
-                  onMouseEnter={e => { e.currentTarget.style.background='white'; e.currentTarget.style.borderColor='var(--accent)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background='var(--surface-2)'; e.currentTarget.style.borderColor='transparent' }}
+                <button
+                  key={ex.label}
+                  onClick={() => { setUrl(ex.url); setText(ex.text); setResult(null) }}
+                  className="group flex w-full items-start gap-3 p-4 text-left transition-colors hover:bg-[var(--surface-muted)]"
                 >
-                  <ChevronRight size={12} style={{ color:'var(--accent)', flexShrink:0, marginTop:3 }} />
-                  <div>
-                    <p className="font-syne" style={{ fontSize:'0.78rem', fontWeight:700, color:'var(--text)', marginBottom:3 }}>{ex.label}</p>
-                    <p style={{ fontSize:'0.72rem', color:'var(--muted)', lineHeight:1.5, margin:0 }}>{ex.text.slice(0,90)}…</p>
+                  <ChevronRight size={14} className="mt-0.5 flex-shrink-0 text-[var(--text-muted)] group-hover:text-[var(--brand-600)]" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-[var(--text)] group-hover:text-[var(--brand-600)]">{ex.label}</p>
+                    <p className="line-clamp-1 text-[11px] text-[var(--text-muted)]">{ex.url}</p>
                   </div>
                 </button>
               ))}
@@ -153,125 +187,101 @@ export default function LiveAnalysis() {
           </div>
         </div>
 
-        {/* ── Output panel ── */}
-        <div className="card anim-fade-up-1" style={{ padding:'24px 26px', display:'flex', flexDirection:'column' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20 }}>
-            <div style={{
-              width:32, height:32, borderRadius:9,
-              background:'linear-gradient(135deg, var(--accent-3), var(--accent-2))',
-              display:'flex', alignItems:'center', justifyContent:'center',
-              boxShadow:'0 6px 16px -6px rgba(6,182,212,0.5)',
-            }}>
-              <Zap size={14} color="white" />
-            </div>
-            <p className="section-label" style={{ margin:0 }}>ABSA Output</p>
-          </div>
-
-          {!loading && !result && !error && (
-            <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:14, padding:'40px 20px' }}>
-              <div style={{
-                width:64, height:64, borderRadius:18,
-                background:'linear-gradient(135deg, var(--surface-2), white)',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                border:'1px solid var(--border)',
-              }}>
-                <Zap size={26} style={{ color:'var(--accent)' }} />
-              </div>
-              <div style={{ textAlign:'center' }}>
-                <p className="font-syne" style={{ fontWeight:700, fontSize:'0.95rem', marginBottom:6, color:'var(--text)' }}>
-                  Awaiting Input
-                </p>
-                <p style={{ fontSize:'0.78rem', color:'var(--muted)', lineHeight:1.6, maxWidth:260 }}>
-                  Paste a paragraph and click Analyze to see entity-level sentiment scores.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {loading && (
-            <div style={{ flex:1, display:'flex', flexDirection:'column', gap:14, paddingTop:8 }}>
-              <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:6 }}>
-                <span className="anim-spin" style={{ width:14, height:14, border:'2px solid var(--border)', borderTopColor:'var(--accent)', borderRadius:'50%', display:'inline-block' }} />
-                <span style={{ fontSize:'0.78rem', color:'var(--muted)' }}>Running ABSA model…</span>
-              </div>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} style={{ display:'flex', flexDirection:'column', gap:6 }}>
-                  <div style={{ display:'flex', justifyContent:'space-between' }}>
-                    <div className="skeleton" style={{ height:12, width:'40%', borderRadius:4 }} />
-                    <div className="skeleton" style={{ height:12, width:'20%', borderRadius:4 }} />
-                  </div>
-                  <div className="skeleton" style={{ height:6, width:'100%', borderRadius:99 }} />
-                  <div className="skeleton" style={{ height:10, width:'70%', borderRadius:4 }} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {error && (
-            <div style={{ display:'flex', alignItems:'flex-start', gap:10, fontSize:'0.85rem', color:'var(--neg)', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'14px 18px' }}>
-              <AlertCircle size={15} style={{ flexShrink:0, marginTop:1 }} />
-              <div>
-                <p style={{ fontWeight:700, marginBottom:3 }}>Analysis failed</p>
-                <p style={{ fontSize:'0.74rem', opacity:.85 }}>{error}</p>
-              </div>
-            </div>
-          )}
-
-          {result && !loading && (
-            <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
-              <div style={{
-                background:`linear-gradient(135deg, ${overallColor}15, ${overallColor}08)`,
-                border:`1.5px solid ${overallColor}30`,
-                borderRadius:14, padding:'18px 20px',
-                display:'flex', alignItems:'center', justifyContent:'space-between',
-              }}>
-                <div>
-                  <p style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--muted)', marginBottom:6 }}>Overall Sentiment</p>
-                  <span className={sentimentPill(result.overall_sentiment)} style={{ fontSize:'0.75rem' }}>
-                    {result.overall_sentiment}
-                  </span>
-                </div>
-                <div style={{ textAlign:'right' }}>
-                  <p style={{ fontSize:'0.65rem', color:'var(--muted)', marginBottom:6 }}>Entities Detected</p>
-                  <div className="font-syne" style={{ fontSize:'1.8rem', fontWeight:800, color:'var(--text)', lineHeight:1 }}>{result.entities.length}</div>
-                </div>
-              </div>
-
-              <div>
-                <p className="section-label" style={{ marginBottom:16 }}>Entity-Level Breakdown</p>
-                {result.entities.map(e => <SentimentChart key={e.name} entity={e} />)}
-              </div>
-
-              <div style={{
-                display:'flex', alignItems:'center', gap:8,
-                fontSize:'0.72rem', color:'var(--muted)', paddingTop:14,
-                borderTop:'1px solid var(--border)',
-              }}>
-                <Clock size={12} />
-                <span className="font-mono">Inference: {result.processing_ms}ms · distilbert-vantage-v1</span>
-                <span style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5, color:'#047857', fontWeight:600 }}>
-                  <span style={{ width:6, height:6, borderRadius:'50%', background:'#10b981', display:'inline-block' }} />
-                  Success
+        <div className="space-y-4 xl:col-span-2">
+          <div className="card-elevated overflow-hidden">
+            <div className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-4 py-3">
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] text-white"
+                  style={{ background: result ? overallColor : 'var(--purple-500)' }}
+                >
+                  <Zap size={13} />
                 </span>
+                <p className="eyebrow text-[var(--brand-700)]">ABSA output</p>
               </div>
+              {latency != null ? (
+                <span className="inline-flex items-center gap-1 text-[10px] text-[var(--text-muted)]">
+                  <Clock size={10} /> {latency}ms
+                </span>
+              ) : null}
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* ── Inspector note ── */}
-      <div className="card anim-fade-up-3" style={{
-        padding:'22px 26px',
-        background:'linear-gradient(135deg, #fffbeb, #fef3c7)',
-        borderColor:'#fde68a',
-      }}>
-        <p className="section-label" style={{ color:'#b45309', marginBottom:10 }}>For Inspectors</p>
-        <p style={{ fontSize:'0.85rem', color:'#78350f', lineHeight:1.7, margin:0 }}>
-          This playground demonstrates <strong style={{ color:'#451a03' }}>live local inference</strong> of our fine-tuned DistilBERT ABSA model.
-          The model was fine-tuned on ~800 hand-labeled Nepali political sentences using Google Colab (free GPU),
-          then deployed locally inside FastAPI using optimized PyTorch. No cloud API is called during inference —
-          latency is typically under 400ms on a standard laptop.
-        </p>
+            {!loading && !result && !error ? (
+              <EmptyState
+                icon={Sparkles}
+                title="Awaiting input"
+                description="Drop a URL or paste the article body. The model is local — runs in <500ms."
+                className="border-0 bg-transparent"
+              />
+            ) : null}
+
+            {loading ? (
+              <div className="space-y-4 p-6">
+                <div className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                  <span className="h-3 w-3 anim-spin rounded-full border-2 border-[var(--border)] border-t-[var(--brand-500)]" />
+                  Running ABSA model…
+                </div>
+                {[100, 80, 60].map((h, i) => <div key={i} className="skeleton h-16" />)}
+              </div>
+            ) : null}
+
+            {error ? (
+              <div className="m-6">
+                <Alert status="error">
+                  <AlertIcon status="error" />
+                  <div>
+                    <AlertTitle>Request failed</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </div>
+                </Alert>
+              </div>
+            ) : null}
+
+            {result ? (
+              <div className="space-y-6 p-5">
+                <div
+                  className="relative overflow-hidden rounded-2xl p-5 text-white"
+                  style={{ background: `linear-gradient(135deg, ${overallColor}, ${overallColor}cc)` }}
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">Overall sentiment</p>
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="text-3xl font-bold capitalize">{result.overall_sentiment}</span>
+                    <span className="text-sm text-white/80">across {result.entities.length} entities</span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="eyebrow mb-3 text-[var(--brand-700)]">Entity-level sentiment</p>
+                  <div className="space-y-3">
+                    {result.entities.map(e => (
+                      <div key={e.name} className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-4">
+                        <div className="mb-2 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-bold text-[var(--text)]">{e.name}</span>
+                            <span className={sentimentPill(e.sentiment)} style={{ fontSize: '0.65rem' }}>{e.sentiment}</span>
+                          </div>
+                          <span className="text-xs font-semibold text-[var(--text-muted)]">{Math.round(e.score * 100)}%</span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-sunken)]">
+                          <div
+                            className="h-full rounded-full"
+                            style={{
+                              width: `${e.score * 100}%`,
+                              background: `linear-gradient(90deg, ${sentimentColor(e.sentiment)}, ${sentimentColor(e.sentiment)}99)`,
+                            }}
+                          />
+                        </div>
+                        {e.context ? (
+                          <p className="mt-2 text-xs italic text-[var(--text-muted)]">{e.context}</p>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
       </div>
     </div>
   )

@@ -1,41 +1,60 @@
 /**
- * Events.jsx — Events Archive
- * ─────────────────────────────────────────────────────────────
- * A dedicated archive view for clustered news events across Nepali
- * English-language outlets. Mirrors the Dashboard hero / stats / filter /
- * card patterns, but presents the full event set as a filterable grid
- * (no API call when USE_MOCK is true — reads MOCK_EVENTS directly).
+ * Events.jsx — Event clusters archive
+ *
+ * Use case #4: View clustered events
  */
 import { useState, useEffect, useMemo } from 'react'
-import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, LayoutGrid, List, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import NewsCard from '../components/NewsCard.jsx'
+import { Link } from 'react-router-dom'
+import {
+  Search,
+  RefreshCw,
+  AlertCircle,
+  Layers,
+  Newspaper,
+  Activity,
+  TrendingUp,
+  Building2,
+  Filter,
+  Grid3x3,
+  List as ListIcon,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpRight,
+  ArrowUpDown,
+  Calendar,
+} from 'lucide-react'
+import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENTS, MOCK_SOURCES } from '../utils/mockData.js'
 import { getEvents, getSources } from '../services/api.js'
-import { sentimentColor } from '../utils/helpers.js'
-import { Card } from '../components/ui/Card.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
-import { PageContainer, Section, PanelLayout, Panel } from '../layouts/index.js'
+import { NewsCard, StatCard } from '../components/DashboardComponents.jsx'
+import { SentimentDonut, SourceBadge } from '../components/Charts.jsx'
+import { EmptyState } from '../components/ui/EmptyState.jsx'
+import { Button } from '../components/ui/Button.jsx'
+import { Input, InputGroup, InputLeftElement } from '../components/ui/Input.jsx'
+import { sentimentColor, fmtDate } from '../utils/helpers.js'
 import { cn } from '../lib/utils.js'
 
-const STAT_ICONS = [Layers, Newspaper, Activity, TrendingUp]
-const STAT_COLORS = ['#6366f1', '#3b82f6', '#10b981', '#a855f7']
+const SORTS = [
+  { key: 'date',     label: 'Latest' },
+  { key: 'articles', label: 'Most covered' },
+  { key: 'match',    label: 'Highest match' },
+]
 
 export default function Events() {
-  const [events, setEvents]       = useState([])
-  const [sources, setSources]     = useState([])
-  const [total, setTotal]         = useState(0)
-  const [loading, setLoading]     = useState(true)
-  const [error, setError]         = useState(null)
-  const [search, setSearch]       = useState('')
+  const [events, setEvents]     = useState([])
+  const [sources, setSources]   = useState([])
+  const [total, setTotal]       = useState(0)
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState(null)
+  const [search, setSearch]     = useState('')
   const [sourceFilter, setSource] = useState('all')
   const [sentFilter, setSent]     = useState('all')
-  const [viewMode, setViewMode]     = useState('grid') // 'grid' | 'table'
+  const [viewMode, setViewMode]   = useState('grid')
   const [sortConfig, setSortConfig] = useState({ key: 'date', direction: 'desc' })
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 12
+  const itemsPerPage = 9
 
   const load = async () => {
     setLoading(true); setError(null)
@@ -48,19 +67,13 @@ export default function Events() {
           getSources(),
         ])
       }
-      setEvents(evtData.events)
-      setTotal(evtData.total)
-      setSources(srcData.sources)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
+      setEvents(evtData.events); setTotal(evtData.total); setSources(srcData.sources)
+    } catch (e) { setError(e.message) }
+    finally { setLoading(false) }
   }
 
   useEffect(() => { load() }, [sourceFilter])
 
-  // ── Derived stats from current event set ──
   const stats = useMemo(() => {
     const totalArticles = events.reduce((acc, e) => acc + (e.article_count || 0), 0)
     const avg = events.length ? +(totalArticles / events.length).toFixed(1) : 0
@@ -68,30 +81,39 @@ export default function Events() {
     events.forEach(e => e.sources?.forEach(s => { sourceCounts[s] = (sourceCounts[s] || 0) + 1 }))
     const topEntry = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]
     return [
-      { label:'Total Events',    value:String(events.length),   sub:`${total} tracked overall`,         icon:STAT_ICONS[0], color:STAT_COLORS[0] },
-      { label:'Total Articles',  value:String(totalArticles),   sub:`Across ${events.length} clusters`, icon:STAT_ICONS[1], color:STAT_COLORS[1] },
-      { label:'Avg / Event',     value:String(avg),             sub:'Articles per cluster',            icon:STAT_ICONS[2], color:STAT_COLORS[2] },
-      { label:'Top Source',      value: topEntry ? topEntry[0].split(' ').slice(0,2).join(' ') : '—', sub: topEntry ? `${topEntry[1]} events` : 'No data', icon:STAT_ICONS[3], color:STAT_COLORS[3] },
+      { label: 'Total events',    value: String(events.length),   sub: `${total} tracked overall`,         icon: Layers,    accent: 'brand' },
+      { label: 'Total articles',  value: String(totalArticles),   sub: `Across ${events.length} clusters`, icon: Newspaper, accent: 'blue' },
+      { label: 'Avg / event',     value: String(avg),             sub: 'Articles per cluster',            icon: Activity,  accent: 'green' },
+      { label: 'Top source',      value: topEntry ? topEntry[0].split(' ').slice(0, 2).join(' ') : '—', sub: topEntry ? `${topEntry[1]} events` : 'No data', icon: Building2, accent: 'purple' },
     ]
   }, [events, total])
 
-  const filtered = events.filter(e => {
-    const q = !search || e.title.toLowerCase().includes(search.toLowerCase())
-    const s = sentFilter === 'all' || e.dominant_sentiment === sentFilter
-    const src = sourceFilter === 'all' || (e.sources || []).includes(sourceFilter)
-    return q && s && src
-  })
+  const sentCounts = useMemo(() => {
+    const c = { positive: 0, negative: 0, neutral: 0 }
+    events.forEach(e => c[e.dominant_sentiment]++)
+    return c
+  }, [events])
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    return events.filter(e => {
+      const matchQ = !q || e.title.toLowerCase().includes(q) || e.entities?.some(x => x.toLowerCase().includes(q))
+      const matchS = sentFilter === 'all' || e.dominant_sentiment === sentFilter
+      const matchSrc = sourceFilter === 'all' || e.sources.includes(sourceFilter)
+      return matchQ && matchS && matchSrc
+    })
+  }, [events, search, sentFilter, sourceFilter])
 
   const sorted = useMemo(() => {
-    const items = [...filtered]
-    items.sort((a, b) => {
-      const aVal = a[sortConfig.key]
-      const bVal = b[sortConfig.key]
-      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1
-      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1
+    const arr = [...filtered]
+    arr.sort((a, b) => {
+      const dir = sortConfig.direction === 'asc' ? 1 : -1
+      if (sortConfig.key === 'date')     return (new Date(a.date) - new Date(b.date)) * dir
+      if (sortConfig.key === 'articles') return ((a.article_count || 0) - (b.article_count || 0)) * dir
+      if (sortConfig.key === 'match')    return ((a.similarity_score || 0) - (b.similarity_score || 0)) * dir
       return 0
     })
-    return items
+    return arr
   }, [filtered, sortConfig])
 
   const paginated = useMemo(() => {
@@ -99,285 +121,256 @@ export default function Events() {
     return sorted.slice(start, start + itemsPerPage)
   }, [sorted, currentPage])
 
-  const totalPages = Math.ceil(sorted.length / itemsPerPage)
+  const totalPages = Math.max(1, Math.ceil(sorted.length / itemsPerPage))
+  const handleSort = (key) => setSortConfig(prev => ({
+    key,
+    direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc',
+  }))
 
-  const handleSort = (key) => {
-    setSortConfig(prev => ({
-      key,
-      direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc'
-    }))
-  }
-return (
-    <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+  const SENT_PILLS = [
+    { key: 'all',      label: 'All',      count: events.length,   color: 'var(--brand-500)' },
+    { key: 'positive', label: 'Positive', count: sentCounts.positive, color: 'var(--pos)' },
+    { key: 'neutral',  label: 'Neutral',  count: sentCounts.neutral,  color: 'var(--neu)' },
+    { key: 'negative', label: 'Negative', count: sentCounts.negative, color: 'var(--neg)' },
+  ]
+
+  return (
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
-        title="Events Archive | Vantage"
-        description="Browse all clustered news events from Nepali outlets, filterable by source, sentiment, and search query."
+        title="Event Clusters | Vantage"
+        description="Browse all clustered news events from Nepali English outlets, filterable by source, sentiment and search query."
       />
 
-      {/* ── Page Hero ── */}
-      <div
-        className="hero-gradient anim-fade-up anim-gradient"
-        style={{
-          borderRadius:24, padding:'44px 48px', position:'relative', overflow:'hidden',
-          boxShadow:'0 24px 60px -24px rgba(11,16,32,0.45)',
-        }}
-      >
-        <span className="orb orb-indigo" style={{ width:280, height:280, right:-40, top:-80 }} />
-        <span className="orb orb-purple" style={{ width:200, height:200, left:'-40px', bottom:'-60px' }} />
-        <span className="orb orb-pink"   style={{ width:160, height:160, right:'30%', top:'40%' }} />
-        <span className="orb orb-cyan"   style={{ width:140, height:140, left:'32%', top:'-30px' }} />
-
-        <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:24 }}>
-          <div style={{ maxWidth:600 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-              <span className="section-label" style={{ color:'#c7d2fe' }}>📚 Event Archive</span>
-            </div>
-            <h1 className="font-serif" style={{ fontSize:'2.6rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px' }}>
-              Event <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Clusters</em>
-            </h1>
-            <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.95rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
-              Every event we've clustered, in one place. Stories are grouped by semantic similarity across {sources.length || 7} Nepali English outlets, updated every five minutes.
-            </p>
-            <div style={{ marginTop:22, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
-              <button onClick={load} disabled={loading} className="btn-ghost" style={{
-                background:'rgba(255,255,255,0.08)', color:'#f1f5f9',
-                borderColor:'rgba(255,255,255,0.18)', fontSize:'0.8rem',
-                backdropFilter:'blur(8px)',
-              }}>
-                <RefreshCw size={13} className={loading ? 'anim-spin' : ''} />
-                Refresh
-              </button>
-              <span style={{
-                display:'inline-flex', alignItems:'center', gap:6,
-                fontSize:'0.78rem', color:'rgba(248,250,252,0.65)',
-                padding:'9px 16px', borderRadius:12,
-                border:'1px solid rgba(255,255,255,0.1)',
-                background:'rgba(255,255,255,0.04)',
-              }}>
-                {filtered.length} of {events.length} events shown
-              </span>
+      <PageHero
+        variant="gradient"
+        eyebrow={<><Layers size={11} /> Use case #4 · Clustered events</>}
+        title="Event clusters archive"
+        description="Every event we've clustered, in one place. Stories are grouped by semantic similarity across 7 Nepali English outlets, refreshed every five minutes."
+        actions={
+          <Button
+            variant="soft"
+            leftIcon={<RefreshCw size={14} className={loading ? 'anim-spin' : ''} />}
+            onClick={load}
+            className="bg-white/15 text-white border border-white/20 backdrop-blur-sm hover:bg-white/25"
+          >
+            Refresh
+          </Button>
+        }
+        visual={
+          <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 backdrop-blur-md">
+            <SentimentDonut
+              positive={sentCounts.positive}
+              neutral={sentCounts.neutral}
+              negative={sentCounts.negative}
+              size={120}
+              thickness={16}
+            />
+            <div className="grid grid-cols-3 gap-6 text-white">
+              {[
+                { label: 'Positive', value: sentCounts.positive, color: 'bg-emerald-400' },
+                { label: 'Neutral',  value: sentCounts.neutral,  color: 'bg-amber-400'   },
+                { label: 'Negative', value: sentCounts.negative, color: 'bg-rose-400'    },
+              ].map(s => (
+                <div key={s.label}>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/70">{s.label}</p>
+                  <p className="mt-1 text-2xl font-bold">{s.value}</p>
+                  <span className={cn('mt-1 inline-block h-1 w-8 rounded-full', s.color)} />
+                </div>
+              ))}
             </div>
           </div>
+        }
+      />
 
-          {!loading && events.length > 0 && (
-            <div className="glass-dark" style={{ borderRadius:18, padding:'20px 24px', minWidth:220 }}>
-              <p style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'rgba(248,250,252,0.5)', marginBottom:14 }}>
-                Sentiment Mix
-              </p>
-              <SentimentMixBar events={events} />
-            </div>
-          )}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s, i) => <StatCard key={s.label} {...s} delay={i} />)}
       </div>
 
-      {/* ── Stats row ── */}
-      <div className="anim-fade-up-1" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
-        {stats.map(({ label, value, sub, icon:Icon, color }) => (
-          <div key={label} className="card" style={{ padding:'22px 24px', position:'relative', overflow:'hidden' }}>
-            <div style={{
-              position:'absolute', right:-20, top:-20, width:80, height:80, borderRadius:'50%',
-              background:`radial-gradient(circle, ${color}22, transparent 70%)`,
-            }} />
-            <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-              <span style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--muted)' }}>{label}</span>
-              <div style={{
-                width:32, height:32, borderRadius:10,
-                background:`linear-gradient(135deg, ${color}22, ${color}10)`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-                border:`1px solid ${color}30`,
-              }}>
-                <Icon size={14} style={{ color }} />
-              </div>
-            </div>
-            <div className="font-syne" style={{ fontSize:'2.1rem', fontWeight:800, color:'var(--text)', lineHeight:1, marginBottom:6 }}>{value}</div>
-            <div style={{ fontSize:'0.72rem', color:'var(--muted)', lineHeight:1.4 }}>{sub}</div>
-          </div>
-        ))}
-      </div>
+      <div className="card-elevated p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <InputGroup className="min-w-[240px] flex-1">
+            <InputLeftElement><Search size={14} /></InputLeftElement>
+            <Input value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1) }} placeholder="Search events, entities, or keywords…" variant="filled" />
+          </InputGroup>
 
-      {/* ── Filters ── */}
-      <div className="anim-fade-up-2 card" style={{ padding:'16px 18px', display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
-        <div style={{ position:'relative', flex:1, minWidth:240 }}>
-          <Search size={14} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <input value={search} onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-            placeholder="Search events…"
-            style={{
-              width:'100%', paddingLeft:40, paddingRight:14, paddingTop:11, paddingBottom:11,
-              fontSize:'0.85rem', background:'var(--surface-2)',
-              border:'1.5px solid transparent', borderRadius:11,
-              outline:'none', color:'var(--text)', transition:'all .18s',
-            }}
-            onFocus={e => { e.target.style.borderColor='var(--accent)'; e.target.style.background='white' }}
-            onBlur={e => { e.target.style.borderColor='transparent'; e.target.style.background='var(--surface-2)' }}
-          />
-        </div>
-
-        <div style={{ position:'relative' }}>
-          <Filter size={12} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <select value={sourceFilter} onChange={e => { setSource(e.target.value); setCurrentPage(1); }} style={{
-            paddingLeft:34, paddingRight:32, paddingTop:11, paddingBottom:11,
-            fontSize:'0.85rem', background:'var(--surface-2)',
-            border:'1.5px solid transparent', borderRadius:11,
-            outline:'none', color:'var(--text)', cursor:'pointer', appearance:'none',
-            fontWeight:500,
-          }}>
+          <select value={sourceFilter} onChange={e => { setSource(e.target.value); setCurrentPage(1) }} className="field-input h-10 w-auto rounded-[var(--radius-lg)] bg-[var(--surface-muted)] px-3 text-sm font-semibold">
             <option value="all">All sources</option>
             {sources.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-        </div>
 
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {['all','positive','negative','neutral'].map(s => (
-            <button key={s} className={`chip ${sentFilter === s ? 'active' : ''}`} onClick={() => { setSent(s); setCurrentPage(1); }} style={{ textTransform:'capitalize' }}>
-              {s}
+          <div className="flex h-10 items-center rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] p-1">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={cn('inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors', viewMode === 'grid' ? 'bg-[var(--brand-500)] text-white' : 'text-[var(--text-muted)] hover:text-[var(--text)]')}
+              aria-label="Grid view"
+            >
+              <Grid3x3 size={14} />
             </button>
-          ))}
+            <button
+              onClick={() => setViewMode('table')}
+              className={cn('inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors', viewMode === 'table' ? 'bg-[var(--brand-500)] text-white' : 'text-[var(--text-muted)] hover:text-[var(--text)]')}
+              aria-label="List view"
+            >
+              <ListIcon size={14} />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 ml-auto border-l border-border pl-4">
-          <button 
-            onClick={() => setViewMode('table')} 
-            className={cn("p-2 rounded-lg transition-colors", viewMode === 'table' ? "bg-primary text-white" : "bg-surface text-text-muted hover:text-text")}
-          >
-            <List size={16} />
-          </button>
-          <button 
-            onClick={() => setViewMode('grid')} 
-            className={cn("p-2 rounded-lg transition-colors", viewMode === 'grid' ? "bg-primary text-white" : "bg-surface text-text-muted hover:text-text")}
-          >
-            <LayoutGrid size={16} />
-          </button>
+        <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-[var(--border-subtle)] pt-3">
+          <Filter size={12} className="text-[var(--text-muted)]" />
+          {SENT_PILLS.map(p => {
+            const active = sentFilter === p.key
+            return (
+              <button
+                key={p.key}
+                onClick={() => { setSent(p.key); setCurrentPage(1) }}
+                className={cn('chip', active && 'is-active')}
+              >
+                {p.color ? <span className="h-2 w-2 rounded-full" style={{ background: p.color }} /> : null}
+                {p.label}
+                <span className={cn('rounded-md px-1 text-[10px] font-bold', active ? 'bg-white/25 text-white' : 'bg-[var(--surface-sunken)] text-[var(--text-muted)]')}>
+                  {p.count}
+                </span>
+              </button>
+            )
+          })}
+
+          <span className="ml-auto text-xs text-[var(--text-muted)]">
+            <strong className="text-[var(--text)]">{filtered.length}</strong> of {events.length} events
+          </span>
         </div>
       </div>
 
-      {/* ── Error ── */}
-      {error && (
-        <div style={{ display:'flex', alignItems:'center', gap:10, fontSize:'0.85rem', color:'var(--neg)', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'14px 20px' }}>
-          <AlertCircle size={15} /> {error}
-          <button onClick={load} style={{ marginLeft:'auto', textDecoration:'underline', background:'none', border:'none', cursor:'pointer', color:'var(--neg)', fontSize:'0.78rem', fontWeight:600 }}>Retry</button>
+      {error ? (
+        <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">
+          <AlertCircle size={16} /> {error}
         </div>
-      )}
+      ) : null}
 
-      {/* ── Loading skeletons ── */}
-      {loading && !error && (
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="skeleton" style={{ height:220, borderRadius:18 }} />
-          ))}
+      {loading ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-56" />)}
         </div>
-      )}
-
-      {/* ── Events View ── */}
-      {!loading && !error && (
-        filtered.length === 0
-          ? (
-            <div style={{ textAlign:'center', padding:'80px 0' }}>
-              <div style={{ fontSize:'2.4rem', marginBottom:12 }}>🔍</div>
-              <p style={{ color:'var(--muted)', fontSize:'0.92rem' }}>No events found{search ? ` for "${search}"` : ''}.</p>
-            </div>
-          )
-          : (
-            <div className="space-y-6">
-              {viewMode === 'grid' ? (
-                <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:16 }}>
-                  {paginated.map((ev, i) => (
-                    <NewsCard key={ev.id} event={ev} delay={i * 0.05} />
-                  ))}
-                </div>
-              ) : (
-                <div className="overflow-x-auto rounded-2xl border border-border/80 bg-surface/85 backdrop-blur-sm">
-                  <table className="w-full text-left border-collapse">
-                    <thead className="bg-bg/50">
-                      <tr className="border-b border-border/80">
-                        {[
-                          { label: 'Event Title', key: 'title' },
-                          { label: 'Sentiment', key: 'dominant_sentiment' },
-                          { label: 'Articles', key: 'article_count' },
-                          { label: 'Sources', key: 'sources' },
-                          { label: 'Date', key: 'date' },
-                        ].map(col => (
-                          <th 
-                            key={col.key} 
-                            onClick={() => handleSort(col.key)}
-                            className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-muted cursor-pointer hover:text-text transition-colors"
-                          >
-                            <div className="flex items-center gap-2">
-                              {col.label}
-                              <ArrowUpDown size={12} className={sortConfig.key === col.key ? 'text-primary' : 'opacity-50'} />
-                            </div>
-                          </th>
+      ) : sorted.length === 0 ? (
+        <EmptyState
+          icon={Layers}
+          title="No events match your filters"
+          description="Try clearing filters or searching for a different term."
+          action={<Button variant="outline" onClick={() => { setSearch(''); setSent('all'); setSource('all') }}>Reset filters</Button>}
+        />
+      ) : viewMode === 'grid' ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {paginated.map((ev, i) => <NewsCard key={ev.id} event={ev} delay={i * 0.04} />)}
+        </div>
+      ) : (
+        <div className="card-elevated overflow-hidden">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                <th className="px-4 py-3 text-left">Event</th>
+                <th className="px-3 py-3 text-left">
+                  <button onClick={() => handleSort('articles')} className="inline-flex items-center gap-1 hover:text-[var(--text)]">
+                    Articles <ArrowUpDown size={10} />
+                  </button>
+                </th>
+                <th className="px-3 py-3 text-left">Sentiment</th>
+                <th className="px-3 py-3 text-left">Sources</th>
+                <th className="px-3 py-3 text-left">
+                  <button onClick={() => handleSort('date')} className="inline-flex items-center gap-1 hover:text-[var(--text)]">
+                    Date <ArrowUpDown size={10} />
+                  </button>
+                </th>
+                <th className="px-3 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.map(ev => (
+                <tr key={ev.id} className="border-b border-[var(--border-subtle)] transition-colors last:border-0 hover:bg-[var(--surface-muted)]">
+                  <td className="px-4 py-3">
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-[var(--text)]">{ev.title}</span>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {ev.entities.slice(0, 3).map(en => (
+                          <span key={en} className="rounded-md bg-[var(--brand-50)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--brand-700)]">
+                            {en}
+                          </span>
                         ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {paginated.map((ev, i) => (
-                        <motion.tr 
-                          key={ev.id}
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: i * 0.05 }}
-                          className="border-b border-border/50 last:border-none hover:bg-bg/30 transition-colors"
-                        >
-                          <td className="px-6 py-4 text-sm font-medium text-text">{ev.title}</td>
-                          <td className="px-6 py-4">
-                            <Badge tone={ev.dominant_sentiment === 'positive' ? 'success' : ev.dominant_sentiment === 'negative' ? 'danger' : 'neutral'} className="text-[10px]">
-                              {ev.dominant_sentiment}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-text-muted">{ev.article_count}</td>
-                          <td className="px-6 py-4 text-sm text-text-muted">{ev.sources?.length || 0}</td>
-                          <td className="px-6 py-4 text-sm text-text-muted">{ev.date}</td>
-                        </motion.tr>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-[var(--text-muted)]">{ev.article_count}</td>
+                  <td className="px-3 py-3">
+                    <span className="rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize" style={{
+                      background: `${sentimentColor(ev.dominant_sentiment)}1A`,
+                      color: sentimentColor(ev.dominant_sentiment),
+                    }}>
+                      {ev.dominant_sentiment}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <div className="flex -space-x-1.5">
+                      {ev.sources.slice(0, 4).map(s => (
+                        <SourceBadge key={s} name={s} className="ring-2 ring-[var(--surface)]" />
                       ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {/* ── Pagination ── */}
-              <div className="flex items-center justify-center gap-4 py-6">
-                <button 
-                  disabled={currentPage === 1} 
-                  onClick={() => setCurrentPage(p => p - 1)}
-                  className="p-2 rounded-lg border border-border/80 bg-surface text-text-muted disabled:opacity-50 hover:text-text transition-colors"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <span className="text-xs font-medium text-text-muted">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button 
-                  disabled={currentPage === totalPages} 
-                  onClick={() => setCurrentPage(p => p + 1)}
-                  className="p-2 rounded-lg border border-border/80 bg-surface text-text-muted disabled:opacity-50 hover:text-text transition-colors"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-          )
-      )}
-    </div>
-  )
-}
-
-function SentimentMixBar({ events }) {
-  const counts = { negative:0, positive:0, neutral:0 }
-  events.forEach(e => counts[e.dominant_sentiment]++)
-  const max = Math.max(...Object.values(counts), 1)
-  return (
-    <div style={{ display:'flex', alignItems:'flex-end', gap:6, height:48 }}>
-      {Object.entries(counts).map(([k, v]) => (
-        <div key={k} style={{ display:'flex', flexDirection:'column', alignItems:'center', flex:1, gap:5 }}>
-          <div style={{
-            width:'100%', borderRadius:'6px 6px 0 0',
-            height:`${Math.round((v / max) * 40)}px`,
-            background: `linear-gradient(180deg, ${sentimentColor(k)}, ${sentimentColor(k)}88)`,
-            transition:'height .6s ease',
-          }} />
-          <span style={{ fontSize:'0.6rem', color:'rgba(248,250,252,0.55)', textTransform:'uppercase', letterSpacing:'0.06em', fontWeight:600 }}>{k.slice(0,3)}</span>
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-xs text-[var(--text-muted)]">
+                    <div className="flex items-center gap-1">
+                      <Calendar size={11} /> {fmtDate(ev.date)}
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-right">
+                    <Link
+                      to={`/event/${ev.id}`}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline"
+                    >
+                      Open <ArrowUpRight size={12} />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      ))}
+      )}
+
+      {!loading && sorted.length > 0 ? (
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-[var(--text-muted)]">
+            Page <strong className="text-[var(--text)]">{currentPage}</strong> of {totalPages}
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronLeft size={14} />
+            </button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={cn(
+                  'inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] text-xs font-semibold transition-colors',
+                  currentPage === i + 1
+                    ? 'bg-[var(--brand-500)] text-white shadow-sm'
+                    : 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--brand-300)] hover:text-[var(--text)]',
+                )}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -1,11 +1,17 @@
-export default function PageLoading({ label = 'Loading content' }) {
+import { Sparkles } from 'lucide-react'
+
+/**
+ * PageLoading
+ *
+ * A soft, branded full-page loading state.
+ */
+export default function PageLoading({ label = 'Loading…' }) {
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:16 }} aria-busy="true" aria-live="polite">
-      <div className="skeleton" style={{ height:140, borderRadius:18 }} />
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:16 }}>
-        {[0, 1, 2].map(index => <div key={index} className="skeleton" style={{ height:220, borderRadius:18 }} />)}
+    <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-lg shadow-brand-500/30">
+        <Sparkles size={20} className="anim-pulse" />
       </div>
-      <p style={{ color:'var(--muted)', fontSize:'0.85rem' }}>{label}</p>
+      <p className="text-sm font-semibold text-[var(--text-muted)]">{label}</p>
     </div>
   )
 }

@@ -1,35 +1,63 @@
-import { AlertCircle, CheckCircle2, Info, AlertTriangle, X } from 'lucide-react'
+import { Info, AlertTriangle, CheckCircle2, XCircle, Sparkles } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 
-const tones = {
-  info: { Icon: Info, wrap: 'bg-blue-50 border-blue-200 text-blue-800' },
-  success: { Icon: CheckCircle2, wrap: 'bg-green-50 border-green-200 text-green-800' },
-  warning: { Icon: AlertTriangle, wrap: 'bg-amber-50 border-amber-200 text-amber-800' },
-  danger: { Icon: AlertCircle, wrap: 'bg-red-50 border-red-200 text-red-800' },
+/**
+ * Alert
+ *
+ * Chakra-style status alert with soft color schemes.
+ */
+const statusMap = {
+  info:     { Icon: Info,          bg: 'bg-[var(--blue-50)]',    fg: 'text-[var(--blue-600)]',    border: 'border-[#bfdbfe]' },
+  success:  { Icon: CheckCircle2,  bg: 'bg-[var(--green-50)]',   fg: 'text-[var(--green-600)]',   border: 'border-[var(--pos-line)]' },
+  warning:  { Icon: AlertTriangle, bg: 'bg-[var(--yellow-50)]',  fg: 'text-[var(--yellow-600)]',  border: 'border-[var(--neu-line)]' },
+  error:    { Icon: XCircle,       bg: 'bg-[var(--red-50)]',     fg: 'text-[var(--red-600)]',     border: 'border-[var(--neg-line)]' },
+  brand:    { Icon: Sparkles,      bg: 'bg-[var(--brand-50)]',   fg: 'text-[var(--brand-700)]',   border: 'border-[var(--brand-100)]' },
 }
 
-export function Alert({ tone = 'info', title, children, onClose, className }) {
-  const { Icon, wrap } = tones[tone] ?? tones.info
+const variantMap = {
+  subtle: '',
+  solid:  'border-transparent text-white [&_.alert-title]:!text-white [&_.alert-desc]:!text-white/90',
+  leftAccent: 'border-l-4',
+}
+
+export function Alert({
+  status = 'info',
+  variant = 'subtle',
+  className,
+  children,
+  ...rest
+}) {
+  const s = statusMap[status] || statusMap.info
+  const isSolid = variant === 'solid'
   return (
     <div
       role="alert"
-      className={cn('flex items-start gap-3 p-4 border rounded-lg text-sm', wrap, className)}
-    >
-      <Icon size={18} className="flex-shrink-0 mt-0.5" />
-      <div className="flex-1 min-w-0">
-        {title && <p className="font-semibold mb-1">{title}</p>}
-        <div className="text-sm leading-relaxed">{children}</div>
-      </div>
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          className="text-current opacity-60 hover:opacity-100 transition-opacity"
-          aria-label="Dismiss"
-        >
-          <X size={16} />
-        </button>
+      className={cn(
+        'flex items-start gap-3 rounded-[var(--radius-lg)] border px-4 py-3 text-sm',
+        s.bg,
+        s.fg,
+        s.border,
+        variantMap[variant],
+        isSolid && 'bg-gradient-to-br from-[var(--brand-600)] to-[var(--purple-600)] border-transparent',
+        className,
       )}
+      {...rest}
+    >
+      {children}
     </div>
   )
+}
+
+export function AlertIcon({ status = 'info', className }) {
+  const s = statusMap[status] || statusMap.info
+  const Icon = s.Icon
+  return <Icon size={18} className={cn('mt-0.5 flex-shrink-0', s.fg, className)} />
+}
+
+export function AlertTitle({ className, children }) {
+  return <p className={cn('alert-title text-sm font-semibold', className)}>{children}</p>
+}
+
+export function AlertDescription({ className, children }) {
+  return <p className={cn('alert-desc text-xs text-current/80 leading-relaxed', className)}>{children}</p>
 }

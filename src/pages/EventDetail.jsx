@@ -1,12 +1,22 @@
-import { useState, useEffect } from 'react'
+/**
+ * EventDetail.jsx — Single event detail
+ */
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, AlertCircle, Layers, Calendar, GitBranch, Clock, Sparkles, Share2, Network } from 'lucide-react'
+import {
+  ArrowLeft, AlertCircle, Calendar, GitBranch, Clock, Sparkles, Network,
+  Building2, ArrowRight,
+} from 'lucide-react'
 import ClusterView from '../components/ClusterView.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL } from '../utils/mockData.js'
 import { getEventById } from '../services/api.js'
 import { fmtDate, sentimentPill, sentimentColor } from '../utils/helpers.js'
+import PageHero from '../components/PageHero.jsx'
+import { SourceBadge } from '../components/Charts.jsx'
+import { Button } from '../components/ui/Button.jsx'
+import { cn } from '../lib/utils.js'
 
 export default function EventDetail() {
   const { id } = useParams()
@@ -19,7 +29,7 @@ export default function EventDetail() {
       setLoading(true); setError(null)
       try {
         setEvent(USE_MOCK ? MOCK_EVENT_DETAIL : await getEventById(id))
-      } catch(e) { setError(e.message) }
+      } catch (e) { setError(e.message) }
       finally { setLoading(false) }
     }
     load()
@@ -29,142 +39,123 @@ export default function EventDetail() {
     a[art.sentiment] = (a[art.sentiment] || 0) + 1; return a
   }, {})
 
-  const timelineEvents = event?.articles?.sort((a, b) => new Date(a.published_at) - new Date(b.published_at)) || []
+  const timelineEvents = useMemo(
+    () => event?.articles?.slice().sort((a, b) => new Date(a.published_at) - new Date(b.published_at)) || [],
+    [event],
+  )
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:28 }}>
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
         title={event ? `${event.title} | Vantage` : 'Event Detail | Vantage'}
         description="Compare multiple articles covering the same event and inspect sentiment, framing, and entity treatment."
       />
 
-      <Link to="/dashboard" style={{
-        display:'inline-flex', alignItems:'center', gap:7,
-        fontSize:'0.82rem', fontWeight:500, color:'var(--muted)',
-        textDecoration:'none', transition:'color .15s', width:'fit-content',
-      }}
-        onMouseEnter={e => e.currentTarget.style.color='var(--accent)'}
-        onMouseLeave={e => e.currentTarget.style.color='var(--muted)'}
+      <Link
+        to="/events"
+        className="inline-flex w-fit items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-3 h-9 text-xs font-semibold text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--brand-600)]"
       >
-        <ArrowLeft size={14} /> Back to Dashboard
+        <ArrowLeft size={14} /> Back to events
       </Link>
 
-      {error && (
-        <div style={{ display:'flex', alignItems:'center', gap:10, fontSize:'0.85rem', color:'var(--neg)', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'14px 20px' }}>
-          <AlertCircle size={15} /> {error}
+      {error ? (
+        <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">
+          <AlertCircle size={16} /> {error}
         </div>
-      )}
+      ) : null}
 
-      {loading && (
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          <div className="skeleton" style={{ height:140, borderRadius:18 }} />
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:16 }}>
-            {[0,1,2].map(i => <div key={i} className="skeleton" style={{ height:380, borderRadius:18 }} />)}
+      {loading ? (
+        <div className="space-y-4">
+          <div className="skeleton h-48" />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[0, 1, 2].map(i => <div key={i} className="skeleton h-72" />)}
           </div>
         </div>
-      )}
-
-      {!loading && event && (
+      ) : !event ? null : (
         <>
-          {/* Header card */}
-          <div className="card anim-fade-up" style={{ padding:0, overflow:'hidden' }}>
-            <div
-              className="hero-gradient"
-              style={{
-                padding:'34px 40px',
-                position:'relative', overflow:'hidden',
-              }}
-            >
-              <span className="orb orb-indigo" style={{ width:200, height:200, right:-40, top:-40 }} />
-              <span className="orb orb-pink"   style={{ width:160, height:160, left:'20%', bottom:-60 }} />
-
-              <div style={{ position:'relative', zIndex:1 }}>
-                <p className="section-label" style={{ color:'rgba(248,250,252,0.7)', marginBottom:12 }}>Event Detail · Comparative Analysis</p>
-                <h1 style={{
-                  fontSize:'1.5rem', fontWeight:700, color:'#ffffff',
-                  letterSpacing:'-0.01em', lineHeight:1.35, margin:'0 0 16px',
-                }}>{event.title}</h1>
-                <div style={{ display:'flex', alignItems:'center', gap:18, flexWrap:'wrap' }}>
-                  <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:'0.78rem', color:'rgba(248,250,252,0.7)' }}>
-                    <Calendar size={13} />{fmtDate(event.date)}
+          <PageHero
+            variant="gradient"
+            eyebrow={<><GitBranch size={11} /> Event cluster</>}
+            title={event.title}
+            description={`${event.articles.length} articles from ${[...new Set(event.articles.map(a => a.source))].length} Nepali outlets, compared side-by-side.`}
+            actions={
+              <Button
+                as={Link}
+                to="/compare"
+                variant="soft"
+                leftIcon={<GitBranch size={14} />}
+                className="bg-white/15 text-white border border-white/20 backdrop-blur-sm hover:bg-white/25"
+              >
+                Compare view
+              </Button>
+            }
+            visual={
+              <div className="flex flex-wrap items-center gap-3">
+                {Object.entries(sentCounts || {}).map(([s, n]) => (
+                  <span
+                    key={s}
+                    className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ background: sentimentColor(s) }} />
+                    {n}× {s}
                   </span>
-                  <span style={{ display:'flex', alignItems:'center', gap:5, fontSize:'0.78rem', color:'rgba(248,250,252,0.7)' }}>
-                    <Layers size={13} />{event.articles.length} articles compared
-                  </span>
-                  {sentCounts && Object.entries(sentCounts).map(([s, n]) => (
-                    <span key={s} style={{
-                      fontSize:'0.65rem', fontWeight:700, padding:'3px 11px', borderRadius:99,
-                      background:`${sentimentColor(s)}22`, color:sentimentColor(s),
-                      border:`1px solid ${sentimentColor(s)}55`, textTransform:'capitalize',
-                    }}>{n}× {s}</span>
-                  ))}
-                </div>
+                ))}
+                <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-md">
+                  <Calendar size={12} /> {fmtDate(event.date)}
+                </span>
               </div>
-            </div>
+            }
+          />
 
-            <div style={{
-              padding:'16px 32px',
-              background:'var(--surface-2)',
-              borderTop:'1px solid var(--border)',
-              display:'flex', alignItems:'center', gap:12,
-            }}>
-              <div style={{
-                width:32, height:32, borderRadius:10,
-                background:'linear-gradient(135deg, var(--accent), var(--accent-2))',
-                display:'flex', alignItems:'center', justifyContent:'center',
-                flexShrink:0, boxShadow:'0 6px 16px -6px rgba(99,102,241,0.5)',
-              }}>
-                <GitBranch size={14} color="white" />
-              </div>
-              <p style={{ fontSize:'0.82rem', color:'var(--text-soft)', margin:0, lineHeight:1.55 }}>
-                <strong style={{ color:'var(--text)' }}>Same event, different narratives.</strong>{' '}
-                Each column shows how a different outlet framed this story. Compare entity sentiment rows to spot systematic differences in how political actors are covered.
-              </p>
-            </div>
+          <div className="card-elevated flex items-start gap-3 p-4">
+            <span className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-600)] text-white">
+              <Sparkles size={16} />
+            </span>
+            <p className="text-sm leading-relaxed text-[var(--text-soft)]">
+              <strong className="text-[var(--text)]">Same event, different narratives.</strong>{' '}
+              Each column below shows how a different outlet framed this story. Compare entity sentiment rows to spot systematic differences in how political actors are covered.
+            </p>
           </div>
 
-          <div className="anim-fade-up-1">
-            <ClusterView articles={event.articles} />
-          </div>
+          <ClusterView articles={event.articles} />
 
-          <div className="grid gap-6 lg:grid-cols-3 anim-fade-up-2">
-            {/* AI Summary & Narratives */}
+          <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
-              <div className="card p-6 space-y-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles size={16} className="text-primary" />
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-text">AI Synthesis</h2>
+              <div className="card-elevated p-6">
+                <div className="mb-3 flex items-center gap-2">
+                  <Sparkles size={16} className="text-[var(--brand-600)]" />
+                  <h2 className="section-title">AI Synthesis</h2>
                 </div>
-                <div className="p-4 rounded-xl bg-surface-2 border border-border/60 italic text-text-soft text-sm leading-relaxed">
-                  "This event represents a critical juncture in coalition politics. While {event.articles[0]?.source} emphasizes the instability and crisis, {event.articles[1]?.source} frames it as a routine democratic transition. The most significant divergence is the treatment of {event.articles[0]?.entities[0]?.name}, who is consistently portrayed as a catalyst for tension across most outlets."
-                </div>
-                <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                  <div className="p-3 rounded-lg border border-border/40 bg-bg/30">
-                    <p className="text-[10px] font-bold uppercase text-muted mb-1">Dominant Narrative</p>
-                    <p className="text-xs font-medium text-text">Coalition Instability vs. Democratic Process</p>
+                <p className="rounded-xl border-l-4 border-[var(--brand-500)] bg-[var(--surface-muted)] p-4 text-sm italic leading-relaxed text-[var(--text-soft)]">
+                  "This event represents a critical juncture in coalition politics. While {event.articles[0]?.source} emphasizes the instability and crisis, {event.articles[1]?.source} frames it as a routine democratic transition. The most significant divergence is the treatment of {event.articles[0]?.entities[0]?.name}."
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Dominant narrative</p>
+                    <p className="mt-1 text-sm font-semibold text-[var(--text)]">Coalition Instability vs. Democratic Process</p>
                   </div>
-                  <div className="p-3 rounded-lg border border-border/40 bg-bg/30">
-                    <p className="text-[10px] font-bold uppercase text-muted mb-1">Key Divergence</p>
-                    <p className="text-xs font-medium text-text">Framing of RSP as 'Reformist' vs 'Opportunist'</p>
+                  <div className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3">
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Key divergence</p>
+                    <p className="mt-1 text-sm font-semibold text-[var(--text)]">Framing of RSP as 'Reformist' vs 'Opportunist'</p>
                   </div>
                 </div>
               </div>
 
-              <div className="card p-6 space-y-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Clock size={16} className="text-primary" />
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-text">Event Timeline</h2>
+              <div className="card-elevated p-6">
+                <div className="mb-4 flex items-center gap-2">
+                  <Clock size={16} className="text-[var(--brand-600)]" />
+                  <h2 className="section-title">Event timeline</h2>
                 </div>
-                <div className="relative pl-6 border-l-2 border-border space-y-8">
-                  {timelineEvents.map((art, i) => (
+                <div className="relative space-y-6 border-l-2 border-[var(--border)] pl-6">
+                  {timelineEvents.map(art => (
                     <div key={art.id} className="relative">
-                      <div className="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-bg border-2 border-primary" />
+                      <div className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-[var(--brand-500)] bg-[var(--surface)]" />
                       <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-muted">{fmtDate(art.published_at)}</span>
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${sourceClass(art.source)}`}>{art.source}</span>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-[10px] font-semibold text-[var(--text-muted)]">{fmtDate(art.published_at)}</span>
+                          <SourceBadge name={art.source} />
                         </div>
-                        <p className="text-xs font-medium text-text leading-snug">{art.headline}</p>
+                        <p className="text-sm font-medium text-[var(--text)]">{art.headline}</p>
                       </div>
                     </div>
                   ))}
@@ -172,51 +163,67 @@ export default function EventDetail() {
               </div>
             </div>
 
-            {/* Relationship Graph Placeholder */}
             <div className="space-y-6">
-              <div className="card p-6 h-full flex flex-col items-center justify-center text-center space-y-4 border-dashed border-2">
-                <div className="p-4 rounded-full bg-primary/10 text-primary">
-                  <Network size={32} />
+              <div className="card-elevated flex flex-col items-center justify-center space-y-3 border-dashed p-6 text-center">
+                <div className="rounded-full bg-[var(--brand-50)] p-3 text-[var(--brand-600)]">
+                  <Network size={28} />
                 </div>
-                <div>
-                  <h3 className="text-sm font-bold text-text">Entity Relationship Graph</h3>
-                  <p className="text-xs text-muted mt-1">Visualizing connections between actors in this event.</p>
-                </div>
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted bg-surface-2 px-3 py-1 rounded-full border border-border">
+                <h3 className="text-sm font-bold text-[var(--text)]">Entity Relationship Graph</h3>
+                <p className="text-xs text-[var(--text-muted)]">Visualizing connections between actors in this event.</p>
+                <span className="rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
                   Coming Soon
+                </span>
+              </div>
+
+              <div className="card-elevated p-5">
+                <p className="eyebrow mb-3 text-[var(--brand-700)]">Sources in this cluster</p>
+                <div className="space-y-2">
+                  {[...new Set(event.articles.map(a => a.source))].map(s => (
+                    <div key={s} className="flex items-center gap-3 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface)] p-2.5">
+                      <SourceBadge name={s} />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-[var(--text)]">{s}</p>
+                        <p className="text-[10px] text-[var(--text-muted)]">
+                          {event.articles.filter(a => a.source === s).length} article{event.articles.filter(a => a.source === s).length > 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="card anim-fade-up-3" style={{ padding:'26px 30px' }}>
-            <p className="section-label" style={{ marginBottom:18 }}>Entity Divergence Summary</p>
-            <p style={{ fontSize:'0.85rem', color:'var(--muted)', marginBottom:22, lineHeight:1.6 }}>
+          <div className="card-elevated p-6">
+            <p className="eyebrow mb-2 text-[var(--brand-700)]">Entity divergence summary</p>
+            <p className="mb-5 text-sm text-[var(--text-muted)]">
               How each political entity is treated across all {event.articles.length} articles covering this event.
             </p>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(190px, 1fr))', gap:14 }}>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[...new Set(event.articles.flatMap(a => a.entities.map(e => e.name)))].map(name => {
                 const mentions = event.articles.flatMap(a => a.entities.filter(e => e.name === name))
                 const avgScore = mentions.reduce((s, e) => s + e.score, 0) / mentions.length
-                const sentiments = mentions.map(e => e.sentiment)
-                const dominant = sentiments.sort((a, b) => sentiments.filter(v => v===b).length - sentiments.filter(v => v===a).length)[0]
+                const sent = avgScore > 0.6 ? 'positive' : avgScore < 0.4 ? 'negative' : 'neutral'
                 return (
-                  <div key={name} style={{
-                    background:'var(--surface-2)', border:'1px solid var(--border)',
-                    borderRadius:12, padding:'16px 18px',
-                  }}>
-                    <p style={{ fontSize:'0.74rem', fontWeight:600, color:'var(--accent)', marginBottom:8 }}>{name}</p>
-                    <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:10 }}>
-                      <span className={sentimentPill(dominant)} style={{ fontSize:'0.62rem' }}>{dominant}</span>
+                  <div key={name} className="rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-sm font-bold text-[var(--text)]">{name}</span>
+                      <span className={sentimentPill(sent)} style={{ fontSize: '0.6rem' }}>{sent}</span>
                     </div>
-                    <div style={{ height:5, background:'white', borderRadius:99, border:'1px solid var(--border)' }}>
-                      <div style={{
-                        width:`${Math.round(avgScore*100)}%`, height:'100%',
-                        background:`linear-gradient(90deg, ${sentimentColor(dominant)}, ${sentimentColor(dominant)}99)`,
-                        borderRadius:99,
-                      }} />
+                    <div className="space-y-1.5">
+                      {mentions.map((m, i) => (
+                        <div key={i} className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                          <span className="w-20 flex-shrink-0 truncate">{m.sentiment}</span>
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-sunken)]">
+                            <div
+                              className="h-full rounded-full"
+                              style={{ width: `${m.score * 100}%`, background: sentimentColor(m.sentiment) }}
+                            />
+                          </div>
+                          <span className="font-mono">{Math.round(m.score * 100)}%</span>
+                        </div>
+                      ))}
                     </div>
-                    <p style={{ fontSize:'0.65rem', color:'var(--muted)', marginTop:6 }}>{mentions.length} mention{mentions.length > 1 ? 's' : ''}</p>
                   </div>
                 )
               })}

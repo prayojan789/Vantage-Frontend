@@ -3,106 +3,109 @@ import {
   BarChart3,
   Zap,
   Newspaper,
-  TrendingUp,
-  Activity,
-  Sparkles,
   Building2,
   Search,
   Users,
-  FileText,
+  Sparkles,
   Network,
   Settings,
   Bell,
   Compass,
   LineChart,
   Layers,
+  GitCompareArrows,
 } from 'lucide-react'
 
 /**
  * Centralised navigation configuration.
  *
- * Adding or removing a route should be a single-file change. Every layout
- * component (Sidebar, TopBar, MobileNav, CommandPalette, Footer) reads from
- * this list so the chrome stays in sync with the route table.
+ * Sidebar groups + footer page shortcuts.
  */
+
 export const PRIMARY_NAV = [
-  { to: '/dashboard', label: 'Dashboard',      icon: LayoutDashboard, group: 'research', description: 'Clustered events & AI insights' },
-  { to: '/events',    label: 'Events',         icon: Layers,          group: 'research', description: 'Cross-publisher event clusters' },
-  { to: '/articles',  label: 'Articles',       icon: Newspaper,       group: 'research', description: 'Browse the article archive' },
-  { to: '/entities',  label: 'Entity Explorer',icon: Users,           group: 'research', description: 'Politicians, parties & organisations' },
-  { to: '/publishers',label: 'Media Houses',   icon: Building2,       group: 'research', description: 'Source profiles & bias trends' },
+  { to: '/dashboard', label: 'Dashboard',        icon: LayoutDashboard,  group: 'workspace', description: 'Your news intelligence feed' },
+  { to: '/events',    label: 'Event Clusters',   icon: Layers,           group: 'workspace', description: 'Cross-publisher clusters' },
+  { to: '/articles',  label: 'Article Archive',  icon: Newspaper,        group: 'workspace', description: 'All ingested articles' },
+  { to: '/search',    label: 'Search',           icon: Search,           group: 'workspace', description: 'Search across events, articles & entities' },
+  { to: '/compare',   label: 'Compare Headlines',icon: GitCompareArrows, group: 'workspace', description: 'Side-by-side coverage comparison' },
 ]
 
 export const ANALYTICS_NAV = [
-  { to: '/bias',      label: 'Bias Report',    icon: BarChart3,       group: 'analytics', description: 'Comparative media analysis' },
-  { to: '/analytics', label: 'Analytics',      icon: LineChart,       group: 'analytics', description: 'Charts, heatmaps & exports' },
+  { to: '/bias',       label: 'Bias Dashboard',     icon: BarChart3,  group: 'analytics', description: 'Comparative media bias analysis' },
+  { to: '/publishers', label: 'Media Houses',       icon: Building2,  group: 'analytics', description: 'Per-publisher sentiment reports' },
+  { to: '/entities',   label: 'Politician Sentiment',icon: Users,     group: 'analytics', description: 'Entity-level sentiment over time' },
+  { to: '/analytics',  label: 'Analytics',          icon: LineChart,  group: 'analytics', description: 'Charts, heatmaps & exports' },
+  { to: '/graphs',     label: 'Knowledge Graph',    icon: Network,    group: 'analytics', description: 'Entity & relationship map' },
 ]
 
 export const AI_NAV = [
-  { to: '/live',      label: 'Live Analysis',  icon: Zap,             group: 'ai',        description: 'Run ABSA on a live article' },
-  { to: '/playground',label: 'AI Playground',  icon: Sparkles,        group: 'ai',        description: 'Paste, upload & experiment' },
-  { to: '/insights',  label: 'AI Insights',    icon: Compass,         group: 'ai',        description: 'Explainable narrative insights' },
-  { to: '/graphs',    label: 'Knowledge Graph',icon: Network,         group: 'ai',        description: 'Entity & relationship map' },
+  { to: '/playground', label: 'AI Playground', icon: Sparkles, group: 'ai', description: 'Run ABSA on any text' },
+  { to: '/live',       label: 'Live Analysis', icon: Zap,      group: 'ai', description: 'Run ABSA on a live article' },
+  { to: '/insights',   label: 'AI Insights',   icon: Compass,  group: 'ai', description: 'Explainable narrative insights' },
 ]
 
 export const UTILITY_NAV = [
-  { to: '/search',    label: 'Search',         icon: Search,          group: 'utility' },
-  { to: '/notifications', label: 'Notifications', icon: Bell,          group: 'utility' },
-  { to: '/settings',  label: 'Settings',       icon: Settings,        group: 'utility' },
+  { to: '/notifications', label: 'Notifications', icon: Bell,     group: 'utility' },
+  { to: '/settings',      label: 'Settings',      icon: Settings, group: 'utility' },
+]
+
+/**
+ * Pages surfaced in the sidebar footer for quick access.
+ * These are the routes not promoted into the main nav groups.
+ */
+export const FOOTER_PAGES = [
+  { to: '/analytics',  label: 'Analytics' },
+  { to: '/graphs',     label: 'Knowledge Graph' },
+  { to: '/insights',   label: 'AI Insights' },
+  { to: '/live',       label: 'Live Analysis' },
+  { to: '/notifications', label: 'Notifications' },
+  { to: '/settings',   label: 'Settings' },
 ]
 
 export const FOOTER_LINKS = [
   {
     title: 'Platform',
     links: [
-      { to: '/dashboard',   label: 'Dashboard' },
-      { to: '/events',      label: 'Events' },
-      { to: '/articles',    label: 'Articles' },
-      { to: '/publishers',  label: 'Media Houses' },
+      { to: '/dashboard', label: 'Dashboard' },
+      { to: '/events',    label: 'Event Clusters' },
+      { to: '/articles',  label: 'Article Archive' },
+      { to: '/search',    label: 'Search' },
+      { to: '/compare',   label: 'Compare' },
     ],
   },
   {
-    title: 'Intelligence',
+    title: 'Analytics',
     links: [
-      { to: '/live',        label: 'Live Analysis' },
-      { to: '/bias',        label: 'Bias Report' },
-      { to: '/playground',  label: 'AI Playground' },
-      { to: '/graphs',      label: 'Knowledge Graph' },
+      { to: '/bias',       label: 'Bias Dashboard' },
+      { to: '/publishers', label: 'Media Houses' },
+      { to: '/entities',   label: 'Politician Sentiment' },
+      { to: '/analytics',  label: 'Analytics' },
+      { to: '/graphs',     label: 'Knowledge Graph' },
     ],
   },
   {
-    title: 'Research',
+    title: 'AI',
     links: [
-      { to: '/entities',    label: 'Entity Explorer' },
-      { to: '/analytics',   label: 'Analytics' },
-      { to: '/insights',    label: 'AI Insights' },
+      { to: '/playground', label: 'AI Playground' },
+      { to: '/live',       label: 'Live Analysis' },
+      { to: '/insights',   label: 'AI Insights' },
     ],
   },
   {
     title: 'Account',
     links: [
-      { to: '/settings',    label: 'Settings' },
+      { to: '/settings',      label: 'Settings' },
       { to: '/notifications', label: 'Notifications' },
-      { to: '/search',      label: 'Search' },
     ],
   },
 ]
 
-/**
- * Grouped sidebar entries, in display order. Each group is rendered with a
- * label and a list of items.
- */
 export const SIDEBAR_GROUPS = [
-  { id: 'research',  label: 'Research',   items: PRIMARY_NAV },
-  { id: 'analytics', label: 'Analytics',  items: ANALYTICS_NAV },
-  { id: 'ai',        label: 'AI',         items: AI_NAV },
+  { id: 'workspace', label: 'Workspace', items: PRIMARY_NAV },
+  { id: 'analytics', label: 'Analytics', items: ANALYTICS_NAV },
+  { id: 'ai',        label: 'AI Tools',  items: AI_NAV },
 ]
 
-/**
- * Tracked publishers surfaced in the sidebar's "sources" footer block.
- * This is editorial metadata, not navigation; it lives in this file so the
- * sidebar can pull from one source of truth.
- */
 export const TRACKED_SOURCES = [
   'The Kathmandu Post',
   'Republica',
@@ -110,10 +113,5 @@ export const TRACKED_SOURCES = [
   'The Himalayan Times',
   'My Republica',
   'Setopati English',
-  'Nepali Times',
+  'Nepal Monitor',
 ]
-
-/**
- * Sidebar width presets (in pixels). The default is what the resizable
- * layout uses when no stored size is present.
- */

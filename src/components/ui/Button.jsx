@@ -1,34 +1,66 @@
 import { forwardRef } from 'react'
 import { cn } from '../../lib/utils.js'
 
-const base = 'inline-flex items-center justify-center gap-2 font-semibold text-sm rounded-md transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary'
-
-const variants = {
-  primary: 'bg-primary text-white hover:bg-primary/90',
-  secondary: 'bg-surface-muted text-text border border-border hover:bg-surface',
-  ghost: 'bg-transparent text-text hover:bg-surface-muted',
-  danger: 'bg-danger text-white hover:bg-danger/90',
+/**
+ * Button
+ *
+ * Chakra-style button with a wide variety of style / size / state
+ * combinations. Mirrors the Chakra API for ease of use.
+ */
+const variantMap = {
+  solid:    'btn-primary',
+  subtle:   'btn-secondary',
+  outline:  'btn-outline',
+  ghost:    'btn-ghost',
+  soft:     'btn-soft',
+  danger:   'btn-danger',
+  link:     'btn-link',
+  unstyled: '',
 }
 
-const sizes = {
-  sm: 'h-8 px-3 text-xs',
-  md: 'h-10 px-4',
-  lg: 'h-11 px-5 text-base',
-  icon: 'h-9 w-9 p-0',
+const sizeMap = {
+  xs:  'btn-sm',
+  sm:  'btn-sm',
+  md:  'btn-md',
+  lg:  'btn-lg',
+  xl:  'btn-lg',
 }
 
 export const Button = forwardRef(function Button(
-  { as: Comp = 'button', className, variant = 'primary', size = 'md', type = 'button', children, ...rest },
+  {
+    as: Comp = 'button',
+    variant = 'solid',
+    size = 'md',
+    colorScheme = 'brand',
+    leftIcon,
+    rightIcon,
+    isLoading = false,
+    loadingText,
+    isDisabled,
+    className,
+    children,
+    ...rest
+  },
   ref,
 ) {
+  const isUnstyled = variant === 'unstyled'
   return (
     <Comp
       ref={ref}
-      type={Comp === 'button' ? type : undefined}
-      className={cn(base, variants[variant], sizes[size], className)}
+      disabled={isDisabled || isLoading}
+      className={cn(
+        isUnstyled ? '' : 'btn',
+        !isUnstyled && sizeMap[size],
+        !isUnstyled && variantMap[variant],
+        className,
+      )}
       {...rest}
     >
-      {children}
+      {isLoading ? (
+        <span className="anim-spin h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white" />
+      ) : leftIcon}
+      {isLoading && loadingText ? loadingText : children}
+      {!isLoading && rightIcon}
     </Comp>
   )
 })

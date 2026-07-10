@@ -1,31 +1,30 @@
-import { NavLink, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Layers, Search, BarChart3, Zap } from 'lucide-react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { LayoutDashboard, Layers, Search, BarChart3, Sparkles } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 
 /**
  * BottomBar
  *
- * Persistent bottom navigation for mobile (<md). Surfaces the four most
- * important destinations and a search trigger so the user never has to
- * open the drawer to find core actions.
+ * Persistent bottom navigation for mobile (<md).
  */
 const ITEMS = [
   { to: '/dashboard', label: 'Home',    icon: LayoutDashboard },
   { to: '/events',    label: 'Events',  icon: Layers },
   { to: '/bias',      label: 'Bias',    icon: BarChart3 },
-  { to: '/live',      label: 'Live',    icon: Zap },
+  { to: '/playground',label: 'Play',    icon: Sparkles },
   { to: '/search',    label: 'Search',  icon: Search, action: 'search' },
 ]
 
 export default function BottomBar({ className, onSearchClick }) {
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
     <nav
       aria-label="Bottom navigation"
       className={cn(
         'md:hidden fixed bottom-0 left-0 right-0 z-30',
-        'bg-surface/95 backdrop-blur border-t border-border',
+        'bg-[var(--surface)]/95 backdrop-blur-md border-t border-[var(--border-subtle)]',
         'pb-[env(safe-area-inset-bottom)]',
         className,
       )}
@@ -38,8 +37,8 @@ export default function BottomBar({ className, onSearchClick }) {
               <li key="search" className="flex">
                 <button
                   type="button"
-                  onClick={onSearchClick ?? (() => document.dispatchEvent(new CustomEvent('vantage:open-search')))}
-                  className="flex-1 flex flex-col items-center justify-center gap-0.5 text-text-muted active:text-text"
+                  onClick={onSearchClick ?? (() => navigate('/search'))}
+                  className="flex-1 flex flex-col items-center justify-center gap-0.5 text-[var(--text-muted)] active:text-[var(--text)]"
                   aria-label="Open search"
                 >
                   <item.icon size={18} aria-hidden="true" />
@@ -55,9 +54,7 @@ export default function BottomBar({ className, onSearchClick }) {
                 to={item.to}
                 className={cn(
                   'flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors',
-                  isActive
-                    ? 'text-primary'
-                    : 'text-text-muted active:text-text',
+                  isActive ? 'text-[var(--brand-600)]' : 'text-[var(--text-muted)] active:text-[var(--text)]',
                 )}
                 aria-current={isActive ? 'page' : undefined}
               >

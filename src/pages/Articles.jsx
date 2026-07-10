@@ -1,32 +1,34 @@
 /**
- * Articles.jsx — Article Archive
- * ─────────────────────────────────────────────────────────────
- * Flat, filterable view of every individual article across all
- * clustered events. Since MOCK_EVENTS only carries per-event
- * summaries, this view derives a flat list of synthetic per-article
- * rows from each event (2 articles per event by default) so the page
- * is fully self-contained and reads from the same mock module.
- *
- * Each "Event Group" reuses the ClusterView component for column
- * rendering, with a sub-header linking back to the event detail page.
+ * Articles.jsx — Article archive
  */
 import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Filter, RefreshCw, AlertCircle, FileText, Database, BarChart3, Award, ExternalLink, Clock } from 'lucide-react'
-import ClusterView from '../components/ClusterView.jsx'
+import {
+  Search,
+  RefreshCw,
+  AlertCircle,
+  FileText,
+  Database,
+  BarChart3,
+  Award,
+  ExternalLink,
+  Clock,
+  Newspaper,
+  Filter,
+} from 'lucide-react'
+import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENTS, MOCK_SOURCES, MOCK_EVENT_DETAIL } from '../utils/mockData.js'
 import { getEvents, getSources } from '../services/api.js'
-import { sentimentPill, sentimentColor, sourceClass, fmtRelative } from '../utils/helpers.js'
+import { sentimentPill, sourceClass, fmtRelative, fmtTime } from '../utils/helpers.js'
+import { StatCard } from '../components/DashboardComponents.jsx'
+import { SourceBadge } from '../components/Charts.jsx'
+import { EmptyState } from '../components/ui/EmptyState.jsx'
+import { Button } from '../components/ui/Button.jsx'
+import { Input, InputGroup, InputLeftElement } from '../components/ui/Input.jsx'
+import { cn } from '../lib/utils.js'
 
-const STAT_ICONS = [FileText, Database, BarChart3, Award]
-const STAT_COLORS = ['#6366f1', '#3b82f6', '#10b981', '#a855f7']
-
-// ── Synthetic per-article derivation from MOCK_EVENTS ──
-// Each event yields 2 article rows. The first event reuses the
-// richer MOCK_EVENT_DETAIL.articles payload verbatim so the archive
-// view always has at least one "real" cluster of articles to render.
 function deriveArticlesFromEvents(events) {
   const groups = []
   events.forEach((ev, idx) => {
@@ -35,18 +37,13 @@ function deriveArticlesFromEvents(events) {
       articles = MOCK_EVENT_DETAIL.articles.map(a => ({
         ...a,
         tags: ['Politics', 'Nepal', 'Analysis'],
-        publisher_info: {
-          location: 'Kathmandu',
-          verified: true,
-          reach: 'High'
-        }
+        publisher_info: { location: 'Kathmandu', verified: true, reach: 'High' },
       }))
     } else {
-      // Generate 2 lightweight synthetic articles per event
       const sources = ev.sources?.length ? ev.sources : MOCK_SOURCES.sources.slice(0, 2)
       const sent = ev.dominant_sentiment
       const score = sent === 'negative' ? 0.78 : sent === 'positive' ? 0.71 : 0.52
-      const offsetMs = (i) => i * 1000 * 60 * 45 // 45 min apart
+      const offsetMs = (i) => i * 1000 * 60 * 45
       articles = sources.slice(0, 2).map((src, i) => ({
         id: `${ev.id}_art_${i + 1}`,
         source: src,
@@ -57,18 +54,10 @@ function deriveArticlesFromEvents(events) {
         published_at: new Date(new Date(ev.date).getTime() - offsetMs(i)).toISOString(),
         sentiment: sent,
         sentiment_score: score,
-        entities: ev.entities?.slice(0, 2).map(name => ({
-          name,
-          sentiment,
-          score,
-        })) || [],
-        summary: 'Auto-derived summary stub for the article archive view. Real backend payloads will populate this field.',
+        entities: (ev.entities || []).slice(0, 2).map(name => ({ name, sentiment: sent, score })),
+        summary: 'Auto-derived summary stub for the article archive view.',
         tags: ['Politics', 'Nepal', 'Analysis'],
-        publisher_info: {
-          location: 'Kathmandu',
-          verified: true,
-          reach: 'Medium'
-        }
+        publisher_info: { location: 'Kathmandu', verified: true, reach: 'Medium' },
       }))
     }
     groups.push({ event: ev, articles })
@@ -98,19 +87,15 @@ export default function Articles() {
       }
       setEventGroups(deriveArticlesFromEvents(evtData.events))
       setSources(srcData.sources)
-    } catch (e) {
-      setError(e.message)
-    } finally {
-      setLoading(false)
-    }
+    } catch (e) { setError(e.message) }
+    finally { setLoading(false) }
   }
 
   useEffect(() => { load() }, [sourceFilter])
 
-  // ── Flatten + filter for stats & list rendering ──
   const allArticles = useMemo(
     () => eventGroups.flatMap(g => g.articles.map(a => ({ ...a, _eventId: g.event.id, _eventTitle: g.event.title }))),
-    [eventGroups]
+    [eventGroups],
   )
 
   const filteredGroups = useMemo(() => {
@@ -131,295 +116,165 @@ export default function Articles() {
       .filter(g => g.articles.length > 0)
   }, [eventGroups, search, sentFilter, sourceFilter])
 
-  // ── Derived stats ──
   const stats = useMemo(() => {
     const total = allArticles.length
     const sourceSet = new Set(allArticles.map(a => a.source))
-    const sentCounts = { positive:0, negative:0, neutral:0 }
+    const sentCounts = { positive: 0, negative: 0, neutral: 0 }
     allArticles.forEach(a => sentCounts[a.sentiment]++)
     const sourceCounts = {}
     allArticles.forEach(a => { sourceCounts[a.source] = (sourceCounts[a.source] || 0) + 1 })
     const topEntry = Object.entries(sourceCounts).sort((a, b) => b[1] - a[1])[0]
     return [
-      { label:'Total Articles',   value:String(total),                  sub:`Across ${eventGroups.length} clusters`, icon:STAT_ICONS[0], color:STAT_COLORS[0] },
-      { label:'Sources Covered',  value:String(sourceSet.size),         sub:`Unique outlets`,                     icon:STAT_ICONS[1], color:STAT_COLORS[1] },
-      { label:'Sentiment Split',  value:`${sentCounts.positive}/${sentCounts.neutral}/${sentCounts.negative}`, sub:'Pos / Neu / Neg', icon:STAT_ICONS[2], color:STAT_COLORS[2] },
-      { label:'Most Active',      value: topEntry ? topEntry[0].split(' ').slice(0,2).join(' ') : '—', sub: topEntry ? `${topEntry[1]} articles` : 'No data', icon:STAT_ICONS[3], color:STAT_COLORS[3] },
+      { label: 'Total articles',   value: String(total),                  sub: `Across ${eventGroups.length} clusters`, icon: FileText, accent: 'brand' },
+      { label: 'Sources covered',  value: String(sourceSet.size),         sub: 'Unique outlets',                     icon: Database, accent: 'blue' },
+      { label: 'Sentiment split',  value: `${sentCounts.positive}/${sentCounts.neutral}/${sentCounts.negative}`, sub: 'Pos / Neu / Neg', icon: BarChart3, accent: 'green' },
+      { label: 'Most active',      value: topEntry ? topEntry[0].split(' ').slice(0, 2).join(' ') : '—', sub: topEntry ? `${topEntry[1]} articles` : 'No data', icon: Award, accent: 'purple' },
     ]
   }, [allArticles, eventGroups])
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
         title="Article Archive | Vantage"
         description="Browse every individual article across all clustered events, filterable by source, sentiment, and search query."
       />
 
-      {/* ── Page Hero ── */}
-      <div
-        className="hero-gradient anim-fade-up anim-gradient"
-        style={{
-          borderRadius:24, padding:'44px 48px', position:'relative', overflow:'hidden',
-          boxShadow:'0 24px 60px -24px rgba(11,16,32,0.45)',
-        }}
-      >
-        <span className="orb orb-indigo" style={{ width:260, height:260, right:-30, top:-90 }} />
-        <span className="orb orb-purple" style={{ width:200, height:200, left:'-30px', bottom:'-60px' }} />
-        <span className="orb orb-pink"   style={{ width:160, height:160, right:'32%', top:'40%' }} />
-        <span className="orb orb-cyan"   style={{ width:140, height:140, left:'38%', bottom:'-20px' }} />
+      <PageHero
+        variant="gradient"
+        eyebrow={<><Newspaper size={11} /> Article archive</>}
+        title="Every article, in one place"
+        description="Every individual article that fed into our event clusters. Search by headline or source, filter by sentiment, and dig into the raw coverage behind each story."
+        actions={
+          <Button
+            variant="soft"
+            leftIcon={<RefreshCw size={14} className={loading ? 'anim-spin' : ''} />}
+            onClick={load}
+            className="bg-white/15 text-white border border-white/20 backdrop-blur-sm hover:bg-white/25"
+          >
+            Refresh
+          </Button>
+        }
+      />
 
-        <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:24 }}>
-          <div style={{ maxWidth:600 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
-              <span className="section-label" style={{ color:'#c7d2fe' }}>📰 Article Archive</span>
-            </div>
-            <h1 className="font-serif" style={{ fontSize:'2.6rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 14px' }}>
-              Article <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Archive</em>
-            </h1>
-            <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.95rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
-              Every individual article that fed into our event clusters. Search by headline or source, filter by sentiment, and dig into the raw coverage behind each story.
-            </p>
-            <div style={{ marginTop:22, display:'flex', alignItems:'center', gap:10, flexWrap:'wrap' }}>
-              <button onClick={load} disabled={loading} className="btn-ghost" style={{
-                background:'rgba(255,255,255,0.08)', color:'#f1f5f9',
-                borderColor:'rgba(255,255,255,0.18)', fontSize:'0.8rem',
-                backdropFilter:'blur(8px)',
-              }}>
-                <RefreshCw size={13} className={loading ? 'anim-spin' : ''} />
-                Refresh
-              </button>
-              <span style={{
-                display:'inline-flex', alignItems:'center', gap:6,
-                fontSize:'0.78rem', color:'rgba(248,250,252,0.65)',
-                padding:'9px 16px', borderRadius:12,
-                border:'1px solid rgba(255,255,255,0.1)',
-                background:'rgba(255,255,255,0.04)',
-              }}>
-                {allArticles.length} articles · {filteredGroups.length} clusters
-              </span>
-            </div>
-          </div>
-
-          {!loading && allArticles.length > 0 && (
-            <div className="glass-dark" style={{ borderRadius:18, padding:'20px 24px', minWidth:240 }}>
-              <p style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'rgba(248,250,252,0.5)', marginBottom:14 }}>
-                Sentiment Distribution
-              </p>
-              <SentimentStackedBar articles={allArticles} />
-            </div>
-          )}
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map(s => <StatCard key={s.label} {...s} />)}
       </div>
 
-      {/* ── Stats row ── */}
-      <div className="anim-fade-up-1" style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16 }}>
-        {stats.map(({ label, value, sub, icon:Icon, color }) => (
-          <div key={label} className="card" style={{ padding:'22px 24px', position:'relative', overflow:'hidden' }}>
-            <div style={{
-              position:'absolute', right:-20, top:-20, width:80, height:80, borderRadius:'50%',
-              background:`radial-gradient(circle, ${color}22, transparent 70%)`,
-            }} />
-            <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-              <span style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--muted)' }}>{label}</span>
-              <div style={{
-                width:32, height:32, borderRadius:10,
-                background:`linear-gradient(135deg, ${color}22, ${color}10)`,
-                display:'flex', alignItems:'center', justifyContent:'center',
-                border:`1px solid ${color}30`,
-              }}>
-                <Icon size={14} style={{ color }} />
-              </div>
-            </div>
-            <div className="font-syne" style={{ fontSize:'2.1rem', fontWeight:800, color:'var(--text)', lineHeight:1, marginBottom:6 }}>{value}</div>
-            <div style={{ fontSize:'0.72rem', color:'var(--muted)', lineHeight:1.4 }}>{sub}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Filters ── */}
-      <div className="anim-fade-up-2 card" style={{ padding:'16px 18px', display:'flex', gap:10, flexWrap:'wrap', alignItems:'center' }}>
-        <div style={{ position:'relative', flex:1, minWidth:240 }}>
-          <Search size={14} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <input value={search} onChange={e => setSearch(e.target.value)}
-            placeholder="Search headlines, sources, or events…"
-            style={{
-              width:'100%', paddingLeft:40, paddingRight:14, paddingTop:11, paddingBottom:11,
-              fontSize:'0.85rem', background:'var(--surface-2)',
-              border:'1.5px solid transparent', borderRadius:11,
-              outline:'none', color:'var(--text)', transition:'all .18s',
-            }}
-            onFocus={e => { e.target.style.borderColor='var(--accent)'; e.target.style.background='white' }}
-            onBlur={e => { e.target.style.borderColor='transparent'; e.target.style.background='var(--surface-2)' }}
-          />
-        </div>
-
-        <div style={{ position:'relative' }}>
-          <Filter size={12} style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'var(--muted)', pointerEvents:'none' }} />
-          <select value={sourceFilter} onChange={e => setSource(e.target.value)} style={{
-            paddingLeft:34, paddingRight:32, paddingTop:11, paddingBottom:11,
-            fontSize:'0.85rem', background:'var(--surface-2)',
-            border:'1.5px solid transparent', borderRadius:11,
-            outline:'none', color:'var(--text)', cursor:'pointer', appearance:'none',
-            fontWeight:500,
-          }}>
+      <div className="card-elevated p-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <InputGroup className="min-w-[240px] flex-1">
+            <InputLeftElement><Search size={14} /></InputLeftElement>
+            <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search articles, sources, or events…" variant="filled" />
+          </InputGroup>
+          <select value={sourceFilter} onChange={e => setSource(e.target.value)} className="field-input h-10 w-auto rounded-[var(--radius-lg)] bg-[var(--surface-muted)] px-3 text-sm font-semibold">
             <option value="all">All sources</option>
             {sources.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-        </div>
-
-        <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
-          {['all','positive','negative','neutral'].map(s => (
-            <button key={s} className={`chip ${sentFilter === s ? 'active' : ''}`} onClick={() => setSent(s)} style={{ textTransform:'capitalize' }}>
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Error ── */}
-      {error && (
-        <div style={{ display:'flex', alignItems:'center', gap:10, fontSize:'0.85rem', color:'var(--neg)', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'14px 20px' }}>
-          <AlertCircle size={15} /> {error}
-          <button onClick={load} style={{ marginLeft:'auto', textDecoration:'underline', background:'none', border:'none', cursor:'pointer', color:'var(--neg)', fontSize:'0.78rem', fontWeight:600 }}>Retry</button>
-        </div>
-      )}
-
-      {/* ── Loading skeletons ── */}
-      {loading && !error && (
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="skeleton" style={{ height:260, borderRadius:18 }} />
-          ))}
-        </div>
-      )}
-
-      {/* ── Flat article list (grouped by event) ── */}
-      {!loading && !error && (
-        filteredGroups.length === 0
-          ? (
-            <div style={{ textAlign:'center', padding:'80px 0' }}>
-              <div style={{ fontSize:'2.4rem', marginBottom:12 }}>📭</div>
-              <p style={{ color:'var(--muted)', fontSize:'0.92rem' }}>No articles found{search ? ` for "${search}"` : ''}.</p>
-            </div>
-          )
-          : (
-            <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
-              {filteredGroups.map(({ event, articles }, i) => (
-                <div key={event.id} className={`card anim-fade-up-${Math.min(i + 1, 4)}`} style={{ padding:0, overflow:'hidden' }}>
-                  {/* Event sub-header */}
-                  <div style={{
-                    padding:'16px 22px', display:'flex', alignItems:'center', justifyContent:'space-between',
-                    borderBottom:'1px solid var(--border)', background:'var(--surface-2)',
-                  }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:10, minWidth:0 }}>
-                      <span style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--muted)' }}>Event</span>
-                      <Link to={`/event/${event.id}`} style={{
-                        fontSize:'0.92rem', fontWeight:700, color:'var(--text)', textDecoration:'none',
-                        whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis',
-                      }}>
-                        {event.title}
-                      </Link>
-                    </div>
-                    <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink:0 }}>
-                      <span className={sentimentPill(event.dominant_sentiment)}>{event.dominant_sentiment}</span>
-                      <span style={{ fontSize:'0.7rem', color:'var(--muted)' }}>
-                        {articles.length} of {event.article_count} articles
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Article rows (compact list — one row per article) */}
-                  <div style={{ display:'flex', flexDirection:'column' }}>
-                    {articles.map((a, idx) => (
-                      <ArticleRow
-                        key={a.id}
-                        article={a}
-                        isLast={idx === articles.length - 1}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )
-      )}
-    </div>
-  )
-}
-
-function ArticleRow({ article, isLast }) {
-  const { source, headline, url, published_at, sentiment, sentiment_score } = article
-  const color = sentimentColor(sentiment)
-  return (
-    <div
-      style={{
-        display:'grid',
-        gridTemplateColumns:'180px 1fr 140px 110px',
-        gap:16, alignItems:'center',
-        padding:'16px 22px',
-        borderBottom: isLast ? 'none' : '1px solid var(--border)',
-      }}
-    >
-      <span style={{
-        fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.03em',
-        textTransform:'uppercase', padding:'5px 11px', borderRadius:6,
-        justifySelf:'start',
-      }} className={sourceClass(source)}>{source}</span>
-
-      <div style={{ minWidth:0 }}>
-        <h4 style={{ fontSize:'0.9rem', fontWeight:600, color:'var(--text)', lineHeight:1.45, margin:0 }}>
-          {headline}
-        </h4>
-      </div>
-
-      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-        <span className={sentimentPill(sentiment)} style={{ fontSize:'0.65rem' }}>{sentiment}</span>
-        <span style={{ fontSize:'0.7rem', color:'var(--muted)' }}>
-          {Math.round((sentiment_score || 0) * 100)}%
-        </span>
-      </div>
-
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'flex-end', gap:10 }}>
-        <span style={{ fontSize:'0.72rem', color:'var(--muted)', display:'flex', alignItems:'center', gap:4 }}>
-          <Clock size={11} />{fmtRelative(published_at)}
-        </span>
-        <a href={url || '#'} target="_blank" rel="noopener noreferrer" style={{
-          display:'inline-flex', alignItems:'center', justifyContent:'center',
-          width:30, height:30, borderRadius:8,
-          background:`linear-gradient(135deg, ${color}22, ${color}10)`,
-          border:`1px solid ${color}33`, color,
-          textDecoration:'none', transition:'all .18s',
-        }} title="Open original article">
-          <ExternalLink size={13} />
-        </a>
-      </div>
-    </div>
-  )
-}
-
-function SentimentStackedBar({ articles }) {
-  const counts = { positive:0, negative:0, neutral:0 }
-  articles.forEach(a => counts[a.sentiment]++)
-  const total = articles.length || 1
-  const pct = (k) => `${((counts[k] / total) * 100).toFixed(1)}%`
-  return (
-    <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-      <div style={{ display:'flex', height:14, borderRadius:99, overflow:'hidden', background:'rgba(255,255,255,0.08)' }}>
-        <div style={{ width: pct('positive'), background:'#10b981' }} />
-        <div style={{ width: pct('neutral'),  background:'#f59e0b' }} />
-        <div style={{ width: pct('negative'), background:'#ef4444' }} />
-      </div>
-      <div style={{ display:'flex', flexDirection:'column', gap:4 }}>
-        {['positive','neutral','negative'].map(k => (
-          <div key={k} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', fontSize:'0.7rem' }}>
-            <span style={{ color:'rgba(248,250,252,0.7)', display:'flex', alignItems:'center', gap:6 }}>
-              <span style={{ width:8, height:8, borderRadius:2, background: sentimentColor(k) }} />
-              <span style={{ textTransform:'capitalize' }}>{k}</span>
-            </span>
-            <strong style={{ color:'#f8fafc' }}>{counts[k]}</strong>
+          <div className="flex items-center gap-1.5">
+            {['all', 'positive', 'neutral', 'negative'].map(s => (
+              <button
+                key={s}
+                onClick={() => setSent(s)}
+                className={cn(
+                  'inline-flex h-10 items-center gap-1.5 rounded-[var(--radius-lg)] border px-3 text-xs font-semibold capitalize transition-all',
+                  sentFilter === s
+                    ? 'border-[var(--brand-500)] bg-[var(--brand-500)] text-white shadow-sm'
+                    : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:border-[var(--brand-300)] hover:text-[var(--text)]',
+                )}
+              >
+                {s}
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
+
+      {error ? (
+        <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">
+          <AlertCircle size={16} /> {error}
+        </div>
+      ) : null}
+
+      {loading ? (
+        <div className="space-y-3">
+          {[0, 1, 2].map(i => <div key={i} className="skeleton h-32" />)}
+        </div>
+      ) : filteredGroups.length === 0 ? (
+        <EmptyState
+          icon={Newspaper}
+          title="No articles match your filters"
+          description="Try clearing filters or searching for a different term."
+          action={<Button variant="outline" onClick={() => { setSearch(''); setSent('all'); setSource('all') }}>Reset</Button>}
+        />
+      ) : (
+        <div className="space-y-6">
+          {filteredGroups.map(g => (
+            <section key={g.event.id} className="card-elevated overflow-hidden">
+              <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-5 py-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className={cn('source-tag', sourceClass(g.event.sources?.[0] || ''))}>Cluster</span>
+                    <Link
+                      to={`/event/${g.event.id}`}
+                      className="text-base font-bold text-[var(--text)] hover:text-[var(--brand-600)]"
+                    >
+                      {g.event.title}
+                    </Link>
+                  </div>
+                  <p className="mt-1 text-[11px] text-[var(--text-muted)]">
+                    {g.articles.length} article{g.articles.length === 1 ? '' : 's'} · {fmtRelative(g.event.date)} · {g.event.sources.length} sources
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {g.event.entities?.slice(0, 4).map(en => (
+                    <span key={en} className="rounded-md bg-[var(--brand-50)] px-2 py-0.5 text-[11px] font-semibold text-[var(--brand-700)]">{en}</span>
+                  ))}
+                </div>
+              </header>
+              <div className="divide-y divide-[var(--border-subtle)]">
+                {g.articles.map(a => (
+                  <article
+                    key={a.id}
+                    className="flex flex-col gap-3 p-5 transition-colors hover:bg-[var(--surface-muted)] sm:flex-row sm:items-start"
+                  >
+                    <div className="flex items-start gap-3 sm:w-72 sm:flex-shrink-0">
+                      <SourceBadge name={a.source} size="md" />
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--text)]">{a.source}</p>
+                        <p className="text-[10px] text-[var(--text-muted)]">Kathmandu · Verified</p>
+                      </div>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
+                        <span className="inline-flex items-center gap-1">
+                          <Clock size={10} /> {fmtTime(a.published_at)}
+                        </span>
+                        <span className={sentimentPill(a.sentiment)} style={{ fontSize: '0.6rem' }}>{a.sentiment}</span>
+                        <span className="font-semibold text-[var(--text-muted)]">{Math.round((a.sentiment_score ?? 0.5) * 100)}% confidence</span>
+                      </div>
+                      <h4 className="mt-1 text-sm font-semibold leading-snug text-[var(--text)]">{a.headline}</h4>
+                      <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--text-muted)]">{a.summary}</p>
+                      <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                        {a.tags?.map(t => (
+                          <span key={t} className="rounded-md bg-[var(--surface-muted)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--text-muted)]">#{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <a
+                      href={a.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-3 text-xs font-semibold text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--brand-600)] sm:self-center"
+                    >
+                      <ExternalLink size={12} /> Original
+                    </a>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

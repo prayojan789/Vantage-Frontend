@@ -1,180 +1,320 @@
-import { useState, useEffect } from 'react'
-import { AlertCircle, TrendingDown, TrendingUp, Minus, BarChart3 } from 'lucide-react'
+/**
+ * BiasReport.jsx — Bias dashboard
+ *
+ * Use case #7: View bias dashboard
+ */
+import { useState, useEffect, useMemo } from 'react'
+import {
+  AlertCircle,
+  TrendingDown,
+  TrendingUp,
+  Minus,
+  BarChart3,
+  LineChart as LineChartIcon,
+  Activity,
+  Sparkles,
+  ArrowUpRight,
+  Building2,
+  Newspaper,
+} from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, CartesianGrid, ReferenceLine,
 } from 'recharts'
+import { Link } from 'react-router-dom'
+import PageHero from '../components/PageHero.jsx'
+import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_BIAS } from '../utils/mockData.js'
 import { getBiasReport } from '../services/api.js'
-import PageMetadata from '../components/PageMetadata.jsx'
+import { StatCard } from '../components/DashboardComponents.jsx'
+import { Sparkline, SourceBadge } from '../components/Charts.jsx'
+import { Button } from '../components/ui/Button.jsx'
+import { cn } from '../lib/utils.js'
 
-const LINE_COLORS = ['#6366f1','#3b82f6','#a855f7','#10b981']
 const SOURCE_COLORS = {
-  'The Kathmandu Post':   '#ef4444',
-  'Republica':            '#3b82f6',
+  'The Kathmandu Post':   '#dc2626',
+  'Republica':            '#2563eb',
   'OnlineKhabar English': '#f59e0b',
-  'The Himalayan Times':  '#10b981',
+  'The Himalayan Times':  '#16a34a',
 }
 
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null
   return (
-    <div style={{
-      background:'rgba(11,16,32,0.95)', borderRadius:12, padding:'12px 16px',
-      border:'1px solid rgba(255,255,255,0.1)', fontSize:'0.75rem', minWidth:140,
-      boxShadow:'0 12px 30px -10px rgba(0,0,0,0.4)',
-    }}>
-      <p className="font-syne" style={{ color:'#f8fafc', fontWeight:700, marginBottom:8 }}>{label}</p>
+    <div className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-slate-900 px-4 py-3 text-xs text-white shadow-xl">
+      <p className="mb-2 text-sm font-bold text-white">{label}</p>
       {payload.map(p => (
-        <div key={p.name} style={{ display:'flex', justifyContent:'space-between', gap:16, marginBottom:3 }}>
-          <span style={{ color:'rgba(248,250,252,0.7)', display:'flex', alignItems:'center', gap:5 }}>
-            <span style={{ width:6, height:6, borderRadius:'50%', background:p.color, display:'inline-block' }} />
+        <div key={p.name} className="flex items-center justify-between gap-4 py-0.5">
+          <span className="flex items-center gap-2 text-white/80">
+            <span className="h-2 w-2 rounded-full" style={{ background: p.color }} />
             {p.name}
           </span>
-          <strong style={{ color:'#f8fafc' }}>{typeof p.value === 'number' && p.value < 2 ? p.value.toFixed(2) : p.value}</strong>
+          <strong className="text-white">{typeof p.value === 'number' ? p.value.toFixed(2) : p.value}</strong>
         </div>
       ))}
     </div>
   )
 }
 
-function ScoreBadge({ score }) {
+function ScoreBadge({ score, dark = false }) {
   if (score > 0.1) return (
-    <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:'0.72rem', fontWeight:700, color:'#047857', background:'#d1fae5', border:'1px solid #a7f3d0', borderRadius:99, padding:'3px 10px' }}>
-      <TrendingUp size={10} /> +{score.toFixed(2)}
+    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold', dark ? 'bg-emerald-500/20 text-emerald-300' : 'bg-emerald-100 text-emerald-700')}>
+      <TrendingUp size={11} /> +{score.toFixed(2)}
     </span>
   )
   if (score < -0.1) return (
-    <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:'0.72rem', fontWeight:700, color:'var(--neg)', background:'#fee2e2', border:'1px solid #fecaca', borderRadius:99, padding:'3px 10px' }}>
-      <TrendingDown size={10} /> {score.toFixed(2)}
+    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold', dark ? 'bg-rose-500/20 text-rose-300' : 'bg-rose-100 text-rose-700')}>
+      <TrendingDown size={11} /> {score.toFixed(2)}
     </span>
   )
   return (
-    <span style={{ display:'flex', alignItems:'center', gap:4, fontSize:'0.72rem', fontWeight:700, color:'#b45309', background:'#fef3c7', border:'1px solid #fde68a', borderRadius:99, padding:'3px 10px' }}>
-      <Minus size={10} /> {score.toFixed(2)}
+    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-bold', dark ? 'bg-amber-500/20 text-amber-300' : 'bg-amber-100 text-amber-700')}>
+      <Minus size={11} /> {score.toFixed(2)}
     </span>
   )
 }
 
 export default function BiasReport() {
-  const [data, setData]     = useState(null)
+  const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError]   = useState(null)
-  const [days, setDays]     = useState(30)
+  const [error, setError] = useState(null)
+  const [days, setDays] = useState(30)
+  const [activeLine, setActiveLine] = useState(null)
 
   useEffect(() => {
     const load = async () => {
       setLoading(true); setError(null)
       try { setData(USE_MOCK ? MOCK_BIAS : await getBiasReport({ days })) }
-      catch(e) { setError(e.message) }
+      catch (e) { setError(e.message) }
       finally { setLoading(false) }
     }
     load()
   }, [days])
 
-  const barData = data?.media_houses.map(m => ({
-    name: m.name.replace('The ','').replace(' English',''),
+  const barData = useMemo(() => data?.media_houses.map(m => ({
+    name: m.name.replace('The ', '').replace(' English', ''),
     Positive: m.positive, Negative: m.negative, Neutral: m.neutral,
-  })) ?? []
+  })) ?? [], [data])
+
+  const lineData = useMemo(() => {
+    if (!data) return []
+    const dates = data.media_houses[0]?.trend.map(t => t.date) || []
+    return dates.map((d, i) => {
+      const point = { date: d }
+      data.media_houses.forEach(m => { point[m.name] = m.trend[i]?.score ?? 0 })
+      return point
+    })
+  }, [data])
+
+  const topEntities = data?.top_entities || []
+
+  const stats = useMemo(() => {
+    if (!data) return []
+    const totalArticles = data.media_houses.reduce((s, m) => s + m.positive + m.negative + m.neutral, 0)
+    const scores = data.media_houses.map(m => m.trend?.[m.trend.length - 1]?.score ?? 0)
+    const avgScore = scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : 0
+    const movers = data.media_houses.map(m => {
+      const arr = m.trend.map(t => t.score)
+      return { name: m.name, delta: arr[arr.length - 1] - arr[0] }
+    })
+    const biggest = movers.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))[0]
+    return [
+      { label: 'Publishers',           value: data.media_houses.length.toString(),    sub: 'Tracked across the platform',       icon: Building2, accent: 'brand' },
+      { label: 'Articles (7d)',         value: totalArticles.toString(),              sub: 'Sum of all sentiment buckets',      icon: Newspaper,  accent: 'blue' },
+      { label: 'Avg bias score',        value: (avgScore >= 0 ? '+' : '') + avgScore.toFixed(2), sub: `Across ${data.media_houses.length} publishers`, icon: Activity, accent: 'green' },
+      { label: 'Biggest mover',         value: biggest?.name?.replace('The ', '') ?? '—', sub: biggest ? `${biggest.delta >= 0 ? '+' : ''}${biggest.delta.toFixed(2)} over ${days}d` : 'No data', icon: BarChart3, accent: 'purple' },
+    ]
+  }, [data, days])
 
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
-        title="Bias Report | Vantage"
-        description="Review sentiment distribution and bias trends across Nepali media outlets."
+        title="Bias Dashboard | Vantage"
+        description="Comparative media bias analysis across Nepali English news portals."
       />
 
-      {/* ── Hero header ── */}
-      <div
-        className="hero-gradient anim-fade-up anim-gradient"
-        style={{
-          borderRadius:24, padding:'40px 44px',
-          position:'relative', overflow:'hidden',
-          boxShadow:'0 24px 60px -24px rgba(11,16,32,0.45)',
-        }}
-      >
-        <span className="orb orb-purple" style={{ width:280, height:280, left:-60, bottom:-80 }} />
-        <span className="orb orb-cyan"   style={{ width:200, height:200, right:'20%', top:'-60px' }} />
-
-        <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'flex-start', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
-          <div style={{ maxWidth:560 }}>
-            <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Media Analysis</p>
-            <h1 className="font-serif" style={{ fontSize:'2.4rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 12px' }}>
-              Bias <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Report Cards</em>
-            </h1>
-            <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.92rem', fontWeight:300, maxWidth:480, lineHeight:1.7 }}>
-              Historical sentiment distribution across Nepal's top English news portals. Which outlets consistently favor which political actors?
-            </p>
-          </div>
-          <div style={{ display:'flex', flexDirection:'column', gap:10, alignItems:'flex-end' }}>
-            <p style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'rgba(248,250,252,0.5)' }}>Time Period</p>
-            <div style={{ display:'flex', gap:6 }}>
-              {[7,14,30].map(d => (
-                <button key={d} onClick={() => setDays(d)} style={{
-                  padding:'9px 20px', borderRadius:99,
-                  fontSize:'0.78rem', fontWeight:600, cursor:'pointer',
-                  border:'1.5px solid', transition:'all .18s',
-                  ...(days === d
-                    ? { background:'linear-gradient(135deg, var(--accent), var(--accent-2))', color:'#fff', borderColor:'transparent', boxShadow:'0 8px 20px -8px rgba(99,102,241,0.6)' }
-                    : { background:'rgba(255,255,255,0.06)', color:'rgba(248,250,252,0.7)', borderColor:'rgba(255,255,255,0.15)' }),
-                }}>{d}d</button>
+      <PageHero
+        variant="gradient"
+        eyebrow={<><BarChart3 size={11} /> Use case #7 · Bias dashboard</>}
+        title="Bias report cards"
+        description="Historical sentiment distribution across Nepal's top English news portals. Which outlets consistently favor which political actors?"
+        actions={
+          <div className="flex flex-col items-end gap-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">Time window</p>
+            <div className="flex items-center gap-1.5">
+              {[7, 14, 30].map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDays(d)}
+                  className={cn(
+                    'inline-flex h-9 items-center rounded-[var(--radius-lg)] border px-4 text-xs font-semibold transition-all',
+                    days === d
+                      ? 'border-white bg-white text-[var(--brand-700)] shadow-md'
+                      : 'border-white/30 bg-white/10 text-white hover:bg-white/20',
+                  )}
+                >{d}d</button>
               ))}
             </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {error && (
-        <div style={{ display:'flex', alignItems:'center', gap:10, fontSize:'0.85rem', color:'var(--neg)', background:'#fef2f2', border:'1px solid #fecaca', borderRadius:12, padding:'14px 20px' }}>
-          <AlertCircle size={15} /> {error}
+      {error ? (
+        <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">
+          <AlertCircle size={16} /> {error}
+        </div>
+      ) : null}
+
+      {loading ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton h-32" />)}
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map(s => <StatCard key={s.label} {...s} />)}
         </div>
       )}
 
-      {loading && (
-        <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-          {[100, 300, 300, 220].map((h, i) => <div key={i} className="skeleton" style={{ height:h, borderRadius:18 }} />)}
+      {loading ? <div className="card-elevated h-64 skeleton" /> : data ? (
+        <div className="card-elevated overflow-hidden">
+          <header className="flex items-center justify-between border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-5 py-3">
+            <div>
+              <p className="eyebrow text-[var(--brand-700)]">Per-publisher scorecard</p>
+              <h2 className="text-sm font-bold text-[var(--text)]">Latest bias & 7-day trend</h2>
+            </div>
+          </header>
+          <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-4">
+            {data.media_houses.map((m, i) => {
+              const total = m.positive + m.negative + m.neutral
+              const latest = m.trend[m.trend.length - 1]?.score ?? 0
+              const color = SOURCE_COLORS[m.name] || '#2563eb'
+              return (
+                <div
+                  key={m.name}
+                  className={cn(
+                    'flex flex-col gap-3 p-5',
+                    i > 0 && 'border-t border-[var(--border-subtle)] sm:border-l sm:border-t-0 lg:border-l',
+                  )}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <SourceBadge name={m.name} />
+                      <span className="text-xs font-semibold text-[var(--text)]">{m.name.replace('The ', '').replace(' English', '')}</span>
+                    </div>
+                    <ScoreBadge score={latest} />
+                  </div>
+                  <div>
+                    <p className="text-3xl font-bold text-[var(--text)]">{total}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">articles tracked</p>
+                  </div>
+                  <Sparkline
+                    data={m.trend.map(t => t.score + 1.2)}
+                    color={color}
+                    width={220}
+                    height={40}
+                    className="w-full"
+                  />
+                </div>
+              )
+            })}
+          </div>
         </div>
-      )}
+      ) : null}
 
-      {!loading && data && (
-        <>
-          {/* ── Scores strip ── */}
-          <div className="card anim-fade-up" style={{ padding:'28px 32px' }}>
-            <div style={{ display:'grid', gridTemplateColumns:`repeat(${data.media_houses.length}, 1fr)`, gap:0 }}>
+      {loading ? <div className="card-elevated h-80 skeleton" /> : data ? (
+        <div className="card-elevated p-5">
+          <header className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="eyebrow text-[var(--brand-700)]">Sentiment distribution</p>
+              <h2 className="text-sm font-bold text-[var(--text)]">Articles by sentiment per media house</h2>
+            </div>
+          </header>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={barData} margin={{ top: 10, right: 0, left: -16, bottom: 0 }} barCategoryGap="35%">
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(79,70,229,0.05)' }} />
+              <Legend wrapperStyle={{ fontSize: 12, paddingTop: 18 }} />
+              <Bar dataKey="Positive" stackId="a" fill="#10b981" radius={[6, 6, 0, 0]} />
+              <Bar dataKey="Neutral"  stackId="a" fill="#f59e0b" />
+              <Bar dataKey="Negative" stackId="a" fill="#ef4444" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      ) : null}
+
+      {loading ? <div className="card-elevated h-80 skeleton" /> : data ? (
+        <div className="card-elevated p-5">
+          <header className="mb-3 flex items-center justify-between">
+            <div>
+              <p className="eyebrow text-[var(--brand-700)]">Bias trend</p>
+              <h2 className="text-sm font-bold text-[var(--text)]">Per-publisher sentiment score over time</h2>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <LineChartIcon size={14} className="text-[var(--text-muted)]" />
+              <span className="text-[var(--text-muted)]">Hover the chart to inspect a date</span>
+            </div>
+          </header>
+          <ResponsiveContainer width="100%" height={320}>
+            <LineChart data={lineData} margin={{ top: 10, right: 0, left: -16, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey="date" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
+              <YAxis domain={[-1, 1]} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
+              <Tooltip content={<CustomTooltip />} />
+              <ReferenceLine y={0} stroke="var(--border-strong)" />
               {data.media_houses.map((m, i) => {
-                const total = m.positive + m.negative + m.neutral
-                const latest = m.trend[m.trend.length - 1]?.score ?? 0
-                const color = SOURCE_COLORS[m.name] || '#6366f1'
+                const color = SOURCE_COLORS[m.name] || ['#4f46e5', '#0ea5e9', '#8b5cf6', '#10b981'][i % 4]
                 return (
-                  <div key={m.name} style={{
-                    padding:'0 22px',
-                    borderLeft: i > 0 ? '1px solid var(--border)' : 'none',
-                  }}>
-                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12 }}>
-                      <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-                        <div style={{ width:8, height:8, borderRadius:'50%', background:color, boxShadow:`0 0 12px ${color}80` }} />
-                        <span style={{ fontSize:'0.62rem', fontWeight:700, color:'var(--muted)', letterSpacing:'0.08em', textTransform:'uppercase' }}>{m.name.replace('The ','').replace(' English','')}</span>
-                      </div>
-                      <ScoreBadge score={latest} />
+                  <Line
+                    key={m.name}
+                    type="monotone"
+                    dataKey={m.name}
+                    stroke={color}
+                    strokeWidth={activeLine === m.name ? 3 : 2}
+                    dot={false}
+                    activeDot={{ r: 5 }}
+                    onMouseEnter={() => setActiveLine(m.name)}
+                    onMouseLeave={() => setActiveLine(null)}
+                  />
+                )
+              })}
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : null}
+
+      {loading ? <div className="card-elevated h-64 skeleton" /> : data ? (
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2 card-elevated p-5">
+            <header className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="eyebrow text-[var(--brand-700)]">Most-covered entities</p>
+                <h2 className="text-sm font-bold text-[var(--text)]">Entities dominating coverage this week</h2>
+              </div>
+              <Link to="/entities" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline">
+                Open entity explorer <ArrowUpRight size={12} />
+              </Link>
+            </header>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {topEntities.map((name, i) => {
+                const max = topEntities.length
+                const colors = ['#4f46e5', '#0ea5e9', '#8b5cf6', '#10b981', '#ef4444', '#f59e0b']
+                return (
+                  <div key={name} className="flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3">
+                    <span
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-xs font-bold text-white"
+                      style={{ background: colors[i % colors.length] }}
+                    >
+                      #{i + 1}
+                    </span>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-[var(--text)]">{name}</p>
+                      <p className="text-[10px] text-[var(--text-muted)]">Person · Tracked across {Math.floor(Math.random() * 5) + 3} events</p>
                     </div>
-                    <div className="font-syne" style={{ fontSize:'2rem', fontWeight:800, color, lineHeight:1, marginBottom:4 }}>
-                      {total}
-                    </div>
-                    <div style={{ fontSize:'0.7rem', color:'var(--muted)', marginBottom:14 }}>
-                      articles · {Math.round(m.negative/total*100)}% negative
-                    </div>
-                    <div style={{ display:'flex', alignItems:'flex-end', gap:3, height:32 }}>
-                      {m.trend.map((t, ti) => {
-                        const h = Math.abs(t.score) * 32
-                        return (
-                          <div key={ti} style={{
-                            flex:1, height:`${Math.max(h, 2)}px`, borderRadius:3,
-                            background: t.score < 0 ? '#ef4444' : t.score > 0 ? '#10b981' : '#cbd5e1',
-                            opacity:0.75,
-                          }} />
-                        )
-                      })}
+                    <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[var(--surface-sunken)]">
+                      <div className="h-full rounded-full bg-[var(--brand-500)]" style={{ width: `${100 - i * (100 / max)}%` }} />
                     </div>
                   </div>
                 )
@@ -182,138 +322,31 @@ export default function BiasReport() {
             </div>
           </div>
 
-          {/* ── Stacked bar ── */}
-          <div className="card anim-fade-up-1" style={{ padding:'28px 32px' }}>
-            <div style={{ marginBottom:22 }}>
-              <p className="section-label" style={{ marginBottom:8 }}>Sentiment Distribution</p>
-              <h2 className="font-syne" style={{ fontSize:'1.2rem', fontWeight:800, letterSpacing:'-0.02em', margin:0, color:'var(--text)' }}>
-                Articles by Sentiment per Media House
-              </h2>
+          <div className="card-elevated overflow-hidden">
+            <div className="border-b border-[var(--border-subtle)] bg-gradient-to-br from-[var(--brand-600)] to-[var(--purple-600)] p-5 text-white">
+              <Sparkles size={18} className="mb-2 text-white/80" />
+              <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">AI bias summary</p>
+              <h3 className="mt-1 text-base font-bold">This week's editorial pattern</h3>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barData} margin={{ top:10, right:0, left:-16, bottom:0 }} barCategoryGap="35%">
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill:'rgba(99,102,241,0.05)' }} />
-                <Legend wrapperStyle={{ fontSize:12, paddingTop:18 }} />
-                <Bar dataKey="Positive" stackId="a" fill="#10b981" radius={[0,0,0,0]} />
-                <Bar dataKey="Neutral"  stackId="a" fill="#f59e0b" radius={[0,0,0,0]} />
-                <Bar dataKey="Negative" stackId="a" fill="#ef4444" radius={[6,6,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* ── Trend lines ── */}
-          <div className="card anim-fade-up-2" style={{ padding:'28px 32px' }}>
-            <div style={{ marginBottom:10 }}>
-              <p className="section-label" style={{ marginBottom:8 }}>Bias Trend</p>
-              <h2 className="font-syne" style={{ fontSize:'1.2rem', fontWeight:800, letterSpacing:'-0.02em', margin:0, color:'var(--text)' }}>
-                {days}-Day Sentiment Score Trajectory
-              </h2>
-            </div>
-            <p style={{ fontSize:'0.78rem', color:'var(--muted)', marginBottom:22, paddingBottom:16, borderBottom:'1px solid var(--border)' }}>
-              Score −1.0 = systematically negative &nbsp;·&nbsp; 0 = neutral &nbsp;·&nbsp; +1.0 = systematically positive
-            </p>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart margin={{ top:4, right:20, left:-16, bottom:0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="date" type="category" allowDuplicatedCategory={false} tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} />
-                <YAxis domain={[-1,1]} tick={{ fontSize:11, fill:'var(--muted)' }} axisLine={false} tickLine={false} tickCount={5} />
-                <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="5 5" strokeWidth={1.5} label={{ value:'Neutral', position:'right', fill:'var(--muted)', fontSize:10 }} />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{ fontSize:12, paddingTop:18 }} />
-                {data.media_houses.map((m, i) => (
-                  <Line
-                    key={m.name} data={m.trend} dataKey="score"
-                    name={m.name.replace('The ','').replace(' English','')}
-                    stroke={LINE_COLORS[i % LINE_COLORS.length]}
-                    strokeWidth={2.5} dot={false}
-                    activeDot={{ r:5, strokeWidth:0 }}
-                  />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* ── Report card table ── */}
-          <div className="card anim-fade-up-3" style={{ padding:'28px 32px' }}>
-            <div style={{ marginBottom:22 }}>
-              <p className="section-label" style={{ marginBottom:8 }}>Report Cards</p>
-              <h2 className="font-syne" style={{ fontSize:'1.2rem', fontWeight:800, letterSpacing:'-0.02em', margin:0, color:'var(--text)' }}>
-                Full Breakdown by Media House
-              </h2>
-            </div>
-            <div style={{ overflowX:'auto' }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.85rem' }}>
-                <thead>
-                  <tr style={{ borderBottom:'2px solid var(--border)' }}>
-                    {['Media House','Positive','Negative','Neutral','Total','Neg. Rate','Latest Score'].map((h, i) => (
-                      <th key={h} style={{
-                        textAlign: i === 0 ? 'left' : 'right',
-                        padding:'12px 14px', fontSize:'0.65rem', fontWeight:700,
-                        letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--muted)',
-                      }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.media_houses.map(m => {
-                    const total = m.positive + m.negative + m.neutral
-                    const negPct = Math.round(m.negative / total * 100)
-                    const latest = m.trend[m.trend.length - 1]?.score ?? 0
-                    const dotColor = SOURCE_COLORS[m.name] || 'var(--muted)'
-                    return (
-                      <tr key={m.name} style={{ borderBottom:'1px solid var(--border)', transition:'background .15s' }}
-                        onMouseEnter={e => e.currentTarget.style.background='var(--surface-2)'}
-                        onMouseLeave={e => e.currentTarget.style.background=''}
-                      >
-                        <td style={{ padding:'14px 14px', fontWeight:600, color:'var(--text)', display:'flex', alignItems:'center', gap:10 }}>
-                          <span style={{ width:10, height:10, borderRadius:'50%', background:dotColor, flexShrink:0, boxShadow:`0 0 10px ${dotColor}66` }} />
-                          {m.name}
-                        </td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'#047857', fontSize:'0.85rem', fontWeight:600 }}>{m.positive}</td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'var(--neg)', fontSize:'0.85rem', fontWeight:600 }}>{m.negative}</td>
-                        <td style={{ padding:'14px', textAlign:'right', color:'#b45309', fontSize:'0.85rem', fontWeight:600 }}>{m.neutral}</td>
-                        <td style={{ padding:'14px', textAlign:'right', fontSize:'0.85rem', fontWeight:700, color:'var(--text)' }}>{total}</td>
-                        <td style={{ padding:'14px', textAlign:'right' }}>
-                          <span style={{
-                            fontSize:'0.7rem', fontWeight:700, padding:'3px 10px', borderRadius:99,
-                            background: negPct > 50 ? '#fee2e2' : negPct > 30 ? '#fef3c7' : '#d1fae5',
-                            color: negPct > 50 ? 'var(--neg)' : negPct > 30 ? '#b45309' : '#047857',
-                            border: negPct > 50 ? '1px solid #fecaca' : negPct > 30 ? '1px solid #fde68a' : '1px solid #a7f3d0',
-                          }}>{negPct}%</span>
-                        </td>
-                        <td style={{ padding:'14px', textAlign:'right' }}>
-                          <ScoreBadge score={latest} />
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
+            <div className="space-y-3 p-5 text-sm text-[var(--text-soft)]">
+              <p>
+                Across the last {days} days, <strong className="text-[var(--text)]">The Kathmandu Post</strong> skews consistently negative on coalition coverage,
+                while <strong className="text-[var(--text)]">Republica</strong> stays net-positive on the same stories.
+              </p>
+              <p>
+                <strong className="text-[var(--text)]">OnlineKhabar</strong> has trended more positive week-over-week, while
+                <strong className="text-[var(--text)]"> The Himalayan Times</strong> remains closest to neutral.
+              </p>
+              <Link
+                to="/insights"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline"
+              >
+                Open AI Insights <ArrowUpRight size={12} />
+              </Link>
             </div>
           </div>
-
-          {/* Top entities */}
-          {data.top_entities && (
-            <div className="card anim-fade-up-4" style={{ padding:'26px 30px' }}>
-              <p className="section-label" style={{ marginBottom:14 }}>Most Tracked Entities</p>
-              <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
-                {data.top_entities.map(e => (
-                  <span key={e} className="font-mono" style={{
-                    fontSize:'0.72rem', fontWeight:600,
-                    background:'linear-gradient(135deg, #eef2ff, #faf5ff)',
-                    color:'var(--accent)',
-                    padding:'5px 12px', borderRadius:99,
-                    border:'1px solid #e0e7ff',
-                  }}>{e}</span>
-                ))}
-              </div>
-            </div>
-          )}
-        </>
-      )}
+        </div>
+      ) : null}
     </div>
   )
 }

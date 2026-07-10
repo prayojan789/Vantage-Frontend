@@ -1,272 +1,433 @@
-import { useState, useEffect } from 'react'
-import { Search, Filter, RefreshCw, AlertCircle, Layers, Newspaper, Activity, TrendingUp, ArrowRight, Sparkles, Pin, Zap, Clock, MessageSquare, FileSearch } from 'lucide-react'
-import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import NewsCard from '../components/NewsCard.jsx'
+/**
+ * Dashboard.jsx — Vantage news intelligence home
+ *
+ * Use case #1: View news feed
+ *
+ * A polished Chakra-style dashboard with:
+ *   - Brand-gradient hero
+ *   - Top KPI strip
+ *   - AI insights + activity feed
+ *   - Filterable event cluster feed
+ *   - Trending entities + source activity
+ */
+import { useState, useEffect, useMemo } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import {
+  Search,
+  RefreshCw,
+  AlertCircle,
+  Layers,
+  Newspaper,
+  Activity,
+  TrendingUp,
+  ArrowRight,
+  Sparkles,
+  Plus,
+  ArrowUpRight,
+  Flame,
+  Building2,
+  Filter,
+  CheckCircle2,
+  Zap,
+  Globe,
+} from 'lucide-react'
+import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENTS, MOCK_SOURCES } from '../utils/mockData.js'
 import { getEvents, getSources } from '../services/api.js'
-import { sentimentColor } from '../utils/helpers.js'
-import { Card } from '../components/ui/Card.jsx'
+import { fmtRelative } from '../utils/helpers.js'
+import { StatCard, NewsCard } from '../components/DashboardComponents.jsx'
+import { SentimentDonut, ActivityFeed, SourceBadge, BarList } from '../components/Charts.jsx'
+import { EmptyState } from '../components/ui/EmptyState.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
-import { PageContainer, Section, PanelLayout, Panel } from '../layouts/index.js'
+import { Button } from '../components/ui/Button.jsx'
+import { Input, InputGroup, InputLeftElement } from '../components/ui/Input.jsx'
+import { Avatar } from '../components/ui/Avatar.jsx'
 import { cn } from '../lib/utils.js'
 
-const STATS = [
-  { label:'Events Today',      value:'6',    sub:'↑ 2 from yesterday',            icon:Layers,     color:'#6366f1' },
-  { label:'Articles Ingested', value:'84',   sub:'Last 24 hours · 7 sources',     icon:Newspaper,  color:'#3b82f6' },
-  { label:'Avg Similarity',    value:'0.89', sub:'Clustering threshold: 0.85',    icon:Activity,   color:'#10b981' },
-  { label:'Sources Online',    value:'7/7',  sub:'All portals active',            icon:TrendingUp, color:'#a855f7' },
-]
-
 const AI_INSIGHTS = [
-  { id: 1, type: 'trend', text: 'Rising negative sentiment detected in "Political Stability" cluster across 3 outlets.', urgency: 'high' },
-  { id: 2, type: 'anomaly', text: 'Unusual coverage spike for "Entity: Ministry of Finance" in the last 4 hours.', urgency: 'medium' },
-  { id: 3, type: 'pattern', text: 'Consistent framing of "Economic Reform" as "Risk" in 80% of tracked sources.', urgency: 'low' },
+  { id: 1, type: 'trend',    text: 'Rising negative sentiment detected in "Political Stability" cluster across 3 outlets.', tone: 'negative', time: '4m ago' },
+  { id: 2, type: 'anomaly',  text: 'Unusual coverage spike for "Entity: Ministry of Finance" in the last 4 hours.',      tone: 'warning',  time: '27m ago' },
+  { id: 3, type: 'pattern',  text: 'Consistent framing of "Economic Reform" as "Risk" in 80% of tracked sources.',     tone: 'brand',    time: '1h ago' },
+  { id: 4, type: 'alert',    text: 'KP Oli mention volume up 38% week-over-week — bias tracking now active.',         tone: 'positive', time: '2h ago' },
 ]
 
 const RECENT_ACTIVITY = [
-  { id: 1, action: 'New Event', detail: 'Cluster #42 created: "Election Reforms"', time: '2m ago', icon: Zap },
-  { id: 2, action: 'Ingestion', detail: '12 articles added from The Kathmandu Post', time: '15m ago', icon: Newspaper },
-  { id: 3, action: 'Analysis', detail: 'Sentiment re-scored for "Entity: PM Office"', time: '1h ago', icon: Activity },
+  { id: 1, title: 'New event cluster',     detail: '#42 created: "Election Reforms"',                time: '2m ago',  icon: Zap,         tone: 'primary' },
+  { id: 2, title: 'Ingestion completed',    detail: '12 articles added from The Kathmandu Post',      time: '15m ago', icon: Newspaper,    tone: 'positive' },
+  { id: 3, title: 'Sentiment re-scored',    detail: '"Entity: PM Office" across 4 sources',           time: '1h ago',  icon: Activity,     tone: 'warning'  },
+  { id: 4, title: 'Source back online',     detail: 'Setopati English resumed after 3h downtime',     time: '2h ago',  icon: CheckCircle2, tone: 'positive' },
+  { id: 5, title: 'Cluster merged',         detail: '"Cabinet Talks" + "Coalition Math" → #38',       time: '3h ago',  icon: Layers,       tone: 'primary' },
 ]
 
-const PINNED_REPORTS = [
-  { id: 1, title: 'Q2 Media Bias Audit', date: 'Jul 01, 2026', status: 'Final' },
-  { id: 2, title: 'Entity Sentiment: Political Parties', date: 'Jun 24, 2026', status: 'Draft' },
-  { id: 3, title: 'Event Cluster Analysis: Budget 2026', date: 'Jun 15, 2026', status: 'Archived' },
+const SENTIMENT_FILTERS = [
+  { key: 'all',      label: 'All',      icon: Layers },
+  { key: 'positive', label: 'Positive', icon: TrendingUp },
+  { key: 'neutral',  label: 'Neutral',  icon: Activity },
+  { key: 'negative', label: 'Negative', icon: AlertCircle },
 ]
 
-function MiniBarChart({ events }) {
-  const counts = { negative:0, positive:0, neutral:0 }
-  events.forEach(e => counts[e.dominant_sentiment]++)
-  const max = Math.max(...Object.values(counts), 1)
-  return (
-    <div style={{ display:'flex', alignItems:'flex-end', gap:6, height:48 }}>
-      {Object.entries(counts).map(([k, v]) => (
-        <div key={k} style={{ display:'flex', flexDirection:'column', alignItems:'center', flex:1, gap:5 }}>
-          <div style={{
-            width:'100%', borderRadius:'6px 6px 0 0',
-            height:`${Math.round((v / max) * 40)}px`,
-            background: `linear-gradient(180deg, ${sentimentColor(k)}, ${sentimentColor(k)}88)`,
-            transition:'height .6s ease',
-          }} />
-          <span style={{ fontSize:'0.6rem', color:'var(--muted)', textTransform:'uppercase', letterSpacing:'0.06em', fontWeight:600 }}>{k.slice(0,3)}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
+const SORTS = [
+  { key: 'date',     label: 'Latest' },
+  { key: 'articles', label: 'Most covered' },
+  { key: 'match',    label: 'Highest match' },
+]
 
 export default function Dashboard() {
-  const [events, setEvents]       = useState([])
-  const [sources, setSources]     = useState([])
-  const [total, setTotal]         = useState(0)
-  const [loading, setLoading]     = useState(true)
-  const [error, setError]         = useState(null)
-  const [search, setSearch]       = useState('')
+  const navigate = useNavigate()
+  const [events, setEvents]     = useState([])
+  const [sources, setSources]   = useState([])
+  const [total, setTotal]       = useState(0)
+  const [loading, setLoading]   = useState(true)
+  const [error, setError]       = useState(null)
+  const [search, setSearch]     = useState('')
+  const [sentFilter, setSent]   = useState('all')
+  const [sortBy, setSortBy]     = useState('date')
   const [sourceFilter, setSource] = useState('all')
-  const [sentFilter, setSent]     = useState('all')
 
   const load = async () => {
     setLoading(true); setError(null)
     try {
       let evtData, srcData
       if (USE_MOCK) { evtData = MOCK_EVENTS; srcData = MOCK_SOURCES }
-      else { [evtData, srcData] = await Promise.all([getEvents({ source: sourceFilter === 'all' ? undefined : sourceFilter }), getSources()]) }
+      else { [evtData, srcData] = await Promise.all([getEvents(), getSources()]) }
       setEvents(evtData.events); setTotal(evtData.total); setSources(srcData.sources)
-    } catch(e) { setError(e.message) }
+    } catch (e) { setError(e.message) }
     finally { setLoading(false) }
   }
 
-  useEffect(() => { load() }, [sourceFilter])
+  useEffect(() => { load() }, [])
 
-  const filtered = events.filter(e => {
-    const q = e.title.toLowerCase().includes(search.toLowerCase())
-    const s = sentFilter === 'all' || e.dominant_sentiment === sentFilter
-    return q && s
-  })
+  const counts = useMemo(() => {
+    const c = { positive: 0, negative: 0, neutral: 0 }
+    events.forEach(e => c[e.dominant_sentiment]++)
+    return c
+  }, [events])
+
+  const totalArticles = useMemo(
+    () => events.reduce((s, e) => s + (e.article_count || 0), 0),
+    [events],
+  )
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase()
+    let arr = events.filter(e => {
+      const matchQ = !q || e.title.toLowerCase().includes(q) || e.entities?.some(x => x.toLowerCase().includes(q))
+      const matchS = sentFilter === 'all' || e.dominant_sentiment === sentFilter
+      const matchSrc = sourceFilter === 'all' || e.sources.includes(sourceFilter)
+      return matchQ && matchS && matchSrc
+    })
+    arr.sort((a, b) => {
+      if (sortBy === 'date')     return new Date(b.date) - new Date(a.date)
+      if (sortBy === 'articles') return (b.article_count || 0) - (a.article_count || 0)
+      if (sortBy === 'match')    return (b.similarity_score || 0) - (a.similarity_score || 0)
+      return 0
+    })
+    return arr
+  }, [events, search, sentFilter, sortBy, sourceFilter])
+
+  // Trending entities
+  const trendingEntities = useMemo(() => {
+    const map = new Map()
+    events.forEach(e => (e.entities || []).forEach(en => {
+      map.set(en, (map.get(en) || 0) + (e.article_count || 0))
+    }))
+    return Array.from(map.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, count]) => ({ name, count }))
+  }, [events])
+
+  // Source activity
+  const sourceActivity = useMemo(() => {
+    const m = new Map()
+    events.forEach(e => (e.sources || []).forEach(s => m.set(s, (m.get(s) || 0) + (e.article_count || 0))))
+    return Array.from(m.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([name, count]) => ({ name, count, color: `var(--brand-500)` }))
+  }, [events])
+
+  const SENT_PILLS = [
+    { key: 'all',      label: 'All',      count: events.length,       color: 'var(--brand-500)' },
+    { key: 'positive', label: 'Positive', count: counts.positive,     color: 'var(--pos)' },
+    { key: 'neutral',  label: 'Neutral',  count: counts.neutral,      color: 'var(--neu)' },
+    { key: 'negative', label: 'Negative', count: counts.negative,     color: 'var(--neg)' },
+  ]
 
   return (
-    <PageContainer width="wide">
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
         title="Vantage Dashboard | Nepal News Intelligence"
-        description="Explore clustered news events, source coverage, and AI-assisted intelligence in the Vantage dashboard."
+        description="Live news intelligence dashboard: clustered events, sentiment overview, AI insights and source coverage."
       />
 
-      <div className="space-y-8">
-        {/* ── Executive Hero ── */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative overflow-hidden rounded-3xl bg-primary p-8 text-white shadow-2xl"
-        >
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <Badge tone="neutral" className="bg-white/20 text-white border-none">Executive Overview</Badge>
-              <h1 className="text-3xl font-bold tracking-tight">Welcome back, Analyst</h1>
-              <p className="text-primary-foreground/80 text-sm">
-                {total} events tracked today across {sources.length || 7} sources. 
-                The pipeline is currently <span className="font-semibold text-white">active and processing</span>.
+      {/* ── Hero ── */}
+      <PageHero
+        variant="gradient"
+        eyebrow={<><Sparkles size={11} /> News Intelligence</>}
+        title={<>Welcome back, <span className="text-white/80">Prayojan</span></>}
+        description={`${total} events tracked today across ${sources.length || 7} Nepali English outlets — the pipeline is active and clustering in real time.`}
+        actions={
+          <>
+            <Button
+              variant="soft"
+              leftIcon={<RefreshCw size={14} className={loading ? 'anim-spin' : ''} />}
+              onClick={load}
+              className="bg-white/15 text-white border border-white/20 backdrop-blur-sm hover:bg-white/25"
+            >
+              Refresh
+            </Button>
+            <Button
+              as={Link}
+              to="/playground"
+              leftIcon={<Sparkles size={14} />}
+              className="bg-white text-[var(--brand-700)] hover:bg-white/90"
+            >
+              AI Playground
+            </Button>
+          </>
+        }
+        visual={
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/70">Today</p>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-white">{events.length || 6}</span>
+                <span className="text-xs font-medium text-white/70">events</span>
+              </div>
+              <p className="mt-1 text-xs text-white/80">
+                <TrendingUp size={11} className="inline" /> +2 from yesterday
               </p>
             </div>
-            <div className="flex gap-3">
-              <Link to="/live" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-primary hover:bg-primary-foreground transition-colors">
-                <Sparkles size={14} /> Live Analysis
-              </Link>
-              <button onClick={load} disabled={loading} className="inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-4 py-2 text-xs font-bold text-white backdrop-blur-sm hover:bg-primary-foreground/20 transition-colors">
-                <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Refresh
-              </button>
-            </div>
-          </div>
-          <div className="absolute -right-10 -bottom-10 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-        </motion.div>
-
-        {/* ── Top Row: Quick Stats & AI Insights ── */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 grid gap-4 sm:grid-cols-2">
-            {STATS.map(({ label, value, sub, icon:Icon, color }) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <Card className="p-6 border-border/80 bg-surface/85 backdrop-blur-sm">
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-text-muted">{label}</span>
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center" style={{ color }}>
-                      <Icon size={16} />
-                    </div>
-                  </div>
-                  <div className="text-3xl font-bold text-text mb-1">{value}</div>
-                  <div className="text-xs text-text-muted">{sub}</div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-4"
-          >
-            <div className="flex items-center gap-2 px-2">
-              <Sparkles size={16} className="text-primary" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-text">AI Insights</h2>
-            </div>
-            <div className="space-y-3">
-              {AI_INSIGHTS.map(insight => (
-                <Card key={insight.id} className="p-4 border-border/80 bg-surface/85 backdrop-blur-sm hover:border-primary/40 transition-colors cursor-pointer">
-                  <div className="flex items-start gap-3">
-                    <div className={cn(
-                      "h-2 w-2 rounded-full mt-1.5",
-                      insight.urgency === 'high' ? 'bg-red-500' : insight.urgency === 'medium' ? 'bg-yellow-500' : 'bg-green-500'
-                    )} />
-                    <p className="text-xs leading-relaxed text-text-muted">{insight.text}</p>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        {/* ── Middle Row: Recent Events & Activity ── */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 space-y-4">
-            <div className="flex items-center justify-between px-2">
-              <div className="flex items-center gap-2">
-                <Layers size={16} className="text-primary" />
-                <h2 className="text-sm font-bold uppercase tracking-wider text-text">Recent Events</h2>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/70">Ingested</p>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-3xl font-bold text-white">{totalArticles || 84}</span>
+                <span className="text-xs font-medium text-white/70">articles</span>
               </div>
-              <div className="flex gap-2">
-                <div className="relative">
-                  <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-                  <input 
-                    value={search} 
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="Search events..." 
-                    className="pl-8 pr-3 py-1.5 text-xs rounded-full border border-border/80 bg-surface focus:ring-2 focus:ring-primary outline-none w-48 transition-all"
-                  />
-                </div>
-                <select 
-                  value={sourceFilter} 
-                  onChange={e => setSource(e.target.value)}
-                  className="pl-3 pr-8 py-1.5 text-xs rounded-full border border-border/80 bg-surface outline-none focus:ring-2 focus:ring-primary"
+              <p className="mt-1 text-xs text-white/80">last 24 hours · 7 sources</p>
+            </div>
+            <div className="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur-md">
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-white/70">Pipeline</p>
+              <div className="mt-2 flex items-center gap-2">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--green-400)] opacity-75 anim-pulse" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--green-400)]" />
+                </span>
+                <span className="text-base font-semibold text-white">All systems normal</span>
+              </div>
+              <p className="mt-1 text-xs text-white/80">7/7 sources online · 320ms latency</p>
+            </div>
+          </div>
+        }
+      />
+
+      {/* ── KPI strip ── */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Events today"          value={String(events.length || 6)}   sub="↑ 2 from yesterday"          icon={Layers}    accent="brand" delta={{ label: '+33%', tone: 'up' }} />
+        <StatCard label="Articles ingested"     value={String(totalArticles || 84)} sub="Last 24 hours · 7 sources"  icon={Newspaper} accent="blue" />
+        <StatCard label="Avg cluster similarity" value="0.89"                        sub="Threshold: 0.85"            icon={Activity}  accent="green" />
+        <StatCard label="Sources online"         value={`${sources.length || 7}/${sources.length || 7}`} sub="All portals active" icon={Building2} accent="purple" />
+      </div>
+
+      {/* ── AI Insights + Activity ── */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-50)] text-[var(--brand-600)]">
+                <Sparkles size={14} />
+              </span>
+              <h2 className="section-title">AI Insights</h2>
+            </div>
+            <Link to="/insights" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline">
+              View all <ArrowRight size={12} />
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {AI_INSIGHTS.map((ins, i) => {
+              const toneMap = {
+                negative: { dot: 'bg-[var(--red-500)]',     chip: 'red' },
+                warning:  { dot: 'bg-[var(--yellow-500)]',  chip: 'yellow' },
+                positive: { dot: 'bg-[var(--green-500)]',   chip: 'green' },
+                brand:    { dot: 'bg-[var(--brand-500)]',   chip: 'brand' },
+              }
+              const t = toneMap[ins.tone] || toneMap.brand
+              return (
+                <article
+                  key={ins.id}
+                  className="card-elevated p-4 anim-fade-up"
+                  style={{ animationDelay: `${i * 0.06}s` }}
                 >
-                  <option value="all">All sources</option>
-                  {sources.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-            </div>
-
-            {!loading && !error && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {filtered.length === 0 ? (
-                  <div className="col-span-2 py-12 text-center text-text-muted text-sm">No events found.</div>
-                ) : (
-                  filtered.map((ev, i) => (
-                    <NewsCard key={ev.id} event={ev} delay={i * 0.05} />
-                  ))
-                )}
-              </div>
-            )}
-            {loading && <div className="grid gap-4 sm:grid-cols-2"><div className="h-40 rounded-2xl bg-surface/50 animate-pulse" /> <div className="h-40 rounded-2xl bg-surface/50 animate-pulse" /></div>}
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center gap-2 px-2">
-              <Clock size={16} className="text-primary" />
-              <h2 className="text-sm font-bold uppercase tracking-wider text-text">Activity</h2>
-            </div>
-            <div className="space-y-3">
-              {RECENT_ACTIVITY.map(act => (
-                <Card key={act.id} className="p-4 border-border/80 bg-surface/85 backdrop-blur-sm flex items-center gap-4">
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                    <act.icon size={14} />
+                  <div className="flex items-center gap-2">
+                    <span className={cn('h-2 w-2 rounded-full', t.dot)} />
+                    <Badge colorScheme={t.chip} size="sm">{ins.type}</Badge>
+                    <span className="ml-auto text-[10px] text-[var(--text-muted)]">{ins.time}</span>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold text-text truncate">{act.action}: {act.detail}</p>
-                    <p className="text-[10px] text-text-muted uppercase tracking-tighter">{act.time}</p>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--text)]">{ins.text}</p>
+                </article>
+              )
+            })}
           </div>
         </div>
 
-        {/* ── Bottom Row: Pinned Reports ── */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 px-2">
-            <Pin size={16} className="text-primary" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-text">Pinned Reports</h2>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--green-50)] text-[var(--green-600)]">
+              <Activity size={14} />
+            </span>
+            <h2 className="section-title">Recent activity</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {PINNED_REPORTS.map(report => (
-              <motion.div
-                key={report.id}
-                whileHover={{ y: -4 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Card className="p-5 border-border/80 bg-surface/85 backdrop-blur-sm flex items-center justify-between group cursor-pointer">
-                  <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-bg text-text flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
-                      <FileSearch size={18} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-text">{report.title}</p>
-                      <p className="text-xs text-text-muted">{report.date}</p>
-                    </div>
-                  </div>
-                  <Badge tone="neutral" className="text-[10px]">{report.status}</Badge>
-                </Card>
-              </motion.div>
-            ))}
+          <div className="card-elevated p-5">
+            <ActivityFeed items={RECENT_ACTIVITY} />
           </div>
         </div>
       </div>
-    </PageContainer>
+
+      {/* ── Main news feed ── */}
+      <section className="flex flex-col gap-4">
+        <header className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow text-[var(--brand-700)]">Use case #1 · News feed</p>
+            <h2 className="mt-1 h-lg">Trending event clusters</h2>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Live clustered coverage of Nepali English publishers — refreshed every five minutes.
+            </p>
+          </div>
+          <Link to="/events" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--brand-600)] hover:underline">
+            Open full archive <ArrowUpRight size={14} />
+          </Link>
+        </header>
+
+        <div className="card-elevated p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <InputGroup className="min-w-[200px] flex-1">
+              <InputLeftElement><Search size={14} /></InputLeftElement>
+              <Input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search events, entities, or keywords…"
+                variant="filled"
+              />
+            </InputGroup>
+
+            <div className="flex flex-wrap items-center gap-1.5">
+              {SENT_PILLS.map(p => (
+                <button
+                  key={p.key}
+                  onClick={() => setSent(p.key)}
+                  className={cn('chip', sentFilter === p.key && 'is-active')}
+                >
+                  <span className="h-2 w-2 rounded-full" style={{ background: p.color }} />
+                  {p.label}
+                  <span className={cn(
+                    'rounded-md px-1 text-[10px] font-bold',
+                    sentFilter === p.key ? 'bg-white/25 text-white' : 'bg-[var(--surface-sunken)] text-[var(--text-muted)]',
+                  )}>{p.count}</span>
+                </button>
+              ))}
+            </div>
+
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              className="field-input h-10 w-auto rounded-[var(--radius-lg)] bg-[var(--surface-muted)] px-3 text-xs font-semibold"
+            >
+              {SORTS.map(s => <option key={s.key} value={s.key}>{s.label}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {error ? (
+          <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">
+            <AlertCircle size={16} /> {error}
+          </div>
+        ) : null}
+
+        {loading ? (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton h-56" />)}
+          </div>
+        ) : filtered.length === 0 ? (
+          <EmptyState
+            icon={Search}
+            title="No events match your filters"
+            description="Try clearing the search box or selecting a different sentiment."
+            action={
+              <Button variant="outline" onClick={() => { setSearch(''); setSent('all'); setSource('all') }}>
+                Clear filters
+              </Button>
+            }
+          />
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((ev, i) => <NewsCard key={ev.id} event={ev} delay={i * 0.04} />)}
+          </div>
+        )}
+      </section>
+
+      {/* ── Trending entities + Source activity ── */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 card-elevated p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--red-50)] text-[var(--red-600)]">
+                <Flame size={14} />
+              </span>
+              <h2 className="section-title">Trending entities</h2>
+            </div>
+            <Link to="/entities" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline">
+              Open explorer <ArrowUpRight size={12} />
+            </Link>
+          </div>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">Most-mentioned people, parties, and institutions in the last 24 hours.</p>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {trendingEntities.map((e, i) => {
+              const max = trendingEntities[0]?.count || 1
+              return (
+                <button
+                  key={e.name}
+                  onClick={() => navigate(`/entities?q=${encodeURIComponent(e.name)}`)}
+                  className="group flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--surface)] p-3 text-left transition-all hover:border-[var(--brand-200)] hover:shadow-sm"
+                >
+                  <span className="flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-50)] text-xs font-bold text-[var(--brand-700)]">
+                    #{i + 1}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[var(--text)] group-hover:text-[var(--brand-600)]">{e.name}</p>
+                    <p className="text-[11px] text-[var(--text-muted)]">{e.count} mentions · trending</p>
+                  </div>
+                  <div className="h-1.5 w-16 overflow-hidden rounded-full bg-[var(--surface-sunken)]">
+                    <div className="h-full rounded-full bg-[var(--brand-500)]" style={{ width: `${(e.count / max) * 100}%` }} />
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="card-elevated p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--blue-50)] text-[var(--blue-600)]">
+                <Building2 size={14} />
+              </span>
+              <h2 className="section-title">Source activity</h2>
+            </div>
+            <Link to="/publishers" className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] hover:underline">
+              All <ArrowUpRight size={12} />
+            </Link>
+          </div>
+          <p className="mt-1 text-xs text-[var(--text-muted)]">Articles contributed in the last 24h.</p>
+
+          <div className="mt-5">
+            <BarList items={sourceActivity.map(s => ({ ...s, color: 'var(--blue-500)' }))} />
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

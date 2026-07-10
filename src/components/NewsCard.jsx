@@ -1,76 +1,40 @@
 import { Link } from 'react-router-dom'
-import { ArrowUpRight, Layers, Clock } from 'lucide-react'
-import { sentimentPill, sentimentColor, fmtRelative } from '../utils/helpers.js'
+import { ArrowUpRight, Clock, Tag } from 'lucide-react'
+import { sentimentPill, fmtRelative, sourceClass } from '../utils/helpers.js'
+import { SourceBadge } from './Charts.jsx'
+import { cn } from '../lib/utils.js'
 
-export default function NewsCard({ event, delay = 0 }) {
-  const { id, title, date, article_count, sources, entities, dominant_sentiment, similarity_score } = event
-  const color = sentimentColor(dominant_sentiment)
-
+/**
+ * NewsCardCompact — used in lists, search results, etc.
+ */
+export default function NewsCardCompact({ event, delay = 0, className }) {
   return (
-    <Link to={`/event/${id}`} style={{ textDecoration:'none', display:'block' }}>
-      <div
-        className="card anim-fade-up"
-        style={{
-          padding:0, overflow:'hidden', cursor:'pointer',
-          animationDelay:`${delay}s`,
-        }}
-      >
-        <div style={{ height:4, background:`linear-gradient(90deg, ${color}, ${color}66)` }} />
-
-        <div style={{ padding:'22px 24px', display:'flex', flexDirection:'column', gap:14 }}>
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:12 }}>
-            <h3 style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', lineHeight:1.45, margin:0 }}>{title}</h3>
-            <span className={sentimentPill(dominant_sentiment)} style={{ flexShrink:0 }}>
-              {dominant_sentiment}
-            </span>
-          </div>
-
-          {/* Sentiment strength bar */}
-          <div style={{ display:'flex', gap:6 }}>
-            {[1, 0.65, 0.3].map((h, i) => (
-              <div key={i} style={{
-                flex:1, height:4, borderRadius:99,
-                background: i === 0
-                  ? color
-                  : `linear-gradient(90deg, ${color}55, ${color}11)`,
-              }} />
-            ))}
-          </div>
-
-          {/* Meta */}
-          <div style={{ display:'flex', alignItems:'center', gap:14, fontSize:'0.72rem', color:'var(--muted)' }}>
-            <span style={{ display:'flex', alignItems:'center', gap:4 }}>
-              <Layers size={11} />{article_count} articles
-            </span>
-            <span style={{ display:'flex', alignItems:'center', gap:4 }}>
-              <Clock size={11} />{fmtRelative(date)}
-            </span>
-            <span style={{ color:'var(--accent)', fontSize:'0.65rem', fontWeight:600 }}>
-              {Math.round(similarity_score * 100)}% match
-            </span>
-          </div>
-
-          {/* Sources */}
-          <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
-            {sources.map(s => (
-              <span key={s} style={{
-                fontSize:'0.65rem', fontWeight:600,
-                background:'var(--surface-2)', color:'var(--text-soft)',
-                padding:'3px 9px', borderRadius:6,
-                border:'1px solid var(--border)',
-              }}>{s}</span>
-            ))}
-          </div>
-
-          {/* Entities + arrow */}
-          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:8, borderTop:'1px solid var(--border)' }}>
-            <div style={{ display:'flex', flexWrap:'wrap', gap:5 }}>
-              {entities.map(e => <span key={e} style={{ fontSize:'0.62rem', fontWeight:600, background:'var(--surface-2)', color:'var(--text-soft)', padding:'2px 8px', borderRadius:5, border:'1px solid var(--border)' }}>{e}</span>)}
-            </div>
-            <ArrowUpRight size={14} style={{ color:'var(--accent)', flexShrink:0 }} />
-          </div>
+    <Link
+      to={`/event/${event.id}`}
+      className={cn('group flex items-start gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3 transition-all hover:border-[var(--brand-200)] hover:shadow-sm anim-fade-up', className)}
+      style={{ animationDelay: `${delay}s` }}
+    >
+      <SourceBadge name={event.sources?.[0]} />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
+          <span className="font-semibold text-[var(--text)]">{event.sources?.[0]}</span>
+          <span>·</span>
+          <span className="inline-flex items-center gap-1">
+            <Clock size={10} /> {fmtRelative(event.date)}
+          </span>
+        </div>
+        <h4 className="mt-0.5 line-clamp-2 text-sm font-semibold text-[var(--text)] group-hover:text-[var(--brand-600)]">
+          {event.title}
+        </h4>
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-[var(--text-muted)]">
+          <span className={sentimentPill(event.dominant_sentiment)} style={{ fontSize: '0.6rem' }}>
+            {event.dominant_sentiment}
+          </span>
+          <span>{event.article_count} articles</span>
+          <span className="font-semibold text-[var(--brand-600)]">{Math.round(event.similarity_score * 100)}% match</span>
         </div>
       </div>
+      <ArrowUpRight size={14} className="mt-1 text-[var(--text-muted)] opacity-0 transition-opacity group-hover:opacity-100" />
     </Link>
   )
 }

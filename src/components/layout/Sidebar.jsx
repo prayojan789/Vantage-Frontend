@@ -1,22 +1,14 @@
 import { useState } from 'react'
-import { NavLink } from 'react-router-dom'
-import { Newspaper, PanelLeftClose, PanelLeftOpen, CircleDot } from 'lucide-react'
+import { NavLink, Link } from 'react-router-dom'
+import { Sparkles, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
-import { SIDEBAR_GROUPS, TRACKED_SOURCES } from '../../layouts/navConfig.jsx'
+import { SIDEBAR_GROUPS, FOOTER_PAGES } from '../../layouts/navConfig.jsx'
 
 /**
- * Sidebar
+ * Sidebar — Chakra-style navigation
  *
- * Primary vertical navigation for the application shell. Built from the
- * centralised navConfig so the route table, sidebar, top bar, and command
- * palette always agree.
- *
- * Features:
- *   - Optional collapsed mode (icon-only)
- *   - Persistent state via localStorage
- *   - "Pipeline status" indicator
- *   - Tracked sources footer block
- *   - Full keyboard navigation (focus styles inherited from :focus-visible)
+ * Persistent, collapsible sidebar with a brand block, grouped nav
+ * links, and a footer that surfaces additional page shortcuts.
  */
 const STORAGE_KEY = 'vantage-sidebar-collapsed'
 
@@ -44,22 +36,25 @@ export default function Sidebar({ className }) {
       data-collapsed={collapsed || undefined}
       className={cn(
         'group/sidebar hidden md:flex flex-col h-screen sticky top-0 z-30',
-        'bg-surface border-r border-border',
+        'bg-[var(--surface)] border-r border-[var(--border-subtle)]',
         'transition-[width] duration-200 ease-out',
         collapsed ? 'w-[72px]' : 'w-64',
         className,
       )}
     >
       {/* Brand */}
-      <div className="h-14 flex items-center gap-2.5 px-4 border-b border-border">
-        <span
-          aria-hidden="true"
-          className="w-2 h-2 rounded-full bg-primary shrink-0"
-        />
+      <div className="flex h-16 items-center gap-2.5 border-b border-[var(--border-subtle)] px-4">
+        <Link
+          to="/dashboard"
+          aria-label="Vantage home"
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30 transition-transform hover:scale-105"
+        >
+          <Sparkles size={16} />
+        </Link>
         {!collapsed ? (
-          <div className="flex flex-col leading-tight min-w-0">
-            <span className="text-sm font-semibold tracking-tight text-text">Vantage</span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-text-muted">
+          <div className="flex min-w-0 flex-col leading-tight">
+            <span className="text-sm font-bold tracking-tight text-[var(--text)]">Vantage</span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
               News Intel · NP
             </span>
           </div>
@@ -67,83 +62,104 @@ export default function Sidebar({ className }) {
       </div>
 
       {/* Pipeline status */}
-      <div className={cn('border-b border-border', collapsed ? 'px-2 py-3' : 'px-4 py-3')}>
-        {collapsed ? (
-          <div
-            className="flex items-center justify-center"
-            title="Pipeline active · 7 sources"
-            aria-label="Pipeline active, 7 sources online"
-          >
-            <CircleDot size={14} className="text-success" />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-[11px] font-medium text-text-muted">
+      {!collapsed ? (
+        <div className="border-b border-[var(--border-subtle)] px-4 py-3">
+          <div className="flex items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--pos-line)] bg-[var(--pos-bg)] px-3 py-2 text-[11px] font-semibold text-[var(--green-600)]">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-60 animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--green-500)] opacity-60 anim-pulse" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--green-500)]" />
             </span>
             Pipeline active · 7 sources
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="border-b border-[var(--border-subtle)] px-2 py-3">
+          <div className="flex items-center justify-center" title="Pipeline active · 7 sources">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--green-500)] opacity-60 anim-pulse" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--green-500)]" />
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Nav groups */}
-      <nav className="flex-1 overflow-y-auto py-4 space-y-6">
+      <nav className="flex-1 overflow-y-auto py-4">
         {SIDEBAR_GROUPS.map(group => (
-          <div key={group.id} className={cn('flex flex-col gap-1', collapsed ? 'px-2' : 'px-3')}>
+          <div key={group.id} className={cn('mb-5 flex flex-col gap-0.5', collapsed ? 'px-2' : 'px-3')}>
             {!collapsed ? (
-              <p className="px-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
+              <p className="px-2 pb-1.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]">
                 {group.label}
               </p>
             ) : (
-              <div className="mx-2 mb-1 h-px bg-border" aria-hidden="true" />
+              <div className="mx-2 mb-1.5 h-px bg-[var(--border)]" aria-hidden="true" />
             )}
             {group.items.map(item => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 className={({ isActive }) => cn(
-                  'flex items-center gap-2.5 rounded-md text-sm font-medium',
+                  'group/item flex items-center gap-2.5 rounded-[var(--radius-lg)] text-sm font-medium',
                   'transition-colors duration-150',
                   collapsed ? 'justify-center h-10 w-12 mx-auto' : 'px-2.5 h-9',
                   isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-text-muted hover:text-text hover:bg-surface-muted',
+                    ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
                 )}
                 title={collapsed ? item.label : undefined}
               >
-                <item.icon size={16} className="shrink-0" aria-hidden="true" />
-                {!collapsed ? <span className="truncate">{item.label}</span> : null}
+                {({ isActive }) => (
+                  <>
+                    <item.icon
+                      size={16}
+                      className={cn(
+                        'flex-shrink-0 transition-colors',
+                        isActive ? 'text-[var(--brand-600)]' : 'text-[var(--text-muted)] group-hover/item:text-[var(--text)]',
+                      )}
+                      aria-hidden="true"
+                    />
+                    {!collapsed ? (
+                      <span className="truncate">{item.label}</span>
+                    ) : null}
+                    {!collapsed && isActive ? (
+                      <span className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--brand-500)]" />
+                    ) : null}
+                  </>
+                )}
               </NavLink>
             ))}
           </div>
         ))}
       </nav>
 
-      {/* Tracked sources footer */}
-      <div className={cn('border-t border-border', collapsed ? 'px-2 py-3' : 'px-4 py-3')}>
-        {!collapsed ? (
-          <>
-            <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted mb-2">
-              <Newspaper size={11} aria-hidden="true" /> Tracked sources
-            </p>
-            <ul className="space-y-0.5">
-              {TRACKED_SOURCES.map(source => (
-                <li
-                  key={source}
-                  className="text-[11px] text-text-muted truncate"
-                >
-                  {source}
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <div className="flex items-center justify-center" title="Tracked sources">
-            <Newspaper size={14} className="text-text-muted" />
+      {/* Footer — page shortcuts */}
+      {!collapsed ? (
+        <div className="border-t border-[var(--border-subtle)] px-4 py-3">
+          <p className="mb-2 px-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+            More pages
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {FOOTER_PAGES.map(p => (
+              <NavLink
+                key={p.to}
+                to={p.to}
+                className={({ isActive }) => cn(
+                  'rounded-[var(--radius-md)] px-2 py-1 text-[11px] font-semibold transition-colors',
+                  isActive
+                    ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
+                )}
+              >
+                {p.label}
+              </NavLink>
+            ))}
           </div>
-        )}
-      </div>
+          <div className="mt-3 flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+            <span>v1.0 · vantage</span>
+            <span className="font-mono">distilbert-v1</span>
+          </div>
+        </div>
+      ) : null}
 
       {/* Collapse toggle */}
       <button
@@ -152,9 +168,9 @@ export default function Sidebar({ className }) {
         aria-pressed={collapsed}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         className={cn(
-          'absolute -right-3 top-16 z-40 hidden md:inline-flex items-center justify-center',
-          'h-6 w-6 rounded-full border border-border bg-surface text-text-muted shadow-sm',
-          'hover:text-text hover:border-primary/40 transition-colors',
+          'absolute -right-3 top-20 z-40 hidden md:inline-flex items-center justify-center',
+          'h-6 w-6 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] shadow-md',
+          'hover:text-[var(--text)] hover:border-[var(--brand-300)] transition-colors',
         )}
       >
         {collapsed ? <PanelLeftOpen size={12} /> : <PanelLeftClose size={12} />}

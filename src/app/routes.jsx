@@ -15,7 +15,8 @@ import AIPlayground from '../pages/AIPlayground.jsx'
 import AIInsights from '../pages/AIInsights.jsx'
 import KnowledgeGraph from '../pages/KnowledgeGraph.jsx'
 import Search from '../pages/Search.jsx'
-import Notifications from '../pages/Notifications.jsx' 
+import Compare from '../pages/Compare.jsx'
+import Notifications from '../pages/Notifications.jsx'
 import Settings from '../pages/Settings.jsx'
 
 export const appRoutes = [
@@ -41,6 +42,7 @@ export const appRoutes = [
       { path: 'insights', element: <AIInsights />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'graphs', element: <KnowledgeGraph />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'search', element: <Search />, handle: { layout: 'default', pageWidth: 'wide' } },
+      { path: 'compare', element: <Compare />, handle: { layout: 'default', pageWidth: 'full', pageFlush: true, footer: false } },
       { path: 'notifications', element: <Notifications />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'settings', element: <Settings />, handle: { layout: 'default', pageWidth: 'wide' } },
     ],

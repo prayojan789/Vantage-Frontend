@@ -1,16 +1,13 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, Github, Twitter, Linkedin } from 'lucide-react'
+import { Sparkles, Github, Twitter, Linkedin, Heart } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 import { FOOTER_LINKS } from '../../layouts/navConfig.jsx'
 
 /**
  * Footer
  *
- * Site footer used inside the AppLayout. Surfaces a brand mark, the
- * platform's link groups, a short description, and a small status line.
- *
- * Stays out of the way: it does not fix itself to the viewport, and it
- * respects the page's max width.
+ * Chakra-style soft footer with brand block, link groups and a
+ * small status row.
  */
 const SOCIAL = [
   { label: 'GitHub',   href: '#', Icon: Github },
@@ -22,21 +19,25 @@ export default function Footer({ className }) {
   return (
     <footer
       className={cn(
-        'mt-12 border-t border-border bg-surface text-text-muted',
+        'mt-16 border-t border-[var(--border-subtle)] bg-[var(--surface)] text-[var(--text-muted)]',
         className,
       )}
     >
-      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 py-10">
+      <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(4,_1fr)]">
-          {/* Brand block */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Link to="/dashboard" className="inline-flex items-center gap-2.5">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-white">
-                <Sparkles size={14} aria-hidden="true" />
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30">
+                <Sparkles size={16} />
               </span>
-              <span className="text-sm font-semibold tracking-tight text-text">Vantage</span>
+              <div className="flex flex-col leading-tight">
+                <span className="text-sm font-bold tracking-tight text-[var(--text)]">Vantage</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
+                  News Intel · NP
+                </span>
+              </div>
             </Link>
-            <p className="text-sm leading-relaxed max-w-sm">
+            <p className="text-sm leading-relaxed max-w-sm text-[var(--text-soft)]">
               An AI-powered news intelligence platform built to help journalists,
               researchers, and policy analysts understand how Nepali publishers
               cover the same event — at a glance.
@@ -47,7 +48,7 @@ export default function Footer({ className }) {
                   <a
                     href={href}
                     aria-label={label}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-md text-text-muted hover:text-text hover:bg-surface-muted"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-lg)] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
                   >
                     <Icon size={15} />
                   </a>
@@ -56,18 +57,17 @@ export default function Footer({ className }) {
             </ul>
           </div>
 
-          {/* Link groups */}
           {FOOTER_LINKS.map(group => (
             <div key={group.title}>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted mb-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)] mb-3">
                 {group.title}
               </p>
-              <ul className="space-y-2">
+              <ul className="flex flex-col gap-2">
                 {group.links.map(link => (
                   <li key={link.to}>
                     <Link
                       to={link.to}
-                      className="text-sm hover:text-text transition-colors"
+                      className="text-sm text-[var(--text-soft)] transition-colors hover:text-[var(--brand-600)]"
                     >
                       {link.label}
                     </Link>
@@ -79,10 +79,12 @@ export default function Footer({ className }) {
         </div>
       </div>
 
-      <div className="border-t border-border">
-        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-          <span>© 2026 Vantage · Nepal News Intelligence</span>
-          <span className="font-mono tracking-wide text-text-muted">
+      <div className="border-t border-[var(--border-subtle)]">
+        <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col items-start justify-between gap-2 text-xs sm:flex-row sm:items-center">
+          <span className="inline-flex items-center gap-1.5">
+            © 2026 Vantage · Nepal News Intelligence · Built with <Heart size={11} className="text-[var(--red-500)]" /> in Kathmandu
+          </span>
+          <span className="font-mono tracking-wide text-[var(--text-muted)]">
             v1.0 · distilbert-vantage-v1
           </span>
         </div>

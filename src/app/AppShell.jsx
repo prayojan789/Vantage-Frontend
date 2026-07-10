@@ -1,21 +1,21 @@
 import { Suspense } from 'react'
-import { BrowserRouter, useRoutes } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import RouteErrorBoundary from '../components/RouteErrorBoundary.jsx'
 import PageLoading from '../components/PageLoading.jsx'
 import { appRoutes } from './routes.jsx'
 
-function AppRoutes() {
-  return useRoutes(appRoutes)
-}
+const router = createBrowserRouter(
+  appRoutes.map(r => ({
+    ...r,
+    errorElement: <RouteErrorBoundary />,
+  })),
+)
 
 export default function AppShell() {
   return (
-    <BrowserRouter>
-      <RouteErrorBoundary>
-        <Suspense fallback={<PageLoading label="Preparing the Vantage workspace…" />}>
-          <AppRoutes />
-        </Suspense>
-      </RouteErrorBoundary>
-    </BrowserRouter>
+    <RouterProvider
+      router={router}
+      fallbackElement={<PageLoading label="Preparing the Vantage workspace…" />}
+    />
   )
 }

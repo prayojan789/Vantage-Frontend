@@ -6,10 +6,8 @@ import { SIDEBAR_GROUPS, UTILITY_NAV } from '../../layouts/navConfig.jsx'
 /**
  * NavRail
  *
- * A compact, icon-only vertical navigation rail for ultra-wide or
- * dashboard-style layouts. It is intentionally narrower than the
- * Sidebar (~64px) and serves as an alternative to the full sidebar
- * when space is at a premium.
+ * A compact icon-only navigation rail for ultra-wide or dashboard-style
+ * layouts. ~64px wide.
  */
 export default function NavRail({ className }) {
   return (
@@ -17,19 +15,19 @@ export default function NavRail({ className }) {
       aria-label="Compact navigation"
       className={cn(
         'hidden xl:flex flex-col items-center h-screen sticky top-0 w-16 py-3',
-        'bg-surface border-r border-border',
+        'bg-[var(--surface)] border-r border-[var(--border-subtle)]',
         className,
       )}
     >
       <NavLink
         to="/dashboard"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary text-white shadow-sm"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30"
         aria-label="Vantage home"
       >
         <Sparkles size={15} />
       </NavLink>
 
-      <div className="mt-4 flex-1 overflow-y-auto w-full flex flex-col items-center gap-4">
+      <div className="mt-4 flex-1 overflow-y-auto w-full flex flex-col items-center gap-3">
         {SIDEBAR_GROUPS.map(group => (
           <div key={group.id} className="flex flex-col items-center gap-1 w-full">
             {group.items.map(item => (
@@ -39,10 +37,10 @@ export default function NavRail({ className }) {
                 title={item.label}
                 aria-label={item.label}
                 className={({ isActive }) => cn(
-                  'inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors',
+                  'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
                   isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-text-muted hover:text-text hover:bg-surface-muted',
+                    ? 'bg-[var(--brand-50)] text-[var(--brand-600)]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-muted)]',
                 )}
               >
                 <item.icon size={16} aria-hidden="true" />
@@ -52,7 +50,7 @@ export default function NavRail({ className }) {
         ))}
       </div>
 
-      <div className="flex flex-col items-center gap-1 pt-2 border-t border-border w-full">
+      <div className="flex flex-col items-center gap-1 pt-2 border-t border-[var(--border-subtle)] w-full">
         {UTILITY_NAV.map(item => (
           <NavLink
             key={item.to}
@@ -60,10 +58,10 @@ export default function NavRail({ className }) {
             title={item.label}
             aria-label={item.label}
             className={({ isActive }) => cn(
-              'inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors',
+              'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
               isActive
-                ? 'bg-primary/10 text-primary'
-                : 'text-text-muted hover:text-text hover:bg-surface-muted',
+                ? 'bg-[var(--brand-50)] text-[var(--brand-600)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-muted)]',
             )}
           >
             <item.icon size={16} aria-hidden="true" />

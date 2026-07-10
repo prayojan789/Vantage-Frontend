@@ -1,182 +1,85 @@
 /**
- * AIInsights.jsx
- * ──────────────
- * Vantage Nepal news intelligence frontend — AI Insights page.
- *
- * Surfaces AI-generated narrative insights about the current news
- * landscape as a vertical list of explainable insight cards. Each card
- * carries a title, 2–3 sentence narrative, a confidence pill, and
- * provenance metadata (events + article count).
- *
- * Insights are grounded in the existing MOCK_EVENTS dataset — no new
- * fixtures introduced.
+ * AIInsights.jsx — Explainable narrative insights
  */
-import { Lightbulb, TrendingUp, Users, AlertTriangle, BarChart3, Compass } from 'lucide-react'
+import { Sparkles, AlertTriangle, TrendingUp, Activity, Lightbulb, Zap, Layers } from 'lucide-react'
+import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import { Card, CardHeader, CardBody } from '../components/ui/Card.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
+import { StatCard } from '../components/DashboardComponents.jsx'
 
-// ── Hardcoded insights (grounded in MOCK_EVENTS) ──
 const INSIGHTS = [
-  {
-    icon: AlertTriangle,
-    iconColor: '#ef4444',
-    title: 'Coalition instability is the dominant theme',
-    body:
-      "Three of the six tracked events in the last 14 days revolve around coalition pressure, cabinet reshuffles, and party infighting. Coverage skews negative, suggesting the political narrative is anchored in instability rather than governance outcomes.",
-    confidence: { tone:'high',     label:'High confidence' },
-    provenance: 'Based on 3 events · 8 articles',
-  },
-  {
-    icon: TrendingUp,
-    iconColor: '#10b981',
-    title: 'RSP is gaining disproportionately positive coverage',
-    body:
-      'OnlineKhabar English and The Himalayan Times frame RSP and Balen Shah in a positive light across multiple events. Mentions cluster around reformist framing rather than policy specifics, indicating a brand-driven rather than issue-driven trend.',
-    confidence: { tone:'medium',   label:'Medium confidence' },
-    provenance: 'Based on 2 events · 5 articles',
-  },
-  {
-    icon: Users,
-    iconColor: '#6366f1',
-    title: 'KP Oli draws the most coverage — and the most negative sentiment',
-    body:
-      'Oli appears in cabinet-reshuffle, UML-congress, and coalition-stability stories. Sentiment is negative in two of those contexts and neutral-to-positive only in the procedural Congress coverage, which is consistent with an opposition-leader pattern.',
-    confidence: { tone:'high',     label:'High confidence' },
-    provenance: 'Based on 3 events · 9 articles',
-  },
-  {
-    icon: BarChart3,
-    iconColor: '#3b82f6',
-    title: 'Macroeconomic coverage is sparse but uniformly positive',
-    body:
-      'Only one tracked event covers the GDP-revision story, but both covering outlets (My Republica, The Himalayan Times) report a positive tone. This is a thin sample, so the optimism should be interpreted as a single-event signal rather than a trend.',
-    confidence: { tone:'low',      label:'Low confidence' },
-    provenance: 'Based on 1 event · 2 articles',
-  },
-  {
-    icon: Lightbulb,
-    iconColor: '#a855f7',
-    title: 'Border and constitutional stories stay neutral',
-    body:
-      'The Terai-border dispute and the Supreme-Court threshold ruling are both covered with neutral framing across multiple outlets. This suggests these topics have not yet been politicized in English-language coverage — a possible opening for sustained narrative tracking.',
-    confidence: { tone:'medium',   label:'Medium confidence' },
-    provenance: 'Based on 2 events · 7 articles',
-  },
-  {
-    icon: Compass,
-    iconColor: '#f59e0b',
-    title: 'Media-house tone is converging, not diverging',
-    body:
-      "Across the past week, sentiment trajectories for Kathmandu Post, Republica, OnlineKhabar, and The Himalayan Times are not moving further apart. Today's daily-coverage variance is being driven by event selection, not by editorial tilt.",
-    confidence: { tone:'medium',   label:'Medium confidence' },
-    provenance: 'Based on 4 outlets · 30-day trend',
-  },
+  { id: 1, type: 'trend',    title: 'Negative sentiment surge in "Political Stability" cluster', body: 'Three of the four top outlets have shifted to net-negative coverage of coalition stability over the past 48 hours. The strongest signal is in coverage of PM Dahal, which moved from -0.20 to -0.52 in the last week.', entities: ['PM Dahal', 'NC', 'UML'], severity: 'high', icon: TrendingUp },
+  { id: 2, type: 'anomaly',  title: 'Ministry of Finance coverage spike', body: 'Article count up 4× in the last 4 hours, with all sources framing the news as a fiscal credibility story. The World Bank GDP forecast is the dominant anchor across all 4 outlets.', entities: ['Finance Ministry', 'NRB', 'World Bank'], severity: 'medium', icon: Activity },
+  { id: 3, type: 'pattern',  title: 'Consistent framing of "Economic Reform" as "Risk"', body: '80% of tracked sources frame the economic reform package using the word "risk" in their lede paragraph. This is a clear pattern that suggests an underlying editorial consensus.', entities: ['Economic Reform'], severity: 'low', icon: Lightbulb },
+  { id: 4, type: 'alert',    title: 'KP Oli mention volume up 38% week-over-week', body: 'KP Oli has gone from being mentioned in 2 events to 5 events this week. Bias tracking is now active for the next 7 days to monitor tone shifts across all sources.', entities: ['KP Oli', 'UML'], severity: 'medium', icon: AlertTriangle },
+  { id: 5, type: 'cluster',  title: 'New mega-cluster forming around Election Reforms', body: 'Six new articles in the last 6 hours are all within 0.91 similarity of a single emerging event. We expect this to crystallize into a top-tier cluster within 24 hours.', entities: ['Election Commission', 'RSP', 'NC'], severity: 'low', icon: Layers },
+  { id: 6, type: 'sentiment',title: 'RSP tone shifts positive in OnlineKhabar', body: 'RSP coverage in OnlineKhabar English has shifted from -0.18 to +0.42 over the last 72 hours. The trigger event appears to be the announcement of new coalition agenda items.', entities: ['RSP', 'Rabi Lamichhane'], severity: 'low', icon: Zap },
 ]
 
-// Map our insight confidence tones → Badge tones
-const BADGE_TONE = {
-  high:   'success',
-  medium: 'warning',
-  low:    'info',
+const SEVERITY_MAP = {
+  high:   { color: 'red',    icon: AlertTriangle },
+  medium: { color: 'yellow', icon: Activity },
+  low:    { color: 'brand',  icon: Lightbulb },
 }
 
 export default function AIInsights() {
   return (
-    <div style={{ display:'flex', flexDirection:'column', gap:32 }}>
+    <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata
         title="AI Insights | Vantage"
-        description="Explainable, narrative AI insights about Nepal's current news landscape."
+        description="Explainable narrative insights, anomaly detection and pattern analysis."
       />
 
-      {/* ── Hero ── */}
-      <div
-        className="hero-gradient anim-fade-up anim-gradient"
-        style={{
-          borderRadius:24, padding:'40px 44px',
-          position:'relative', overflow:'hidden',
-          boxShadow:'0 24px 60px -24px rgba(11,16,32,0.45)',
-        }}
-      >
-        <span className="orb orb-pink"   style={{ width:260, height:260, right:-40, top:-80 }} />
-        <span className="orb orb-indigo" style={{ width:200, height:200, left:'-40px', bottom:'-60px' }} />
-        <span className="orb orb-purple" style={{ width:160, height:160, right:'32%', top:'40%' }} />
+      <PageHero
+        variant="gradient"
+        eyebrow={<><Sparkles size={11} /> AI Insights</>}
+        title="Explainable narrative insights"
+        description="Patterns, anomalies, and trends detected across the Nepali press — every insight with a confidence score and the entities it affects."
+        actions={
+          <Badge colorScheme="brand" size="lg">
+            <Sparkles size={11} /> distilbert-vantage-v1
+          </Badge>
+        }
+      />
 
-        <div style={{ position:'relative', zIndex:1, maxWidth:600 }}>
-          <p className="section-label" style={{ color:'#c7d2fe', marginBottom:12 }}>Explainable AI</p>
-          <h1 className="font-serif" style={{ fontSize:'2.4rem', color:'var(--text)', lineHeight:1.05, letterSpacing:'-0.02em', margin:'0 0 12px' }}>
-            AI <em style={{ fontStyle:'italic', color:'var(--accent)', fontWeight:600 }}>Insights</em>
-          </h1>
-          <p style={{ color:'rgba(248,250,252,0.7)', fontSize:'0.92rem', fontWeight:300, maxWidth:500, lineHeight:1.7 }}>
-            Narrative summaries generated from clustered events, entity sentiment, and source tone.
-            Every insight is grounded in the underlying articles — no black boxes.
-          </p>
-        </div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard label="Active insights"   value="14"   sub="across 7 sources"  icon={Sparkles} accent="brand" />
+        <StatCard label="Anomalies"          value="3"    sub="last 24 hours"     icon={AlertTriangle} accent="red" />
+        <StatCard label="Patterns"           value="8"    sub="rolling 30 days"   icon={Lightbulb} accent="yellow" />
+        <StatCard label="Avg confidence"     value="0.87" sub="model-graded"      icon={Activity} accent="green" />
       </div>
 
-      {/* ── Insight cards ── */}
-      <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+      <div className="grid gap-4 lg:grid-cols-2">
         {INSIGHTS.map((ins, i) => {
+          const sev = SEVERITY_MAP[ins.severity] || SEVERITY_MAP.low
           const Icon = ins.icon
-          // anim-fade-up → anim-fade-up-1 → anim-fade-up-2 …
-          const staggerClass = i === 0 ? 'anim-fade-up' : `anim-fade-up-${i}`
           return (
-            <div
-              key={ins.title}
-              className={`card ${staggerClass}`}
-              style={{ padding:'24px 28px', display:'flex', flexDirection:'column', gap:14 }}
-            >
-              <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:18, flexWrap:'wrap' }}>
-                <div style={{ display:'flex', alignItems:'flex-start', gap:14, flex:1, minWidth:260 }}>
-                  <div style={{
-                    width:40, height:40, borderRadius:11, flexShrink:0,
-                    background:`linear-gradient(135deg, ${ins.iconColor}22, ${ins.iconColor}10)`,
-                    border:`1px solid ${ins.iconColor}30`,
-                    display:'flex', alignItems:'center', justifyContent:'center',
-                  }}>
-                    <Icon size={18} style={{ color: ins.iconColor }} />
-                  </div>
-                  <div style={{ flex:1, minWidth:0 }}>
-                    <h3 className="font-syne" style={{
-                      fontSize:'1.05rem', fontWeight:700,
-                      color:'var(--text)', margin:'0 0 8px',
-                      letterSpacing:'-0.01em',
-                    }}>
-                      {ins.title}
-                    </h3>
-                    <p style={{
-                      fontSize:'0.85rem', color:'var(--text)', opacity:0.78,
-                      lineHeight:1.65, margin:0,
-                    }}>
-                      {ins.body}
-                    </p>
+            <Card key={ins.id} variant="elevated" className="anim-fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
+              <CardHeader>
+                <div className="flex items-start gap-3">
+                  <span className={`inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-50)] text-[var(--brand-600)]`}>
+                    <Icon size={16} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <Badge colorScheme={sev.color} size="sm">{ins.type}</Badge>
+                      <Badge colorScheme="gray" size="sm">{ins.severity}</Badge>
+                    </div>
+                    <h3 className="mt-2 text-sm font-bold text-[var(--text)]">{ins.title}</h3>
                   </div>
                 </div>
-                <Badge tone={BADGE_TONE[ins.confidence.tone]} className="shrink-0">
-                  {ins.confidence.label}
-                </Badge>
-              </div>
-
-              <div style={{
-                display:'flex', alignItems:'center', gap:8,
-                fontSize:'0.72rem', color:'var(--muted)',
-                paddingTop:12, borderTop:'1px solid var(--border)',
-              }}>
-                <span
-                  className="font-mono"
-                  style={{
-                    background:'var(--surface-2)',
-                    padding:'3px 8px', borderRadius:5,
-                    fontWeight:600, color:'var(--text)',
-                  }}
-                >
-                  {ins.provenance}
-                </span>
-                <span style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:5 }}>
-                  <Compass size={11} />
-                  Generated from MOCK_EVENTS
-                </span>
-              </div>
-            </div>
+              </CardHeader>
+              <CardBody>
+                <p className="text-sm leading-relaxed text-[var(--text-soft)]">{ins.body}</p>
+                <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-[var(--border-subtle)] pt-3">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[var(--text-muted)]">Entities:</span>
+                  {ins.entities.map(e => (
+                    <span key={e} className="rounded-md bg-[var(--brand-50)] px-2 py-0.5 text-[11px] font-semibold text-[var(--brand-700)]">{e}</span>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
           )
         })}
       </div>

@@ -1,36 +1,39 @@
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import { sentimentColor, sentimentPill, sentimentArrow } from '../utils/helpers.js'
 
-export default function SentimentChart({ entity }) {
+/**
+ * SentimentChart
+ *
+ * Per-entity horizontal bar with a sentiment pill.
+ */
+export function SentimentChart({ entity }) {
   const { name, sentiment, score } = entity
   const pct = Math.max(0, Math.min(100, Math.round((score ?? 0) * 100)))
   const color = sentimentColor(sentiment)
+  const Icon = sentiment === 'positive' ? TrendingUp : sentiment === 'negative' ? TrendingDown : Minus
 
   return (
-    <div style={{ marginBottom:14 }}>
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
-        <span style={{ fontSize:'0.82rem', fontWeight:600, color:'var(--text)' }}>{name}</span>
-        <span className={sentimentPill(sentiment)} style={{ fontSize:'0.62rem' }}>
-          {sentimentArrow(sentiment)} {pct}%
+    <div className="mb-3.5 last:mb-0">
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-sm font-semibold text-[var(--text)]">{name}</span>
+        <span className={sentimentPill(sentiment)} style={{ fontSize: '0.62rem' }}>
+          <Icon size={9} /> {pct}%
         </span>
       </div>
-      <div style={{
-        height:6, background:'var(--surface-2)',
-        borderRadius:99, overflow:'hidden',
-        border:'1px solid var(--border)',
-      }}>
-        <div style={{
-          width:`${pct}%`, height:'100%',
-          background:`linear-gradient(90deg, ${color}, ${color}cc)`,
-          borderRadius:99,
-          transition:'width .7s cubic-bezier(.4,0,.2,1)',
-        }} />
+      <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-sunken)]">
+        <div
+          className="h-full rounded-full transition-all duration-700"
+          style={{
+            width: `${pct}%`,
+            background: `linear-gradient(90deg, ${color}, ${color}cc)`,
+          }}
+        />
       </div>
-      {entity.context && (
-        <p style={{
-          fontSize:'0.7rem', color:'var(--muted)', fontStyle:'italic',
-          marginTop:5, paddingLeft:2, lineHeight:1.5,
-        }}>{entity.context}</p>
-      )}
+      {entity.context ? (
+        <p className="mt-1.5 text-[11px] italic leading-relaxed text-[var(--text-muted)]">
+          {entity.context}
+        </p>
+      ) : null}
     </div>
   )
 }

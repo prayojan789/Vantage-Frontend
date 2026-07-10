@@ -5,11 +5,12 @@
  * Set USE_MOCK = false in src/utils/config.js when your FastAPI backend is running.
  *
  * ENDPOINTS (match these in FastAPI):
- *   GET  /events        → { events:[...], total:N }
- *   GET  /events/:id    → { id, title, date, articles:[...] }
- *   GET  /bias          → { media_houses:[...], top_entities:[...] }
- *   POST /analyze       → { entities:[...], overall_sentiment, processing_ms }
- *   GET  /sources       → { sources:[...] }
+ *   GET  /events         → { events:[...], total:N }
+ *   GET  /events/:id     → { id, title, date, articles:[...] }
+ *   GET  /articles/:id   → { id, headline, summary, source, sentiment, entities:[...] }
+ *   GET  /bias           → { media_houses:[...], top_entities:[...] }
+ *   POST /analyze        → { entities:[...], overall_sentiment, processing_ms }
+ *   GET  /sources        → { sources:[...] }
  *
  * See src/utils/mockData.js for exact JSON shapes.
  */
@@ -26,8 +27,9 @@ client.interceptors.response.use(
   err => Promise.reject(new Error(err.response?.data?.detail || err.message || 'Request failed'))
 )
 
-export const getEvents    = (params = {}) => client.get('/events', { params })
-export const getEventById = id            => client.get(`/events/${id}`)
-export const getBiasReport = (params={})  => client.get('/bias', { params })
-export const analyzeText  = text          => client.post('/analyze', { text })
-export const getSources   = ()            => client.get('/sources')
+export const getEvents      = (params = {}) => client.get('/events', { params })
+export const getEventById   = id            => client.get(`/events/${id}`)
+export const getArticleById = id            => client.get(`/articles/${id}`)
+export const getBiasReport  = (params={})   => client.get('/bias', { params })
+export const analyzeText    = text          => client.post('/analyze', { text })
+export const getSources     = ()            => client.get('/sources')

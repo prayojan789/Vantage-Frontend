@@ -124,7 +124,7 @@ export function AppLayout({ variant: variantProp }) {
 
   return (
     <AppLayoutProvider value={{ variant, drawerOpen, setDrawerOpen }}>
-      <div className={cn('min-h-screen flex flex-col bg-bg text-text')}>
+      <div className="min-h-screen flex flex-col bg-[var(--bg)] text-[var(--text)]">
         <MobileNav open={drawerOpen} onClose={() => setDrawerOpen(false)} />
         {renderChrome()}
       </div>
