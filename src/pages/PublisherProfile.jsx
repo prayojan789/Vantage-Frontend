@@ -15,7 +15,7 @@ import { cn } from '../lib/utils.js'
 
 const SOURCE_COLORS = {
   'The Kathmandu Post':   '#dc2626',
-  'Republica':            '#2563eb',
+  'Republica':            '#f97316',
   'OnlineKhabar English': '#f59e0b',
   'The Himalayan Times':  '#16a34a',
 }
@@ -32,7 +32,7 @@ export default function PublisherProfile() {
   }, [id])
 
   if (!house) return null
-  const color = SOURCE_COLORS[house.name] || '#2563eb'
+  const color = SOURCE_COLORS[house.name] || '#f97316'
   const total = house.positive + house.negative + house.neutral
   const latest = house.trend?.[house.trend.length - 1]?.score ?? 0
   const negPct = total ? Math.round(house.negative / total * 100) : 0

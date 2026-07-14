@@ -37,7 +37,7 @@ export default function SignUp() {
 
   const strength = scorePassword(form.password)
   const strengthLabel = ['Too short', 'Weak', 'Fair', 'Good', 'Strong'][strength.score]
-  const strengthColor = ['bg-[var(--red-500)]', 'bg-[var(--red-500)]', 'bg-[var(--yellow-500)]', 'bg-[var(--blue-500)]', 'bg-[var(--green-500)]'][strength.score]
+  const strengthColor = ['bg-[var(--red-500)]', 'bg-[var(--red-500)]', 'bg-[var(--yellow-500)]', 'bg-[var(--orange-500)]', 'bg-[var(--green-500)]'][strength.score]
 
   const onSubmit = async (e) => {
     e.preventDefault()

@@ -7,7 +7,7 @@ import { cn } from '../../lib/utils.js'
  * Chakra-style status alert with soft color schemes.
  */
 const statusMap = {
-  info:     { Icon: Info,          bg: 'bg-[var(--blue-50)]',    fg: 'text-[var(--blue-600)]',    border: 'border-[#bfdbfe]' },
+  info:     { Icon: Info,          bg: 'bg-[var(--orange-50)]',   fg: 'text-[var(--orange-700)]',   border: 'border-[#fed7aa]' },
   success:  { Icon: CheckCircle2,  bg: 'bg-[var(--green-50)]',   fg: 'text-[var(--green-600)]',   border: 'border-[var(--pos-line)]' },
   warning:  { Icon: AlertTriangle, bg: 'bg-[var(--yellow-50)]',  fg: 'text-[var(--yellow-600)]',  border: 'border-[var(--neu-line)]' },
   error:    { Icon: XCircle,       bg: 'bg-[var(--red-50)]',     fg: 'text-[var(--red-600)]',     border: 'border-[var(--neg-line)]' },
@@ -38,7 +38,7 @@ export function Alert({
         s.fg,
         s.border,
         variantMap[variant],
-        isSolid && 'bg-gradient-to-br from-[var(--brand-600)] to-[var(--purple-600)] border-transparent',
+        isSolid && 'bg-gradient-to-br from-[var(--brand-600)] to-[var(--orange-600)] border-transparent',
         className,
       )}
       {...rest}

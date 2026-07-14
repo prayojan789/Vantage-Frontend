@@ -8,14 +8,14 @@ import { cn } from '../../lib/utils.js'
 const schemes = {
   gray:   'bg-[var(--surface-muted)] text-[var(--text-muted)] border-[var(--border)]',
   brand:  'bg-[var(--brand-50)]      text-[var(--brand-700)]     border-[var(--brand-100)]',
-  blue:   'bg-[var(--blue-50)]       text-[var(--blue-600)]      border-[#bfdbfe]',
+  blue:   'bg-[var(--orange-50)]     text-[var(--orange-700)]    border-[#fed7aa]',
   green:  'bg-[var(--green-50)]      text-[var(--green-600)]     border-[var(--pos-line)]',
   red:    'bg-[var(--red-50)]        text-[var(--red-600)]       border-[var(--neg-line)]',
   yellow: 'bg-[var(--yellow-50)]     text-[var(--yellow-600)]    border-[var(--neu-line)]',
   purple: 'bg-[var(--purple-50)]     text-[var(--purple-600)]    border-[#e9d5ff]',
   pink:   'bg-[var(--pink-50)]       text-[var(--pink-600)]      border-[#fbcfe8]',
   teal:   'bg-[var(--teal-50)]       text-[var(--teal-600)]      border-[#99f6e4]',
-  cyan:   'bg-[var(--cyan-50)]       text-[var(--cyan-600)]      border-[#a5f3fc]',
+  cyan:   'bg-[var(--orange-50)]     text-[var(--orange-700)]    border-[#fed7aa]',
   orange: 'bg-[var(--orange-50)]     text-[var(--orange-600)]    border-[#fed7aa]',
 }
 

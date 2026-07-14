@@ -54,7 +54,7 @@ const ENTITY_ROSTER = [
   { match: 'Election Commission', display: 'Election Commission', type: 'Org' },
 ]
 
-const SCHEMES = ['brand', 'blue', 'green', 'red', 'yellow', 'purple', 'pink', 'cyan', 'teal', 'orange', 'blue', 'cyan']
+const SCHEMES = ['brand', 'orange', 'green', 'red', 'yellow', 'purple', 'pink', 'orange', 'teal', 'orange', 'orange', 'orange']
 
 function buildTrend(seed) {
   let v = 0

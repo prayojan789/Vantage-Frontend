@@ -34,7 +34,7 @@ import { cn } from '../lib/utils.js'
 
 const SOURCE_COLORS = {
   'The Kathmandu Post':   '#dc2626',
-  'Republica':            '#2563eb',
+  'Republica':            '#f97316',
   'OnlineKhabar English': '#f59e0b',
   'The Himalayan Times':  '#16a34a',
 }
@@ -188,7 +188,7 @@ export default function BiasReport() {
             {data.media_houses.map((m, i) => {
               const total = m.positive + m.negative + m.neutral
               const latest = m.trend[m.trend.length - 1]?.score ?? 0
-              const color = SOURCE_COLORS[m.name] || '#2563eb'
+              const color = SOURCE_COLORS[m.name] || '#f97316'
               return (
                 <div
                   key={m.name}
@@ -265,7 +265,7 @@ export default function BiasReport() {
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine y={0} stroke="var(--border-strong)" />
               {data.media_houses.map((m, i) => {
-                const color = SOURCE_COLORS[m.name] || ['#4f46e5', '#0ea5e9', '#8b5cf6', '#10b981'][i % 4]
+                const color = SOURCE_COLORS[m.name] || ['#f97316', '#fb923c', '#fdba74', '#10b981'][i % 4]
                 return (
                   <Line
                     key={m.name}
@@ -300,7 +300,7 @@ export default function BiasReport() {
             <div className="grid gap-3 sm:grid-cols-2">
               {topEntities.map((name, i) => {
                 const max = topEntities.length
-                const colors = ['#4f46e5', '#0ea5e9', '#8b5cf6', '#10b981', '#ef4444', '#f59e0b']
+                const colors = ['#f97316', '#fb923c', '#fdba74', '#10b981', '#ef4444', '#f59e0b']
                 return (
                   <div key={name} className="flex items-center gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] p-3">
                     <span

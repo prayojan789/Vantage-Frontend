@@ -29,6 +29,7 @@ import { Button } from '../components/ui/Button.jsx'
 import { Card } from '../components/ui/Card.jsx'
 import { Avatar } from '../components/ui/Avatar.jsx'
 import { cn } from '../lib/utils.js'
+import { useAuth } from '../providers/AuthProvider.jsx'
 
 const USE_CASES = [
   { id: 1, title: 'View news feed',          desc: 'Live clustered coverage with sentiment overview',            icon: Layers,         to: '/dashboard' },
@@ -65,6 +66,7 @@ const TIMELINE = [
 ]
 
 export default function Landing() {
+  const { user, signOut } = useAuth()
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <PageMetadata
@@ -96,12 +98,33 @@ export default function Landing() {
             ))}
           </nav>
           <div className="flex items-center gap-2">
-            <Link to="/dashboard" className="hidden sm:inline-flex h-9 items-center text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)]">
-              Sign in
-            </Link>
-            <Button as={Link} to="/dashboard" rightIcon={<ArrowRight size={14} />}>
-              Open workspace
-            </Button>
+            {user ? (
+              <>
+                <span className="hidden items-center gap-2 sm:inline-flex h-9 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm font-semibold text-[var(--text)]">
+                  <Avatar name={user.name} size="xs" />
+                  {user.name}
+                </span>
+                <Button as={Link} to="/dashboard" rightIcon={<ArrowRight size={14} />}>
+                  Open workspace
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => { signOut() }}
+                >
+                  Sign out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/sign-in" className="hidden sm:inline-flex h-9 items-center text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)]">
+                  Sign in
+                </Link>
+                <Button as={Link} to="/sign-up" rightIcon={<ArrowRight size={14} />}>
+                  Create account
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </header>

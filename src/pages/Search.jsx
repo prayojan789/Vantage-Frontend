@@ -67,7 +67,7 @@ const entityEventIndex = ENTITY_POOL.reduce((acc, name) => {
 
 const TYPE_META = {
   event:   { label: 'Event',   tone: 'brand',  icon: Layers },
-  article: { label: 'Article', tone: 'blue',   icon: Newspaper },
+  article: { label: 'Article', tone: 'orange', icon: Newspaper },
   entity:  { label: 'Entity',  tone: 'gray',   icon: User },
 }
 
@@ -325,7 +325,7 @@ function ResultCard({ result, query, delay = 0 }) {
           className={cn(
             'inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-[10px] font-bold uppercase tracking-wider',
             result.type === 'event'   && 'border-[var(--brand-100)] bg-[var(--brand-50)] text-[var(--brand-700)]',
-            result.type === 'article' && 'border-[#bfdbfe] bg-[var(--blue-50)] text-[var(--blue-600)]',
+            result.type === 'article' && 'border-[#fed7aa] bg-[var(--orange-50)] text-[var(--orange-700)]',
             result.type === 'entity'  && 'border-[var(--border)] bg-[var(--surface-muted)] text-[var(--text-muted)]',
           )}
         >

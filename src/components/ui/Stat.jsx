@@ -71,14 +71,14 @@ export function StatIcon({ className, children, ...rest }) {
  */
 const accentMap = {
   brand:  { bg: 'bg-[var(--brand-50)]',  fg: 'text-[var(--brand-600)]'  },
-  blue:   { bg: 'bg-[var(--blue-50)]',   fg: 'text-[var(--blue-600)]'   },
+  blue:   { bg: 'bg-[var(--orange-50)]', fg: 'text-[var(--orange-600)]'   },
   green:  { bg: 'bg-[var(--green-50)]',  fg: 'text-[var(--green-600)]'  },
   red:    { bg: 'bg-[var(--red-50)]',    fg: 'text-[var(--red-600)]'    },
   yellow: { bg: 'bg-[var(--yellow-50)]', fg: 'text-[var(--yellow-600)]' },
   purple: { bg: 'bg-[var(--purple-50)]', fg: 'text-[var(--purple-600)]' },
   pink:   { bg: 'bg-[var(--pink-50)]',   fg: 'text-[var(--pink-600)]'   },
   teal:   { bg: 'bg-[var(--teal-50)]',   fg: 'text-[var(--teal-600)]'   },
-  cyan:   { bg: 'bg-[var(--cyan-50)]',   fg: 'text-[var(--cyan-600)]'   },
+  cyan:   { bg: 'bg-[var(--orange-50)]', fg: 'text-[var(--orange-600)]'   },
   orange: { bg: 'bg-[var(--orange-50)]', fg: 'text-[var(--orange-600)]' },
 }
 

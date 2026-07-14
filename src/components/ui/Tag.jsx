@@ -9,7 +9,7 @@ import { cn } from '../../lib/utils.js'
 const schemes = {
   gray:   'bg-[var(--surface-muted)] text-[var(--text)] border-[var(--border)]',
   brand:  'bg-[var(--brand-50)] text-[var(--brand-700)] border-[var(--brand-100)]',
-  blue:   'bg-[var(--blue-50)] text-[var(--blue-600)] border-[#bfdbfe]',
+  blue:   'bg-[var(--orange-50)] text-[var(--orange-700)] border-[#fed7aa]',
   green:  'bg-[var(--green-50)] text-[var(--green-600)] border-[var(--pos-line)]',
   red:    'bg-[var(--red-50)] text-[var(--red-600)] border-[var(--neg-line)]',
   yellow: 'bg-[var(--yellow-50)] text-[var(--yellow-600)] border-[var(--neu-line)]',

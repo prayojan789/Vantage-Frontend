@@ -7,7 +7,7 @@ import { cn } from '../../lib/utils.js'
  */
 const colorSchemes = {
   brand: 'is-on:bg-[var(--brand-500)]',
-  blue:  'is-on:bg-[var(--blue-500)]',
+  blue:  'is-on:bg-[var(--orange-500)]',
   green: 'is-on:bg-[var(--green-500)]',
   red:   'is-on:bg-[var(--red-500)]',
 }

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 import { useTheme } from '../../providers/ThemeProvider.jsx'
+import { useAuth } from '../../providers/AuthProvider.jsx'
 import { Avatar } from '../ui/Avatar.jsx'
 
 /**
@@ -31,11 +32,14 @@ export default function TopBar({ onMenuClick, className }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { theme, setTheme } = useTheme()
+  const { user, signOut } = useAuth()
   const [themeOpen, setThemeOpen] = useState(false)
   const [userOpen, setUserOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const themeRef = useRef(null)
   const userRef = useRef(null)
+
+  const initialsName = user?.name || 'Guest'
 
   useEffect(() => {
     if (!themeOpen) return undefined
@@ -76,6 +80,12 @@ export default function TopBar({ onMenuClick, className }) {
         document.querySelector('input[data-cmdk]')?.focus()
       }
     }
+
+  const handleSignOut = () => {
+    signOut()
+    setUserOpen(false)
+    navigate('/sign-in', { replace: true })
+  }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [])
@@ -194,55 +204,66 @@ export default function TopBar({ onMenuClick, className }) {
           </div>
 
           {/* User menu */}
-          <div ref={userRef} className="relative">
-            <button
-              type="button"
-              onClick={() => setUserOpen(o => !o)}
-              aria-haspopup="menu"
-              aria-expanded={userOpen}
-              className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-1.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
-            >
-              <Avatar name="Prayojan" size="xs" />
-              <ChevronDown size={12} className="hidden sm:inline-block" />
-            </button>
-            {userOpen ? (
-              <div
-                role="menu"
-                className="absolute right-0 mt-2 w-60 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-lg z-50"
+          {user ? (
+            <div ref={userRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setUserOpen(o => !o)}
+                aria-haspopup="menu"
+                aria-expanded={userOpen}
+                className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-1.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
               >
-                <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-3 py-3">
-                  <Avatar name="Prayojan" size="sm" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-[var(--text)]">Prayojan</p>
-                    <p className="text-[11px] text-[var(--text-muted)]">prayojan@vantage.np</p>
+                <Avatar name={initialsName} size="xs" />
+                <ChevronDown size={12} className="hidden sm:inline-block" />
+              </button>
+              {userOpen ? (
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-60 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-lg z-50"
+                >
+                  <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-3 py-3">
+                    <Avatar name={initialsName} size="sm" />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-[var(--text)]">{user.name}</p>
+                      <p className="text-[11px] text-[var(--text-muted)]">{user.email}</p>
+                    </div>
+                  </div>
+                  {[
+                    { to: '/dashboard',     label: 'Dashboard',     Icon: LayoutDashboard },
+                    { to: '/settings',      label: 'Settings',      Icon: SettingsIcon },
+                    { to: '/notifications', label: 'Notifications', Icon: BellRing },
+                  ].map(({ to, label, Icon }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      onClick={() => setUserOpen(false)}
+                      role="menuitem"
+                      className="flex items-center gap-2 px-3 h-9 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
+                    >
+                      <Icon size={14} /> {label}
+                    </Link>
+                  ))}
+                  <div className="border-t border-[var(--border-subtle)]">
+                    <button
+                      type="button"
+                      onClick={handleSignOut}
+                      role="menuitem"
+                      className="flex w-full items-center gap-2 px-3 h-9 text-sm font-medium text-[var(--red-600)] transition-colors hover:bg-[var(--red-50)]"
+                    >
+                      <LogOut size={14} /> Sign out
+                    </button>
                   </div>
                 </div>
-                {[
-                  { to: '/dashboard',     label: 'Dashboard',     Icon: LayoutDashboard },
-                  { to: '/settings',      label: 'Settings',      Icon: SettingsIcon },
-                  { to: '/notifications', label: 'Notifications', Icon: BellRing },
-                ].map(({ to, label, Icon }) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    onClick={() => setUserOpen(false)}
-                    role="menuitem"
-                    className="flex items-center gap-2 px-3 h-9 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
-                  >
-                    <Icon size={14} /> {label}
-                  </Link>
-                ))}
-                <div className="border-t border-[var(--border-subtle)]">
-                  <button
-                    role="menuitem"
-                    className="flex w-full items-center gap-2 px-3 h-9 text-sm font-medium text-[var(--red-600)] transition-colors hover:bg-[var(--red-50)]"
-                  >
-                    <LogOut size={14} /> Sign out
-                  </button>
-                </div>
-              </div>
-            ) : null}
-          </div>
+              ) : null}
+            </div>
+          ) : (
+            <Link
+              to="/sign-in"
+              className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] bg-[var(--brand-600)] px-3 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[var(--brand-700)]"
+            >
+              <UserIcon size={13} /> Sign in
+            </Link>
+          )}
         </div>
       </div>
     </header>

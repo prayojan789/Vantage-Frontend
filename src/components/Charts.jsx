@@ -197,12 +197,12 @@ export function ActivityFeed({ items = [], className }) {
 
 const palette = {
   'The Kathmandu Post':   { bg: 'bg-[var(--red-50)]',    fg: 'text-[#b91c1c]' },
-  'Republica':            { bg: 'bg-[var(--blue-50)]',   fg: 'text-[#1d4ed8]' },
+  'Republica':            { bg: 'bg-[var(--orange-50)]', fg: 'text-[#c2410c]' },
   'OnlineKhabar English': { bg: 'bg-[var(--yellow-50)]', fg: 'text-[#b45309]' },
   'The Himalayan Times':  { bg: 'bg-[var(--green-50)]',  fg: 'text-[#047857]' },
   'My Republica':         { bg: 'bg-[#ede9fe]',          fg: 'text-[#6d28d9]' },
   'Setopati English':     { bg: 'bg-[var(--pink-50)]',   fg: 'text-[#be185d]' },
-  'Nepal Monitor':        { bg: 'bg-[var(--cyan-50)]',   fg: 'text-[#0e7490]' },
+  'Nepal Monitor':        { bg: 'bg-[var(--orange-50)]', fg: 'text-[#9a3412]' },
 }
 
 export function SourceBadge({ name, size = 'sm', className }) {

@@ -50,10 +50,10 @@ export default function PageHero({
       >
         <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0 max-w-2xl">
-            {eyebrow ? <div className="eyebrow mb-3 text-blue-200">{eyebrow}</div> : null}
+            {eyebrow ? <div className="eyebrow mb-3 text-orange-200">{eyebrow}</div> : null}
             {title ? <h1 className="h-display text-white">{title}</h1> : null}
             {description ? (
-              <p className="mt-2 text-sm text-indigo-100/80 sm:text-base">{description}</p>
+              <p className="mt-2 text-sm text-orange-100/85 sm:text-base">{description}</p>
             ) : null}
             {children}
           </div>
@@ -91,3 +91,4 @@ export default function PageHero({
     </section>
   )
 }
+   

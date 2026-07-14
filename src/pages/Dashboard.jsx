@@ -412,7 +412,7 @@ export default function Dashboard() {
         <div className="card-elevated p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--blue-50)] text-[var(--blue-600)]">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--orange-50)] text-[var(--orange-700)]">
                 <Building2 size={14} />
               </span>
               <h2 className="section-title">Source activity</h2>
@@ -424,7 +424,7 @@ export default function Dashboard() {
           <p className="mt-1 text-xs text-[var(--text-muted)]">Articles contributed in the last 24h.</p>
 
           <div className="mt-5">
-            <BarList items={sourceActivity.map(s => ({ ...s, color: 'var(--blue-500)' }))} />
+            <BarList items={sourceActivity.map(s => ({ ...s, color: 'var(--orange-500)' }))} />
           </div>
         </div>
       </div>

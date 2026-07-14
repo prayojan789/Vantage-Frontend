@@ -64,7 +64,7 @@ export default function LiveAnalysis() {
     finally { setLoading(false) }
   }
 
-  const overallColor = result ? sentimentColor(result.overall_sentiment) : '#2563eb'
+  const overallColor = result ? sentimentColor(result.overall_sentiment) : '#f97316'
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
@@ -147,7 +147,7 @@ export default function LiveAnalysis() {
 
           <div className="card-elevated overflow-hidden">
             <div className="flex items-center gap-2 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-4 py-3">
-              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--blue-50)] text-[var(--blue-600)]">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--orange-50)] text-[var(--orange-700)]">
                 <Cpu size={13} />
               </span>
               <p className="eyebrow text-[var(--brand-700)]">Model specs</p>

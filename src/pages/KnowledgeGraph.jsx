@@ -9,11 +9,11 @@ import { StatCard } from '../components/DashboardComponents.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
 
 const NODES = [
-  { id: 'kp-oli',     name: 'KP Oli',         type: 'Person', x: 30, y: 30, color: '#2563eb' },
-  { id: 'uml',         name: 'UML',            type: 'Party',  x: 50, y: 15, color: '#1d4ed8' },
-  { id: 'rsp',         name: 'RSP',            type: 'Party',  x: 75, y: 30, color: '#0ea5e9' },
-  { id: 'nc',          name: 'Nepali Congress', type: 'Party',  x: 25, y: 65, color: '#06b6d4' },
-  { id: 'pm-dahal',    name: 'PM Dahal',       type: 'Person', x: 50, y: 50, color: '#3b82f6' },
+  { id: 'kp-oli',     name: 'KP Oli',         type: 'Person', x: 30, y: 30, color: '#f97316' },
+  { id: 'uml',         name: 'UML',            type: 'Party',  x: 50, y: 15, color: '#ea580c' },
+  { id: 'rsp',         name: 'RSP',            type: 'Party',  x: 75, y: 30, color: '#fb923c' },
+  { id: 'nc',          name: 'Nepali Congress', type: 'Party',  x: 25, y: 65, color: '#fdba74' },
+  { id: 'pm-dahal',    name: 'PM Dahal',       type: 'Person', x: 50, y: 50, color: '#c2410c' },
   { id: 'balen',       name: 'Balen Shah',     type: 'Person', x: 80, y: 65, color: '#16a34a' },
   { id: 'supreme',     name: 'Supreme Court',  type: 'Org',    x: 50, y: 85, color: '#f59e0b' },
   { id: 'nrb',         name: 'NRB',            type: 'Org',    x: 15, y: 45, color: '#dc2626' },

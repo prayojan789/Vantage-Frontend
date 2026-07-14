@@ -1,5 +1,8 @@
 import Landing from '../pages/Landing.jsx'
 import AppLayout from '../layouts/AppLayout.jsx'
+import AuthLayout from '../layouts/AuthLayout.jsx'
+import SignIn from '../pages/SignIn.jsx'
+import SignUp from '../pages/SignUp.jsx'
 import Dashboard from '../pages/Dashboard.jsx'
 import Events from '../pages/Events.jsx'
 import Articles from '../pages/Articles.jsx'
@@ -18,6 +21,7 @@ import Search from '../pages/Search.jsx'
 import Compare from '../pages/Compare.jsx'
 import Notifications from '../pages/Notifications.jsx'
 import Settings from '../pages/Settings.jsx'
+import AuthGuard from '../components/AuthGuard.jsx'
 
 export const appRoutes = [
   {
@@ -25,7 +29,18 @@ export const appRoutes = [
     element: <Landing />,
   },
   {
-    element: <AppLayout />,
+    element: <AuthLayout />,
+    children: [
+      { path: 'sign-in', element: <SignIn /> },
+      { path: 'sign-up', element: <SignUp /> },
+    ],
+  },
+  {
+    element: (
+      <AuthGuard>
+        <AppLayout />
+      </AuthGuard>
+    ),
     children: [
       { path: 'dashboard', element: <Dashboard />, handle: { layout: 'default', pageWidth: 'wide' } },
       { path: 'events', element: <Events />, handle: { layout: 'default', pageWidth: 'wide' } },
