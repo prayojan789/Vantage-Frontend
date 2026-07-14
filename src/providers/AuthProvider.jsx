@@ -58,10 +58,18 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { setHydrated(true) }, [])
 
-  const signIn = useCallback(async ({ email, password }) => {
+  const signIn = useCallback(async ({ email, password, remember = true }) => {
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    if (!normalizedEmail) return { ok: false, error: 'Please enter your email.' }
+    if (!password) return { ok: false, error: 'Please enter your password.' }
+    // Simple shape check — full RFC validation happens server-side
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return { ok: false, error: 'That email address doesn\u2019t look right.' }
+    }
+
     const users = readUsers()
     const found = users.find(
-      u => u.email.toLowerCase() === (email || '').toLowerCase() && u.password === password,
+      u => u.email.toLowerCase() === normalizedEmail && u.password === password,
     )
     if (!found) {
       return { ok: false, error: 'Invalid email or password.' }
@@ -70,6 +78,7 @@ export function AuthProvider({ children }) {
       name: found.name,
       email: found.email,
       role: found.role,
+      remember: !!remember,
       signedInAt: new Date().toISOString(),
     }
     setUser(session)
@@ -78,20 +87,25 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signUp = useCallback(async ({ name, email, password }) => {
-    if (!name?.trim()) return { ok: false, error: 'Please enter your name.' }
-    if (!email?.trim()) return { ok: false, error: 'Please enter your email.' }
+    const cleanName = (name || '').trim()
+    const normalizedEmail = (email || '').trim().toLowerCase()
+    if (!cleanName) return { ok: false, error: 'Please enter your name.' }
+    if (!normalizedEmail) return { ok: false, error: 'Please enter your email.' }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      return { ok: false, error: 'That email address doesn\u2019t look right.' }
+    }
     if (!password || password.length < 6) {
       return { ok: false, error: 'Password must be at least 6 characters.' }
     }
     const users = readUsers()
-    const exists = users.some(u => u.email.toLowerCase() === email.toLowerCase())
+    const exists = users.some(u => u.email.toLowerCase() === normalizedEmail)
     if (exists) return { ok: false, error: 'An account with that email already exists.' }
 
     const newUser = {
-      name: name.trim(),
-      email: email.trim(),
+      name: cleanName,
+      email: normalizedEmail,
       password,
-      role: 'Newsroom · Research',
+      role: 'Newsroom \u00b7 Research',
       createdAt: new Date().toISOString(),
     }
     writeUsers([...users, newUser])
@@ -100,6 +114,7 @@ export function AuthProvider({ children }) {
       name: newUser.name,
       email: newUser.email,
       role: newUser.role,
+      remember: true,
       signedInAt: new Date().toISOString(),
     }
     setUser(session)
@@ -113,21 +128,21 @@ export function AuthProvider({ children }) {
   }, [])
 
   /**
-   * Ensure the demo "Prayojan" account exists. Called once on first
-   * load so the user can sign in with the seeded credentials and
-   * see data immediately.
+   * Ensure the demo "Prayojan" account exists. Called on mount so
+   * the user can sign in with the seeded credentials and see data
+   * immediately, even if they've cleared localStorage.
    */
   useEffect(() => {
     const users = readUsers()
-    if (users.length === 0) {
-      const seed = {
-        name: 'Prayojan',
-        email: 'prayojan@vantage.np',
-        password: 'vantage',
-        role: 'Newsroom · Research Lead',
-        createdAt: new Date().toISOString(),
-      }
-      writeUsers([seed])
+    const seed = {
+      name: 'Prayojan',
+      email: 'prayojan@vantage.np',
+      password: 'vantage',
+      role: 'Newsroom \u00b7 Research Lead',
+      createdAt: new Date().toISOString(),
+    }
+    if (!users.some(u => u.email.toLowerCase() === seed.email)) {
+      writeUsers([...users, seed])
     }
   }, [])
 

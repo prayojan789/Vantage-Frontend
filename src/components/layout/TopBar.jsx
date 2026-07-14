@@ -35,6 +35,7 @@ export default function TopBar({ onMenuClick, className }) {
   const { user, signOut } = useAuth()
   const [themeOpen, setThemeOpen] = useState(false)
   const [userOpen, setUserOpen] = useState(false)
+  const [signOutConfirm, setSignOutConfirm] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const themeRef = useRef(null)
   const userRef = useRef(null)
@@ -80,15 +81,24 @@ export default function TopBar({ onMenuClick, className }) {
         document.querySelector('input[data-cmdk]')?.focus()
       }
     }
-
-  const handleSignOut = () => {
-    signOut()
-    setUserOpen(false)
-    navigate('/sign-in', { replace: true })
-  }
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [])
+
+  const requestSignOut = () => {
+    setUserOpen(false)
+    setSignOutConfirm(true)
+  }
+
+  const confirmSignOut = () => {
+    signOut()
+    setSignOutConfirm(false)
+    navigate('/sign-in', { replace: true, state: { signedOut: true } })
+  }
+
+  const cancelSignOut = () => {
+    setSignOutConfirm(false)
+  }
 
   return (
     <header
@@ -246,7 +256,7 @@ export default function TopBar({ onMenuClick, className }) {
                   <div className="border-t border-[var(--border-subtle)]">
                     <button
                       type="button"
-                      onClick={handleSignOut}
+                      onClick={requestSignOut}
                       role="menuitem"
                       className="flex w-full items-center gap-2 px-3 h-9 text-sm font-medium text-[var(--red-600)] transition-colors hover:bg-[var(--red-50)]"
                     >
@@ -266,6 +276,52 @@ export default function TopBar({ onMenuClick, className }) {
           )}
         </div>
       </div>
+
+      {/* Sign-out confirmation */}
+      {signOutConfirm ? (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm anim-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="signout-title"
+          onClick={cancelSignOut}
+        >
+          <div
+            className="card-elevated w-[min(420px,90vw)] p-6 anim-scale-in"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <span className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--red-50)] text-[var(--red-600)]">
+                <LogOut size={18} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 id="signout-title" className="text-base font-bold text-[var(--text)]">
+                  Sign out of Vantage?
+                </h2>
+                <p className="mt-1 text-sm text-[var(--text-muted)]">
+                  You'll need to sign in again to access your dashboard, saved searches, and notifications.
+                </p>
+              </div>
+            </div>
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={cancelSignOut}
+                className="btn btn-md btn-outline"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmSignOut}
+                className="btn btn-md bg-[var(--red-600)] text-white hover:bg-[var(--red-500)]"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </header>
   )
 }

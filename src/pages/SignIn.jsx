@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Mail, Lock, ArrowRight, Sparkles, AlertCircle, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Sparkles, AlertCircle, Loader2, Eye, EyeOff, CheckCircle2 } from 'lucide-react'
 import { useAuth } from '../providers/AuthProvider.jsx'
 import { Button } from '../components/ui/Button.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
@@ -18,31 +18,42 @@ export default function SignIn() {
   const location = useLocation()
 
   const from = location.state?.from?.pathname || '/dashboard'
+  const signedOut = location.state?.signedOut === true
 
   const [email, setEmail] = useState('prayojan@vantage.np')
   const [password, setPassword] = useState('vantage')
   const [showPassword, setShowPassword] = useState(false)
+  const [remember, setRemember] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   // If already signed in, bounce to the destination
   useEffect(() => {
     if (hydrated && user) navigate(from, { replace: true })
   }, [hydrated, user, from, navigate])
 
+  // Clear any error as soon as the user edits a field
+  useEffect(() => {
+    if (error) setError('')
+  }, [email, password]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const onSubmit = async (e) => {
     e.preventDefault()
+    if (loading) return
     setError('')
     setLoading(true)
     // Small UX delay so the spinner is visible
     await new Promise(r => setTimeout(r, 350))
-    const result = await signIn({ email, password })
-    setLoading(false)
+    const result = await signIn({ email, password, remember })
     if (!result.ok) {
+      setLoading(false)
       setError(result.error || 'Could not sign in.')
       return
     }
-    navigate(from, { replace: true })
+    setSuccess(true)
+    // Brief success flash, then navigate
+    setTimeout(() => navigate(from, { replace: true }), 350)
   }
 
   const fillDemo = () => {
@@ -62,11 +73,25 @@ export default function SignIn() {
         Sign in to your Vantage workspace.
       </p>
 
+      {signedOut ? (
+        <div className="mt-5 flex items-start gap-2 rounded-[var(--radius-lg)] border border-[var(--brand-200)] bg-[var(--brand-50)] p-3 text-sm text-[var(--brand-700)]">
+          <CheckCircle2 size={15} className="mt-0.5 flex-shrink-0" />
+          <span>You've been signed out. Sign in again to continue.</span>
+        </div>
+      ) : null}
+
       <form onSubmit={onSubmit} className="mt-7 space-y-4" noValidate>
         {error ? (
           <div className="flex items-start gap-2 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] p-3 text-sm text-[var(--neg)]">
             <AlertCircle size={15} className="mt-0.5 flex-shrink-0" />
             <span>{error}</span>
+          </div>
+        ) : null}
+
+        {success ? (
+          <div className="flex items-start gap-2 rounded-[var(--radius-lg)] border border-[var(--pos-line)] bg-[var(--pos-bg)] p-3 text-sm text-[var(--green-600)]">
+            <Sparkles size={15} className="mt-0.5 flex-shrink-0" />
+            <span>Welcome back! Redirecting to your workspace…</span>
           </div>
         ) : null}
 
@@ -122,7 +147,12 @@ export default function SignIn() {
         </div>
 
         <label className="flex items-center gap-2 text-sm text-[var(--text-muted)]">
-          <input type="checkbox" defaultChecked className="h-4 w-4 rounded border-[var(--border)] accent-[var(--brand-600)]" />
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={e => setRemember(e.target.checked)}
+            className="h-4 w-4 rounded border-[var(--border)] accent-[var(--brand-600)]"
+          />
           Keep me signed in for 30 days
         </label>
 

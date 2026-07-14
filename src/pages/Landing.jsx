@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
   Layers,
@@ -66,6 +66,7 @@ const TIMELINE = [
 
 export default function Landing() {
   const { user, signOut } = useAuth()
+  const navigate = useNavigate()
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <PageMetadata
@@ -103,7 +104,10 @@ export default function Landing() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => { signOut() }}
+                  onClick={() => {
+                    signOut()
+                    navigate('/sign-in', { replace: true, state: { signedOut: true } })
+                  }}
                 >
                   Sign out
                 </Button>

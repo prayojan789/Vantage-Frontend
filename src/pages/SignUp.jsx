@@ -27,11 +27,17 @@ export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [accepted, setAccepted] = useState(true)
 
   useEffect(() => {
     if (hydrated && user) navigate(from, { replace: true })
   }, [hydrated, user, from, navigate])
+
+  // Clear any error as soon as the user edits the form
+  useEffect(() => {
+    if (error) setError('')
+  }, [form]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const set = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
 
@@ -41,6 +47,7 @@ export default function SignUp() {
 
   const onSubmit = async (e) => {
     e.preventDefault()
+    if (loading) return
     setError('')
     if (form.password !== form.confirm) {
       setError('Passwords do not match.')
@@ -57,12 +64,13 @@ export default function SignUp() {
       email: form.email,
       password: form.password,
     })
-    setLoading(false)
     if (!result.ok) {
+      setLoading(false)
       setError(result.error || 'Could not create your account.')
       return
     }
-    navigate(from, { replace: true })
+    setSuccess(true)
+    setTimeout(() => navigate(from, { replace: true }), 350)
   }
 
   return (
@@ -81,6 +89,13 @@ export default function SignUp() {
           <div className="flex items-start gap-2 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] p-3 text-sm text-[var(--neg)]">
             <AlertCircle size={15} className="mt-0.5 flex-shrink-0" />
             <span>{error}</span>
+          </div>
+        ) : null}
+
+        {success ? (
+          <div className="flex items-start gap-2 rounded-[var(--radius-lg)] border border-[var(--pos-line)] bg-[var(--pos-bg)] p-3 text-sm text-[var(--green-600)]">
+            <Check size={15} className="mt-0.5 flex-shrink-0" />
+            <span>Account created! Welcome to Vantage — taking you to your workspace…</span>
           </div>
         ) : null}
 
