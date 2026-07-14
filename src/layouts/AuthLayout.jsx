@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
+import Logo from '../components/Logo.jsx'
 
 /**
  * AuthLayout — Chakra-style split-screen auth shell.
@@ -17,13 +17,7 @@ export default function AuthLayout() {
           <div className="absolute inset-0 -z-0 bg-grid-soft opacity-30" aria-hidden="true" />
           <div className="relative z-10 flex flex-col justify-between p-10 xl:p-14 text-white">
             <Link to="/" className="inline-flex w-fit items-center gap-2.5">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-white/15 text-white shadow-md backdrop-blur-sm">
-                <Sparkles size={16} />
-              </span>
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-bold tracking-tight">Vantage</span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-white/70">News Intel · NP</span>
-              </div>
+              <Logo size={36} tone="plain" tagline="News Intel · NP" />
             </Link>
 
             <div className="max-w-md">
@@ -59,10 +53,7 @@ export default function AuthLayout() {
         <main className="flex flex-col">
           <div className="flex items-center justify-between px-6 pt-6 sm:px-10 lg:hidden">
             <Link to="/" className="inline-flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--brand-700)] text-white">
-                <Sparkles size={14} />
-              </span>
-              <span className="text-sm font-bold tracking-tight">Vantage</span>
+              <Logo size={32} showWordmark tagline={null} tone="solid" />
             </Link>
           </div>
           <div className="flex flex-1 items-center justify-center px-6 py-10 sm:px-10">

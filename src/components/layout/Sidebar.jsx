@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { NavLink, Link } from 'react-router-dom'
-import { Sparkles, PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
+import Logo from '../Logo.jsx'
 import { SIDEBAR_GROUPS, FOOTER_PAGES } from '../../layouts/navConfig.jsx'
 
 /**
@@ -47,18 +48,10 @@ export default function Sidebar({ className }) {
         <Link
           to="/dashboard"
           aria-label="Vantage home"
-          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30 transition-transform hover:scale-105"
+          className="flex-shrink-0 transition-transform hover:scale-105"
         >
-          <Sparkles size={16} />
+          <Logo size={36} showWordmark={!collapsed} tagline={collapsed ? null : 'News Intel · NP'} />
         </Link>
-        {!collapsed ? (
-          <div className="flex min-w-0 flex-col leading-tight">
-            <span className="text-sm font-bold tracking-tight text-[var(--text)]">Vantage</span>
-            <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-              News Intel · NP
-            </span>
-          </div>
-        ) : null}
       </div>
 
       {/* Pipeline status */}

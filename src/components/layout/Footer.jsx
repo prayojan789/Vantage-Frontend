@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
-import { Sparkles, Github, Twitter, Linkedin, Heart } from 'lucide-react'
+import { Github, Twitter, Linkedin, Heart } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
+import Logo from '../Logo.jsx'
 import { FOOTER_LINKS } from '../../layouts/navConfig.jsx'
 
 /**
@@ -27,15 +28,7 @@ export default function Footer({ className }) {
         <div className="grid gap-10 md:grid-cols-[1.4fr_repeat(4,_1fr)]">
           <div className="space-y-4">
             <Link to="/dashboard" className="inline-flex items-center gap-2.5">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30">
-                <Sparkles size={16} />
-              </span>
-              <div className="flex flex-col leading-tight">
-                <span className="text-sm font-bold tracking-tight text-[var(--text)]">Vantage</span>
-                <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-                  News Intel · NP
-                </span>
-              </div>
+              <Logo size={36} />
             </Link>
             <p className="text-sm leading-relaxed max-w-sm text-[var(--text-soft)]">
               An AI-powered news intelligence platform built to help journalists,

@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
-import { Sparkles, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
+import Logo from '../Logo.jsx'
 import { SIDEBAR_GROUPS } from '../../layouts/navConfig.jsx'
 
 /**
@@ -28,10 +29,7 @@ export default function MobileNav({ open, onClose, className }) {
       >
         <div className="flex h-16 items-center justify-between border-b border-[var(--border-subtle)] px-4">
           <div className="flex items-center gap-2.5">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white">
-              <Sparkles size={16} />
-            </span>
-            <span className="text-sm font-bold text-[var(--text)]">Vantage</span>
+            <Logo size={36} />
           </div>
           <button
             onClick={onClose}

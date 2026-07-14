@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
-import { Sparkles } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
+import Logo from '../Logo.jsx'
 import { SIDEBAR_GROUPS, UTILITY_NAV } from '../../layouts/navConfig.jsx'
 
 /**
@@ -21,10 +21,10 @@ export default function NavRail({ className }) {
     >
       <NavLink
         to="/dashboard"
-        className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30"
         aria-label="Vantage home"
+        className="transition-transform hover:scale-105"
       >
-        <Sparkles size={15} />
+        <Logo size={36} showWordmark={false} />
       </NavLink>
 
       <div className="mt-4 flex-1 overflow-y-auto w-full flex flex-col items-center gap-3">

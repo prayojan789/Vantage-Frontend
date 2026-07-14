@@ -323,7 +323,7 @@ export default function BiasReport() {
           </div>
 
           <div className="card-elevated overflow-hidden">
-            <div className="border-b border-[var(--border-subtle)] bg-gradient-to-br from-[var(--brand-600)] to-[var(--purple-600)] p-5 text-white">
+            <div className="border-b border-[var(--border-subtle)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--orange-400)] p-5 text-white">
               <Sparkles size={18} className="mb-2 text-white/80" />
               <p className="text-[10px] font-bold uppercase tracking-wider text-white/80">AI bias summary</p>
               <h3 className="mt-1 text-base font-bold">This week's editorial pattern</h3>

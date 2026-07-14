@@ -7,39 +7,39 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* ── Card surfaces — light orange tint ── */
-  --card-bg:          #fff7ed;
-  --card-bg-hover:    #ffedd5;
-  --card-border:      #fed7aa;
-  --card-border-hover:#fdba74;
-  --bg:              #fffaf5;
-  --bg-subtle:       #fff7ed;
+  /* ── Card surfaces — very light, almost white with a hint of peach ── */
+  --card-bg:          #fffdf7;
+  --card-bg-hover:    #fff8eb;
+  --card-border:      #fbeed8;
+  --card-border-hover:#f9dca8;
+  --bg:              #fffdf9;
+  --bg-subtle:       #fffaf2;
   --surface:         #ffffff;
   --surface-raised:  #ffffff;
-  --surface-muted:   #fff7ed;
-  --surface-sunken:  #fff1e0;
+  --surface-muted:   #fffaf2;
+  --surface-sunken:  #fff4e3;
 
   /* ── Borders ── */
-  --border:          #fed7aa;
-  --border-strong:   #fdba74;
-  --border-subtle:   #ffedd5;
+  --border:          #f0e0c2;
+  --border-strong:   #e6cf9c;
+  --border-subtle:   #f7e8d0;
 
   /* ── Text ── */
-  --text:            #431407;
-  --text-muted:      #9a3412;
-  --text-subtle:     #c2410c;
+  --text:            #3f2208;
+  --text-muted:      #8a5212;
+  --text-subtle:     #b8700e;
   --text-inverse:    #ffffff;
 
-  /* ── Brand — Orange #F97316 ── */
-  --brand-50:        #fff7ed;
-  --brand-100:       #ffedd5;
-  --brand-200:       #fed7aa;
-  --brand-300:       #fdba74;
+  /* ── Brand — Soft Orange #FB923C ── */
+  --brand-50:        #fff8ed;
+  --brand-100:       #ffeed1;
+  --brand-200:       #fdd9a3;
+  --brand-300:       #fcbe74;
   --brand-400:       #fb923c;
-  --brand-500:       #f97316;
-  --brand-600:       #ea580c;
-  --brand-700:       #c2410c;
-  --brand-800:       #9a3412;
+  --brand-500:       #f98026;
+  --brand-600:       #e76a14;
+  --brand-700:       #b8520e;
+  --brand-800:       #8a3d09;
 
   /* Accent palettes — soft Chakra-style */
   --teal-50:         #e6fffa;
@@ -74,7 +74,7 @@
   --success:         #16a34a;
   --warning:         #f59e0b;
   --danger:          #dc2626;
-  --info:            #f97316;
+  --info:            #fb923c;
 
   /* Sentiment */
   --pos:             #16a34a;
@@ -95,8 +95,8 @@
   --shadow-xl:       0 20px 25px -5px rgba(17, 24, 39, 0.06), 0 10px 10px -5px rgba(17, 24, 39, 0.02);
   --shadow-2xl:      0 25px 50px -12px rgba(17, 24, 39, 0.15);
   --shadow-inner:    inset 0 2px 4px 0 rgba(17, 24, 39, 0.03);
-  --shadow-outline:  0 0 0 3px rgba(249, 115, 22, 0.28);
-  --shadow-glow:     0 8px 32px -8px rgba(249, 115, 22, 0.32);
+  --shadow-outline:  0 0 0 3px rgba(251, 146, 60, 0.28);
+  --shadow-glow:     0 8px 32px -8px rgba(251, 146, 60, 0.30);
 
   /* Radius (Chakra: sm 0.125rem, md 0.375rem, lg 0.5rem, xl 0.75rem, 2xl 1rem, full) */
   --radius-xs:       0.125rem;
@@ -136,15 +136,15 @@
   --dur-slow:        280ms;
 
   /* Focus ring */
-  --ring:            0 0 0 3px rgba(249, 115, 22, 0.32);
+  --ring:            0 0 0 3px rgba(251, 146, 60, 0.32);
 
   /* Legacy aliases */
   --ink-0:           var(--surface);
   --ink-50:          var(--bg);
-  --ink-100:         #ffedd5;
+  --ink-100:         #fff3e1;
   --ink-200:         var(--border);
-  --ink-700:         #9a3412;
-  --ink-800:         #7c2d12;
+  --ink-700:         #8a5212;
+  --ink-800:         #6b3d0a;
   --ink-900:         var(--text);
   --muted:           var(--text-muted);
   --accent:          var(--brand-600);
@@ -286,8 +286,8 @@ html[data-theme-transitioning='true'] *::after {
 /* Light orange background patterns */
 .bg-grid-soft {
   background-image:
-    linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(251, 146, 60, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251, 146, 60, 0.045) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 [data-theme='dark'] .bg-grid-soft {
@@ -297,7 +297,7 @@ html[data-theme-transitioning='true'] *::after {
 }
 
 .bg-dots {
-  background-image: radial-gradient(rgba(249, 115, 22, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(251, 146, 60, 0.10) 1px, transparent 1px);
   background-size: 16px 16px;
 }
 [data-theme='dark'] .bg-dots {

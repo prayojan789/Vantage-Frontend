@@ -59,23 +59,23 @@
     color: var(--text);
   }
 
-  /* ── Card system — light orange tint ── */
+  /* ── Card system — almost white with a whisper of peach ── */
   .card {
-    background: var(--card-bg, #fff7ed);
-    border: 1px solid var(--card-border, #fed7aa);
+    background: var(--card-bg, #fffdf7);
+    border: 1px solid var(--card-border, #fbeed8);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xs);
     transition: box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease), transform var(--dur) var(--ease), background-color var(--dur) var(--ease);
   }
   .card:hover {
     box-shadow: var(--shadow-md);
-    border-color: var(--card-border-hover, #fdba74);
-    background: var(--card-bg-hover, #ffedd5);
+    border-color: var(--card-border-hover, #f9dca8);
+    background: var(--card-bg-hover, #fff8eb);
   }
 
   .card-elevated {
-    background: var(--card-bg, #fff7ed);
-    border: 1px solid var(--card-border, #fed7aa);
+    background: var(--card-bg, #fffdf7);
+    border: 1px solid var(--card-border, #fbeed8);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm);
     transition: box-shadow var(--dur) var(--ease), transform var(--dur-slow) var(--ease), border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
@@ -83,25 +83,25 @@
   .card-elevated:hover {
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
-    border-color: var(--card-border-hover, #fdba74);
-    background: var(--card-bg-hover, #ffedd5);
+    border-color: var(--card-border-hover, #f9dca8);
+    background: var(--card-bg-hover, #fff8eb);
   }
 
   .card-flat {
-    background: var(--card-bg, #fff7ed);
-    border: 1px solid var(--card-border, #fed7aa);
+    background: var(--card-bg, #fffdf7);
+    border: 1px solid var(--card-border, #fbeed8);
     border-radius: var(--radius-xl);
   }
 
   .card-outline {
     background: transparent;
-    border: 1.5px dashed var(--card-border, #fdba74);
+    border: 1.5px dashed var(--card-border, #f9dca8);
     border-radius: var(--radius-xl);
   }
 
   .card-bordered {
-    background: var(--card-bg, #fff7ed);
-    border: 1px solid var(--card-border, #fdba74);
+    background: var(--card-bg, #fffdf7);
+    border: 1px solid var(--card-border, #f9dca8);
     border-radius: var(--radius-xl);
   }
 
@@ -442,17 +442,17 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 
-  /* ── Hero / Brand surfaces (orange #F97316) ── */
+  /* ── Hero / Brand surfaces (soft orange #FB923C) ── */
   .bg-brand-gradient {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(251, 146, 60, 0.22), transparent 60%),
-      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(249, 115, 22, 0.20), transparent 60%),
-      linear-gradient(135deg, var(--brand-600) 0%, var(--brand-800) 100%);
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(252, 190, 116, 0.22), transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(251, 146, 60, 0.18), transparent 60%),
+      linear-gradient(135deg, var(--brand-500) 0%, var(--brand-700) 100%);
   }
   .bg-brand-soft {
     background:
-      radial-gradient(ellipse 80% 60% at 0% 0%, rgba(249, 115, 22, 0.08), transparent 60%),
-      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(251, 146, 60, 0.06), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 0% 0%, rgba(251, 146, 60, 0.07), transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(252, 190, 116, 0.06), transparent 60%),
       var(--bg-subtle);
   }
   .bg-dark-gradient {

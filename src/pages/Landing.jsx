@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
-  Sparkles,
   Layers,
   BarChart3,
   Building2,
@@ -24,10 +23,10 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import PageMetadata from '../components/PageMetadata.jsx'
-import { Badge } from '../components/ui/Badge.jsx'
 import { Button } from '../components/ui/Button.jsx'
 import { Card } from '../components/ui/Card.jsx'
 import { Avatar } from '../components/ui/Avatar.jsx'
+import Logo from '../components/Logo.jsx'
 import { cn } from '../lib/utils.js'
 import { useAuth } from '../providers/AuthProvider.jsx'
 
@@ -78,13 +77,7 @@ export default function Landing() {
       <header className="sticky top-0 z-30 border-b border-[var(--border-subtle)] bg-[var(--surface)]/85 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-6">
           <Link to="/dashboard" className="flex items-center gap-2.5">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-500)] to-[var(--purple-500)] text-white shadow-md shadow-brand-500/30">
-              <Sparkles size={16} />
-            </span>
-            <div className="flex flex-col leading-tight">
-              <span className="text-sm font-bold tracking-tight">Vantage</span>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-muted)]">News Intel · NP</span>
-            </div>
+            <Logo size={36} />
           </Link>
           <nav className="hidden items-center gap-1 md:flex">
             {['Features', 'Use cases', 'Workflow'].map(item => (
@@ -136,12 +129,9 @@ export default function Landing() {
 
         <div className="mx-auto max-w-[1280px] px-6 py-20 lg:py-28">
           <div className="flex flex-col items-center text-center">
-            <Badge colorScheme="brand" size="lg" className="mb-6">
-              <Sparkles size={11} /> News Intelligence Platform
-            </Badge>
             <h1 className="h-display max-w-3xl">
               See how Nepali publishers cover the same story —{' '}
-              <span className="bg-gradient-to-r from-[var(--brand-600)] to-[var(--purple-600)] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--brand-500)] to-[var(--orange-400)] bg-clip-text text-transparent">
                 at a glance
               </span>
             </h1>
@@ -162,7 +152,7 @@ export default function Landing() {
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             {STATS.map(s => (
               <div key={s.label} className="card-elevated p-4 text-center">
-                <p className="h-lg bg-gradient-to-br from-[var(--brand-600)] to-[var(--purple-600)] bg-clip-text text-transparent">
+                <p className="h-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--orange-400)] bg-clip-text text-transparent">
                   {s.value}
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">{s.label}</p>
