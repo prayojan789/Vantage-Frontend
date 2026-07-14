@@ -131,7 +131,7 @@ export default function Landing() {
           <div className="flex flex-col items-center text-center">
             <h1 className="h-display max-w-3xl">
               See how Nepali publishers cover the same story —{' '}
-              <span className="bg-gradient-to-r from-[var(--brand-500)] to-[var(--orange-400)] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
                 at a glance
               </span>
             </h1>
@@ -152,7 +152,7 @@ export default function Landing() {
           <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
             {STATS.map(s => (
               <div key={s.label} className="card-elevated p-4 text-center">
-                <p className="h-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--orange-400)] bg-clip-text text-transparent">
+                <p className="h-lg bg-gradient-to-br from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
                   {s.value}
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">{s.label}</p>

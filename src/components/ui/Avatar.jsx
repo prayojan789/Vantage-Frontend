@@ -6,12 +6,12 @@ import { cn } from '../../lib/utils.js'
  * Chakra-style avatar with optional name initials and color schemes.
  */
 const schemes = {
-  brand:  'from-[var(--brand-500)] to-[var(--orange-500)]',
-  blue:   'from-[var(--orange-500)] to-[var(--yellow-500)]',
-  green:  'from-[var(--green-500)] to-[var(--teal-500)]',
-  red:    'from-[var(--red-500)] to-[var(--pink-500)]',
-  yellow: 'from-[var(--yellow-500)] to-[var(--orange-500)]',
-  purple: 'from-[var(--purple-500)] to-[var(--pink-500)]',
+  brand:  'from-[#f59e0b] to-[#fdba74]',
+  blue:   'from-[#fb923c] to-[#fde68a]',
+  green:  'from-[#22c55e] to-[#86efac]',
+  red:    'from-[#ef4444] to-[#fca5a5]',
+  yellow: 'from-[#fbbf24] to-[#fdba74]',
+  purple: 'from-[#a855f7] to-[#f0abfc]',
   gray:   'from-[#94a3b8] to-[#475569]',
 }
 

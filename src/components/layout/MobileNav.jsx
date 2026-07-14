@@ -53,8 +53,8 @@ export default function MobileNav({ open, onClose, className }) {
                   className={({ isActive }) => cn(
                     'flex items-center gap-2.5 rounded-[var(--radius-lg)] px-2.5 h-10 text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
-                      : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
+                      ? 'bg-[var(--brand-500)] text-white shadow-sm'
+                      : 'text-[var(--text-muted)] hover:bg-[var(--brand-200)] hover:text-[var(--text)]',
                   )}
                 >
                   <item.icon size={16} />

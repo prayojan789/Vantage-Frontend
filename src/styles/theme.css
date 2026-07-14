@@ -7,39 +7,39 @@
 [data-theme='light'] {
   color-scheme: light;
 
-  /* ── Card surfaces — very light, almost white with a hint of peach ── */
-  --card-bg:          #fffdf7;
-  --card-bg-hover:    #fff8eb;
-  --card-border:      #fbeed8;
-  --card-border-hover:#f9dca8;
-  --bg:              #fffdf9;
-  --bg-subtle:       #fffaf2;
+  /* ── Card surfaces — almost white with a hint of peach ── */
+  --card-bg:          #ffffff;
+  --card-bg-hover:    #fff7ed;
+  --card-border:      #f3f4f6;
+  --card-border-hover:#fed7aa;
+  --bg:              #fff7ed;
+  --bg-subtle:       #fffbf5;
   --surface:         #ffffff;
   --surface-raised:  #ffffff;
-  --surface-muted:   #fffaf2;
-  --surface-sunken:  #fff4e3;
+  --surface-muted:   #fff7ed;
+  --surface-sunken:  #fffbf5;
 
   /* ── Borders ── */
-  --border:          #f0e0c2;
-  --border-strong:   #e6cf9c;
-  --border-subtle:   #f7e8d0;
+  --border:          #e5e7eb;
+  --border-strong:   #d1d5db;
+  --border-subtle:   #f3f4f6;
 
   /* ── Text ── */
-  --text:            #3f2208;
-  --text-muted:      #8a5212;
-  --text-subtle:     #b8700e;
+  --text:            #1f2937;
+  --text-muted:      #6b7280;
+  --text-subtle:     #9ca3af;
   --text-inverse:    #ffffff;
 
-  /* ── Brand — Soft Orange #FB923C ── */
-  --brand-50:        #fff8ed;
-  --brand-100:       #ffeed1;
-  --brand-200:       #fdd9a3;
-  --brand-300:       #fcbe74;
-  --brand-400:       #fb923c;
-  --brand-500:       #f98026;
-  --brand-600:       #e76a14;
-  --brand-700:       #b8520e;
-  --brand-800:       #8a3d09;
+  /* ── Brand — Amber #F59E0B (Tailwind amber-500) ── */
+  --brand-50:        #fff7ed;
+  --brand-100:       #ffedd5;
+  --brand-200:       #fed7aa;
+  --brand-300:       #fdba74;
+  --brand-400:       #fbbf24;
+  --brand-500:       #f59e0b;
+  --brand-600:       #ea580c;
+  --brand-700:       #c2410c;
+  --brand-800:       #9a3412;
 
   /* Accent palettes — soft Chakra-style */
   --teal-50:         #e6fffa;
@@ -71,21 +71,21 @@
   --blue-600:        #2563eb;
 
   /* Status */
-  --success:         #16a34a;
+  --success:         #22c55e;
   --warning:         #f59e0b;
-  --danger:          #dc2626;
-  --info:            #fb923c;
+  --danger:          #ef4444;
+  --info:            #3b82f6;
 
   /* Sentiment */
-  --pos:             #16a34a;
+  --pos:             #22c55e;
   --pos-bg:          #f0fdf4;
   --pos-line:        #bbf7d0;
-  --neg:             #dc2626;
+  --neg:             #ef4444;
   --neg-bg:          #fef2f2;
   --neg-line:        #fecaca;
   --neu:             #f59e0b;
-  --neu-bg:          #fffbeb;
-  --neu-line:        #fde68a;
+  --neu-bg:          #fff7ed;
+  --neu-line:        #fed7aa;
 
   /* ── Subtle shadows tuned for white/gray stack ── */
   --shadow-xs:       0 1px 2px 0 rgba(17, 24, 39, 0.04);

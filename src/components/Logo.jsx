@@ -63,7 +63,7 @@ export default function Logo({
         className={cn(
           'inline-flex items-center justify-center rounded-[var(--radius-lg)] text-white shadow-md transition-transform',
           tone === 'gradient' &&
-            'bg-gradient-to-br from-[var(--brand-500)] to-[var(--orange-400)] shadow-brand-500/25',
+            'bg-gradient-to-br from-[#f59e0b] to-[#fdba74] shadow-[#f59e0b]/25',
           tone === 'plain' && 'bg-white/15 backdrop-blur-sm shadow-white/10',
           tone === 'solid' && 'bg-[var(--brand-500)]',
         )}

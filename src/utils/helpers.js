@@ -1,9 +1,9 @@
-// Vivid palette aligned with the new design system (#16a34a / #dc2626 / #f59e0b)
+// Vivid palette aligned with the new design system (#22c55e / #ef4444 / #f59e0b)
 export const sentimentPill = s =>
   s === 'positive' ? 'pill pill-positive' : s === 'negative' ? 'pill pill-negative' : 'pill pill-neutral'
 
 export const sentimentColor = s =>
-  s === 'positive' ? '#16a34a' : s === 'negative' ? '#dc2626' : '#f59e0b'
+  s === 'positive' ? '#22c55e' : s === 'negative' ? '#ef4444' : '#f59e0b'
 
 export const sentimentArrow = s =>
   s === 'positive' ? '↑' : s === 'negative' ? '↓' : '→'
@@ -32,3 +32,27 @@ export const sourceClass = name => {
   if (name?.includes('Setopati')) return 'source-seto'
   return 'source-okh'
 }
+
+/**
+ * Chart palette — primary orange family + supporting tones.
+ * Spec: orange #F59E0B, light orange #FDBA74, gold #FBBF24, beige #FDE68A, gray #CBD5E1
+ */
+export const CHART_PALETTE = {
+  orange:      '#F59E0B',
+  lightOrange: '#FDBA74',
+  gold:        '#FBBF24',
+  beige:       '#FDE68A',
+  gray:        '#CBD5E1',
+  positive:    '#22C55E',
+  negative:    '#EF4444',
+  neutral:     '#F59E0B',
+  blue:        '#3B82F6',
+}
+
+export const CHART_COLORS = [
+  CHART_PALETTE.orange,
+  CHART_PALETTE.lightOrange,
+  CHART_PALETTE.gold,
+  CHART_PALETTE.beige,
+  CHART_PALETTE.gray,
+]

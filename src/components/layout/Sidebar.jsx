@@ -96,8 +96,8 @@ export default function Sidebar({ className }) {
                   'transition-colors duration-150',
                   collapsed ? 'justify-center h-10 w-12 mx-auto' : 'px-2.5 h-9',
                   isActive
-                    ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
-                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
+                    ? 'bg-[var(--brand-500)] text-white shadow-sm'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--brand-200)] hover:text-[var(--text)]',
                 )}
                 title={collapsed ? item.label : undefined}
               >
@@ -107,7 +107,7 @@ export default function Sidebar({ className }) {
                       size={16}
                       className={cn(
                         'flex-shrink-0 transition-colors',
-                        isActive ? 'text-[var(--brand-600)]' : 'text-[var(--text-muted)] group-hover/item:text-[var(--text)]',
+                        isActive ? 'text-white' : 'text-[var(--brand-600)] group-hover/item:text-[var(--text)]',
                       )}
                       aria-hidden="true"
                     />
@@ -115,7 +115,7 @@ export default function Sidebar({ className }) {
                       <span className="truncate">{item.label}</span>
                     ) : null}
                     {!collapsed && isActive ? (
-                      <span className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-[var(--brand-500)]" />
+                      <span className="ml-auto h-1.5 w-1.5 flex-shrink-0 rounded-full bg-white" />
                     ) : null}
                   </>
                 )}

@@ -39,8 +39,8 @@ export default function NavRail({ className }) {
                 className={({ isActive }) => cn(
                   'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
                   isActive
-                    ? 'bg-[var(--brand-50)] text-[var(--brand-600)]'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-muted)]',
+                    ? 'bg-[var(--brand-500)] text-white shadow-sm'
+                    : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-200)]',
                 )}
               >
                 <item.icon size={16} aria-hidden="true" />
@@ -60,8 +60,8 @@ export default function NavRail({ className }) {
             className={({ isActive }) => cn(
               'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
               isActive
-                ? 'bg-[var(--brand-50)] text-[var(--brand-600)]'
-                : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--surface-muted)]',
+                ? 'bg-[var(--brand-500)] text-white shadow-sm'
+                : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-200)]',
             )}
           >
             <item.icon size={16} aria-hidden="true" />
