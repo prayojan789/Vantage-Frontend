@@ -159,41 +159,41 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  /* ── Card surfaces — deep warm orange tint ── */
-  --card-bg:          #2a1408;
-  --card-bg-hover:    #3a1d0e;
-  --card-border:      #7c2d12;
-  --card-border-hover:#c2410c;
+  /* ── Card surfaces — neutral dark gray ── */
+  --card-bg:          #1f2937;
+  --card-bg-hover:    #273344;
+  --card-border:      #374151;
+  --card-border-hover:#4b5563;
 
-  /* ── Surfaces — deep warm black ── */
-  --bg:              #1a0d04;
-  --bg-subtle:       #1a0d04;
-  --surface:         #2a1408;
-  --surface-raised:  #3a1d0e;
-  --surface-muted:   #2a1408;
-  --surface-sunken:  #1a0d04;
+  /* ── Surfaces — neutral dark gray ── */
+  --bg:              #111827;
+  --bg-subtle:       #111827;
+  --surface:         #1f2937;
+  --surface-raised:  #273344;
+  --surface-muted:   #1f2937;
+  --surface-sunken:  #0f172a;
 
   /* ── Borders ── */
-  --border:          #7c2d12;
-  --border-strong:   #9a3412;
-  --border-subtle:   #431407;
+  --border:          #374151;
+  --border-strong:   #4b5563;
+  --border-subtle:   #1f2937;
 
   /* ── Text ── */
-  --text:            #fff7ed;
-  --text-muted:      #fdba74;
-  --text-subtle:     #fb923c;
-  --text-inverse:    #1a0d04;
+  --text:            #f9fafb;
+  --text-muted:      #9ca3af;
+  --text-subtle:     #6b7280;
+  --text-inverse:    #111827;
 
-  /* ── Brand — Orange #F97316 (kept) ── */
-  --brand-50:        #431407;
+  /* ── Brand — Amber #F59E0B (kept) ── */
+  --brand-50:        #451a03;
   --brand-100:       #7c2d12;
   --brand-200:       #9a3412;
   --brand-300:       #c2410c;
   --brand-400:       #ea580c;
-  --brand-500:       #f97316;
-  --brand-600:       #fb923c;
-  --brand-700:       #fdba74;
-  --brand-800:       #fed7aa;
+  --brand-500:       #f59e0b;
+  --brand-600:       #fbbf24;
+  --brand-700:       #fcd34d;
+  --brand-800:       #fde68a;
 
   /* Sentiment */
   --pos:             #4ade80;
@@ -265,8 +265,8 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
 ::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
 
-[data-theme='dark'] ::-webkit-scrollbar-thumb { background: #7c2d12; }
-[data-theme='dark'] ::-webkit-scrollbar-thumb:hover { background: #9a3412; }
+[data-theme='dark'] ::-webkit-scrollbar-thumb { background: #374151; }
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
 
 :focus-visible {
   outline: none;

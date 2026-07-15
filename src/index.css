@@ -496,79 +496,79 @@
   }
   .bg-dark-gradient {
     background:
-      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(249, 115, 22, 0.18), transparent 60%),
-      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(251, 146, 60, 0.12), transparent 60%),
-      #1a0d04;
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(245, 158, 11, 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 60% at 100% 100%, rgba(251, 191, 36, 0.12), transparent 60%),
+      #111827;
   }
 
-  /* ── Dark theme overrides — cards keep the warm orange tint ── */
+  /* ── Dark theme overrides — simple, neutral dark surfaces ── */
   [data-theme='dark'] .card,
   [data-theme='dark'] .card-elevated,
   [data-theme='dark'] .card-bordered {
-    background: #2a1408;
-    border-color: #7c2d12;
-    box-shadow: 0 0 0 1px #7c2d12, 0 8px 24px -12px rgba(0, 0, 0, 0.8);
+    background: #1f2937;
+    border-color: #374151;
+    box-shadow: 0 8px 24px -12px rgba(0, 0, 0, 0.8);
   }
   [data-theme='dark'] .card:hover,
   [data-theme='dark'] .card-elevated:hover {
-    background: #3a1d0e;
-    border-color: #c2410c;
+    background: #273344;
+    border-color: #4b5563;
   }
   [data-theme='dark'] .card-flat {
-    background: #2a1408;
-    border-color: #7c2d12;
+    background: #1f2937;
+    border-color: #374151;
   }
   [data-theme='dark'] .card-outline {
-    border-color: #7c2d12;
+    border-color: #4b5563;
   }
   [data-theme='dark'] .field-input,
   [data-theme='dark'] .field-select,
   [data-theme='dark'] .field-textarea {
-    background: #1a0d04;
-    border-color: #7c2d12;
-    color: #fff7ed;
+    background: #111827;
+    border-color: #374151;
+    color: #f9fafb;
   }
   [data-theme='dark'] .tab-list {
-    background: #2a1408;
-    border-color: #7c2d12;
+    background: #1f2937;
+    border-color: #374151;
   }
   [data-theme='dark'] .tab.is-active {
-    background: #3a1d0e;
-    color: #fff7ed;
+    background: #273344;
+    color: #f9fafb;
   }
   [data-theme='dark'] .chip {
-    background: #2a1408;
-    border-color: #7c2d12;
-    color: #fdba74;
+    background: #1f2937;
+    border-color: #374151;
+    color: #9ca3af;
   }
   [data-theme='dark'] .chip:hover {
-    background: #3a1d0e;
-    border-color: #9a3412;
-    color: #fff7ed;
+    background: #273344;
+    border-color: #4b5563;
+    color: #f9fafb;
   }
   [data-theme='dark'] .btn-outline {
-    background: #1a0d04;
-    border-color: #7c2d12;
-    color: #fff7ed;
+    background: #1f2937;
+    border-color: #374151;
+    color: #f9fafb;
   }
   [data-theme='dark'] .btn-outline:hover:not(:disabled) {
-    background: #2a1408;
-    border-color: #9a3412;
+    background: #273344;
+    border-color: #4b5563;
   }
   [data-theme='dark'] .btn-soft {
-    background: #2a1408;
-    color: #fff7ed;
+    background: #1f2937;
+    color: #f9fafb;
   }
   [data-theme='dark'] .btn-soft:hover:not(:disabled) {
-    background: #3a1d0e;
+    background: #273344;
   }
-  [data-theme='dark'] .source-tkp    { background: #1a0606; color: #fca5a5; }
-  [data-theme='dark'] .source-rep    { background: #2a1408; color: #fdba74; }
-  [data-theme='dark'] .source-okh    { background: #1a1305; color: #fcd34d; }
-  [data-theme='dark'] .source-hmt    { background: #03150a; color: #86efac; }
-  [data-theme='dark'] .source-mrep   { background: #14091f; color: #c4b5fd; }
-  [data-theme='dark'] .source-seto   { background: #1a0a14; color: #f9a8d4; }
-  [data-theme='dark'] .source-nm     { background: #02161a; color: #67e8f9; }
+  [data-theme='dark'] .source-tkp    { background: #1f2937; color: #fca5a5; }
+  [data-theme='dark'] .source-rep    { background: #1f2937; color: #fdba74; }
+  [data-theme='dark'] .source-okh    { background: #1f2937; color: #fcd34d; }
+  [data-theme='dark'] .source-hmt    { background: #1f2937; color: #86efac; }
+  [data-theme='dark'] .source-mrep   { background: #1f2937; color: #c4b5fd; }
+  [data-theme='dark'] .source-seto   { background: #1f2937; color: #f9a8d4; }
+  [data-theme='dark'] .source-nm     { background: #1f2937; color: #67e8f9; }
 }
 
 /* ── Chakra-style Stack utilities ── */
