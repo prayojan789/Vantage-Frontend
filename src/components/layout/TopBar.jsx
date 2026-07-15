@@ -113,7 +113,7 @@ export default function TopBar({ onMenuClick, className }) {
           type="button"
           onClick={onMenuClick}
           aria-label="Open navigation"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)] md:hidden"
+          className="icon-btn md:hidden"
         >
           <Menu size={18} />
         </button>
@@ -146,7 +146,7 @@ export default function TopBar({ onMenuClick, className }) {
           <Link
             to="/search"
             aria-label="Open search"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)] md:hidden"
+            className="icon-btn md:hidden"
           >
             <Search size={16} />
           </Link>
@@ -154,7 +154,7 @@ export default function TopBar({ onMenuClick, className }) {
           {/* AI Playground CTA */}
           <Link
             to="/playground"
-            className="hidden h-9 items-center gap-1.5 rounded-[var(--radius-lg)] bg-[var(--brand-600)] px-3 text-xs font-semibold text-white shadow-sm transition-all hover:scale-[1.02] hover:bg-[var(--brand-700)] md:inline-flex"
+            className="hidden h-9 items-center gap-1.5 rounded-[var(--radius-lg)] bg-[var(--brand-500)] px-3 text-xs font-semibold text-white shadow-sm transition-all hover:scale-[1.04] hover:bg-[var(--brand-600)] hover:shadow-[0_8px_20px_rgba(245,158,11,0.35)] md:inline-flex"
           >
             <Sparkles size={13} />
             Playground
@@ -164,7 +164,7 @@ export default function TopBar({ onMenuClick, className }) {
           <Link
             to="/notifications"
             aria-label="Notifications"
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
+            className="icon-btn relative"
           >
             <Bell size={16} />
             <span className="absolute right-1.5 top-1.5 inline-block h-2 w-2 rounded-full bg-[var(--red-500)] shadow-[0_0_6px_rgba(239,68,68,0.6)]" />
@@ -178,7 +178,7 @@ export default function TopBar({ onMenuClick, className }) {
               aria-haspopup="menu"
               aria-expanded={themeOpen}
               aria-label={`Theme: ${theme}`}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-lg)] text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
+              className="icon-btn"
             >
               <ThemeIcon theme={theme} />
             </button>
@@ -205,7 +205,7 @@ export default function TopBar({ onMenuClick, className }) {
                         : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
                     )}
                   >
-                    <Icon size={14} />
+                    <Icon size={14} className="transition-transform group-hover:scale-110" />
                     {label}
                   </button>
                 ))}
@@ -221,17 +221,17 @@ export default function TopBar({ onMenuClick, className }) {
                 onClick={() => setUserOpen(o => !o)}
                 aria-haspopup="menu"
                 aria-expanded={userOpen}
-                className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-1.5 text-[var(--text-muted)] transition-colors hover:text-[var(--text)]"
+                className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-1.5 text-[var(--text-muted)] transition-all hover:border-[var(--brand-300)] hover:bg-[var(--brand-50)] hover:text-[var(--text)]"
               >
                 <Avatar name={initialsName} size="xs" />
-                <ChevronDown size={12} className="hidden sm:inline-block" />
+                <ChevronDown size={12} className="hidden transition-transform sm:inline-block group-aria-expanded:rotate-180" />
               </button>
               {userOpen ? (
                 <div
                   role="menu"
-                  className="absolute right-0 mt-2 w-60 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-lg z-50"
+                  className="absolute right-0 mt-2 w-60 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] shadow-xl z-50"
                 >
-                  <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] px-3 py-3">
+                  <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] bg-[var(--surface-muted)] px-3 py-3">
                     <Avatar name={initialsName} size="sm" />
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-[var(--text)]">{user.name}</p>
@@ -248,9 +248,9 @@ export default function TopBar({ onMenuClick, className }) {
                       to={to}
                       onClick={() => setUserOpen(false)}
                       role="menuitem"
-                      className="flex items-center gap-2 px-3 h-9 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--text)]"
+                      className="flex items-center gap-2 px-3 h-9 text-sm text-[var(--text-muted)] transition-colors hover:bg-[var(--brand-50)] hover:text-[var(--brand-700)]"
                     >
-                      <Icon size={14} /> {label}
+                      <Icon size={14} className="transition-transform group-hover:scale-110" /> {label}
                     </Link>
                   ))}
                   <div className="border-t border-[var(--border-subtle)]">
@@ -258,9 +258,9 @@ export default function TopBar({ onMenuClick, className }) {
                       type="button"
                       onClick={requestSignOut}
                       role="menuitem"
-                      className="flex w-full items-center gap-2 px-3 h-9 text-sm font-medium text-[var(--red-600)] transition-colors hover:bg-[var(--red-50)]"
+                      className="flex w-full items-center gap-2 px-3 h-9 text-sm font-medium text-[var(--red-600)] transition-colors hover:bg-[var(--red-50)] hover:text-[var(--red-700)]"
                     >
-                      <LogOut size={14} /> Sign out
+                      <LogOut size={14} className="transition-transform group-hover:-translate-x-0.5" /> Sign out
                     </button>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function TopBar({ onMenuClick, className }) {
           ) : (
             <Link
               to="/sign-in"
-              className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] bg-[var(--brand-600)] px-3 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[var(--brand-700)]"
+              className="ml-1 inline-flex h-9 items-center gap-1.5 rounded-[var(--radius-lg)] bg-[var(--brand-500)] px-3 text-xs font-semibold text-white shadow-sm transition-all hover:scale-[1.04] hover:bg-[var(--brand-600)] hover:shadow-[0_8px_20px_rgba(245,158,11,0.35)]"
             >
               <UserIcon size={13} /> Sign in
             </Link>

@@ -50,7 +50,7 @@ export function Tag({
           type="button"
           aria-label="Remove"
           onClick={onClose}
-          className="-mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full opacity-70 hover:opacity-100 hover:bg-black/5"
+          className="-mr-1 inline-flex h-4 w-4 items-center justify-center rounded-full opacity-60 transition-all hover:scale-110 hover:opacity-100 hover:bg-black/10 active:scale-90"
         >
           <X size={10} />
         </button>
@@ -68,7 +68,7 @@ export function TagCloseButton({ onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="-mr-1 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full opacity-70 hover:opacity-100 hover:bg-black/5"
+      className="-mr-1 ml-1 inline-flex h-4 w-4 items-center justify-center rounded-full opacity-60 transition-all hover:scale-110 hover:opacity-100 hover:bg-black/10 active:scale-90"
       aria-label="Remove"
     >
       <X size={10} />

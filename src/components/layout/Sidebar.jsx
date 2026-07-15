@@ -93,11 +93,11 @@ export default function Sidebar({ className }) {
                 to={item.to}
                 className={({ isActive }) => cn(
                   'group/item flex items-center gap-2.5 rounded-[var(--radius-lg)] text-sm font-medium',
-                  'transition-colors duration-150',
+                  'transition-all duration-150',
                   collapsed ? 'justify-center h-10 w-12 mx-auto' : 'px-2.5 h-9',
                   isActive
-                    ? 'bg-[var(--brand-500)] text-white shadow-sm'
-                    : 'text-[var(--text-muted)] hover:bg-[var(--brand-200)] hover:text-[var(--text)]',
+                    ? 'bg-[var(--brand-500)] text-white shadow-[0_4px_12px_rgba(245,158,11,0.30)]'
+                    : 'text-[var(--text-muted)] hover:bg-[var(--brand-100)] hover:text-[var(--text)]',
                 )}
                 title={collapsed ? item.label : undefined}
               >
@@ -106,7 +106,7 @@ export default function Sidebar({ className }) {
                     <item.icon
                       size={16}
                       className={cn(
-                        'flex-shrink-0 transition-colors',
+                        'flex-shrink-0 transition-transform duration-150 group-hover/item:scale-110',
                         isActive ? 'text-white' : 'text-[var(--brand-600)] group-hover/item:text-[var(--text)]',
                       )}
                       aria-hidden="true"
@@ -161,9 +161,9 @@ export default function Sidebar({ className }) {
         aria-pressed={collapsed}
         aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         className={cn(
-          'absolute -right-3 top-20 z-40 hidden md:inline-flex items-center justify-center',
-          'h-6 w-6 rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] shadow-md',
-          'hover:text-[var(--text)] hover:border-[var(--brand-300)] transition-colors',
+          'absolute -right-3 top-20 z-40 hidden md:inline-flex h-6 w-6 items-center justify-center rounded-full',
+          'border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] shadow-md',
+          'transition-all duration-150 hover:scale-110 hover:border-[var(--brand-300)] hover:bg-[var(--brand-50)] hover:text-[var(--brand-700)]',
         )}
       >
         {collapsed ? <PanelLeftOpen size={12} /> : <PanelLeftClose size={12} />}

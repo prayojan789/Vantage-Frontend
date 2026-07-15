@@ -37,13 +37,13 @@ export default function NavRail({ className }) {
                 title={item.label}
                 aria-label={item.label}
                 className={({ isActive }) => cn(
-                  'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
+                  'group/rail inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-all duration-150',
                   isActive
-                    ? 'bg-[var(--brand-500)] text-white shadow-sm'
-                    : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-200)]',
+                    ? 'bg-[var(--brand-500)] text-white shadow-[0_4px_12px_rgba(245,158,11,0.30)]'
+                    : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-100)]',
                 )}
               >
-                <item.icon size={16} aria-hidden="true" />
+                <item.icon size={16} aria-hidden="true" className="transition-transform group-hover/rail:scale-110" />
               </NavLink>
             ))}
           </div>
@@ -58,13 +58,13 @@ export default function NavRail({ className }) {
             title={item.label}
             aria-label={item.label}
             className={({ isActive }) => cn(
-              'inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-colors',
+              'group/rail inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] transition-all duration-150',
               isActive
-                ? 'bg-[var(--brand-500)] text-white shadow-sm'
-                : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-200)]',
+                ? 'bg-[var(--brand-500)] text-white shadow-[0_4px_12px_rgba(245,158,11,0.30)]'
+                : 'text-[var(--brand-600)] hover:text-[var(--text)] hover:bg-[var(--brand-100)]',
             )}
           >
-            <item.icon size={16} aria-hidden="true" />
+            <item.icon size={16} aria-hidden="true" className="transition-transform group-hover/rail:scale-110" />
           </NavLink>
         ))}
       </div>
