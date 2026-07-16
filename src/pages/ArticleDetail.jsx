@@ -4,10 +4,11 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
-  ArrowLeft, Clock, ExternalLink, Tag, Share2, Bookmark,
+  Clock, ExternalLink, Tag, Share2, Bookmark,
   MessageSquare, Quote, Link2, History, Building2,
 } from 'lucide-react'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL } from '../utils/mockData.js'
 import { getArticleById } from '../services/api.js'
@@ -79,12 +80,7 @@ export default function ArticleDetail() {
         description={article.summary}
       />
 
-      <Link
-        to="/articles"
-        className="inline-flex w-fit items-center gap-1.5 text-xs font-semibold text-[var(--text-muted)] transition-colors hover:text-[var(--brand-600)]"
-      >
-        <ArrowLeft size={14} /> Back to Archive
-      </Link>
+      <BackButton to="/articles" label="Back to Archive" />
 
       <div className="grid gap-6 lg:grid-cols-12">
         <article className="space-y-6 lg:col-span-8">

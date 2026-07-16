@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_ANALYZE } from '../utils/mockData.js'
 import { analyzeText } from '../services/api.js'

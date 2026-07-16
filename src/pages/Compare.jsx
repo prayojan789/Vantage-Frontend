@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL, MOCK_EVENTS } from '../utils/mockData.js'
 import { sentimentColor, sentimentPill, fmtTime, sourceClass } from '../utils/helpers.js'
@@ -101,6 +102,7 @@ export default function Compare() {
         title="Compare Headlines | Vantage"
         description="Side-by-side comparison of how different Nepali media outlets cover the same event."
       />
+      <BackButton to="/events" label="Back to events" />
 
       <PageHero
         variant="dark"

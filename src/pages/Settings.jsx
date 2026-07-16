@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { useTheme } from '../providers/ThemeProvider.jsx'
 import { Button } from '../components/ui/Button.jsx'
 import { Switch } from '../components/ui/Switch.jsx'
@@ -42,6 +43,8 @@ export default function Settings() {
         title="Settings | Vantage"
         description="Profile, appearance, notifications, integrations and API key settings."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="gradient"

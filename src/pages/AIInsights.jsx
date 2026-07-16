@@ -4,6 +4,7 @@
 import { Sparkles, AlertTriangle, TrendingUp, Activity, Lightbulb, Zap, Layers } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { Card, CardHeader, CardBody } from '../components/ui/Card.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
 import { StatCard } from '../components/DashboardComponents.jsx'
@@ -30,6 +31,8 @@ export default function AIInsights() {
         title="AI Insights | Vantage"
         description="Explainable narrative insights, anomaly detection and pattern analysis."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="gradient"

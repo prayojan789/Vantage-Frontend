@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { EmptyState } from '../components/ui/EmptyState.jsx'
 import { Button } from '../components/ui/Button.jsx'
 import { Input, InputGroup, InputLeftElement } from '../components/ui/Input.jsx'
@@ -162,6 +163,7 @@ export default function SearchPage() {
   return (
     <div className="flex flex-col gap-6 lg:gap-8">
       <PageMetadata title="Search | Vantage" description="Search across events, articles, and entities from Nepali news publishers." />
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="dark"

@@ -9,6 +9,7 @@ import {
 import { Link } from 'react-router-dom'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { Button } from '../components/ui/Button.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
 import { cn } from '../lib/utils.js'
@@ -75,6 +76,8 @@ export default function Notifications() {
         title="Notifications | Vantage"
         description="Stay on top of new events, sentiment spikes, source issues and weekly reports."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="gradient"

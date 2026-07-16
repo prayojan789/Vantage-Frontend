@@ -4,11 +4,12 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
-  ArrowLeft, AlertCircle, Calendar, GitBranch, Clock, Sparkles, Network,
+  AlertCircle, Calendar, GitBranch, Clock, Sparkles, Network,
   Building2, ArrowRight,
 } from 'lucide-react'
 import ClusterView from '../components/ClusterView.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_EVENT_DETAIL } from '../utils/mockData.js'
 import { getEventById } from '../services/api.js'
@@ -51,12 +52,7 @@ export default function EventDetail() {
         description="Compare multiple articles covering the same event and inspect sentiment, framing, and entity treatment."
       />
 
-      <Link
-        to="/events"
-        className="inline-flex w-fit items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-3 h-9 text-xs font-semibold text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--brand-600)]"
-      >
-        <ArrowLeft size={14} /> Back to events
-      </Link>
+      <BackButton to="/events" label="Back to events" />
 
       {error ? (
         <div className="flex items-center gap-3 rounded-[var(--radius-lg)] border border-[var(--neg-line)] bg-[var(--neg-bg)] px-4 py-3 text-sm text-[var(--red-700)]">

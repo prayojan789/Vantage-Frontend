@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { USE_MOCK } from '../utils/config.js'
 import { MOCK_ANALYZE } from '../utils/mockData.js'
 import { analyzeText } from '../services/api.js'
@@ -72,6 +73,8 @@ export default function LiveAnalysis() {
         title="Live Analysis | Vantage"
         description="Run aspect-based sentiment analysis on a live URL or pasted text."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="dark"
@@ -281,7 +284,7 @@ export default function LiveAnalysis() {
               </div>
             ) : null}
           </div>
-        </div>
+         </div>
       </div>
     </div>
   )

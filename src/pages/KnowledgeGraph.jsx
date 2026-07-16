@@ -4,6 +4,7 @@
 import { Network, Users, Building2, Landmark, Layers } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { Card, CardHeader, CardBody } from '../components/ui/Card.jsx'
 import { StatCard } from '../components/DashboardComponents.jsx'
 import { Badge } from '../components/ui/Badge.jsx'
@@ -37,6 +38,8 @@ export default function KnowledgeGraph() {
         title="Knowledge Graph | Vantage"
         description="Entity and relationship map across Nepali politics and media coverage."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="light"

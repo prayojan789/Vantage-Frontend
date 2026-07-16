@@ -3,9 +3,10 @@
  */
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Building2, ExternalLink, BarChart3, TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Building2, ExternalLink, BarChart3, TrendingUp, TrendingDown, Minus } from 'lucide-react'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { MOCK_BIAS } from '../utils/mockData.js'
 import { StatCard } from '../components/DashboardComponents.jsx'
 import { Sparkline, SourceBadge } from '../components/Charts.jsx'
@@ -46,12 +47,7 @@ export default function PublisherProfile() {
         description={`Bias report and sentiment analysis for ${house.name}.`}
       />
 
-      <Link
-        to="/publishers"
-        className="inline-flex w-fit items-center gap-1.5 rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--surface)] px-3 h-9 text-xs font-semibold text-[var(--text-muted)] transition-colors hover:border-[var(--brand-300)] hover:text-[var(--brand-600)]"
-      >
-        <ArrowLeft size={14} /> Back to media houses
-      </Link>
+      <BackButton to="/publishers" label="Back to media houses" />
 
       <PageHero
         variant="light"

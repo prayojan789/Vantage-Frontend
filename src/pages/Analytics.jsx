@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import PageHero from '../components/PageHero.jsx'
 import PageMetadata from '../components/PageMetadata.jsx'
+import BackButton from '../components/BackButton.jsx'
 import { MOCK_EVENTS } from '../utils/mockData.js'
 import { StatCard } from '../components/DashboardComponents.jsx'
 import { Card, CardHeader, CardBody } from '../components/ui/Card.jsx'
@@ -35,6 +36,8 @@ export default function Analytics() {
         title="Analytics | Vantage"
         description="Charts, heatmaps and exports for the Vantage news intelligence platform."
       />
+
+      <BackButton fallback="/dashboard" />
 
       <PageHero
         variant="light"
