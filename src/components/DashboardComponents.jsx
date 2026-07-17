@@ -20,7 +20,7 @@ export function NewsCard({ event, delay = 0, className }) {
       to={`/event/${id}`}
       className={cn(
         'group block anim-fade-up',
-        className,
+        className, 
       )}
       style={{ animationDelay: `${delay}s` }}
     >
@@ -48,7 +48,7 @@ export function NewsCard({ event, delay = 0, className }) {
               style={{
                 background:
                   i === 0
-                    ? color
+                    ? color 
                     : `linear-gradient(90deg, ${color}66, ${color}11)`,
                 opacity: h,
               }}

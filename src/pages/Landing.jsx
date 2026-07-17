@@ -187,9 +187,6 @@ export default function Landing() {
                   className="group card-elevated relative overflow-hidden p-5 anim-fade-up"
                 >
                   <span className="absolute right-3 top-3 text-[10px] font-bold uppercase tracking-wider text-[var(--text-subtle)]">#{uc.id}</span>
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-50)] text-[var(--brand-600)] transition-transform group-hover:scale-110">
-                    <Icon size={18} />
-                  </span>
                   <h3 className="mt-3 text-base font-bold text-[var(--text)]">{uc.title}</h3>
                   <p className="mt-1 text-xs leading-relaxed text-[var(--text-muted)]">{uc.desc}</p>
                   <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-[var(--brand-600)] opacity-0 transition-opacity group-hover:opacity-100">

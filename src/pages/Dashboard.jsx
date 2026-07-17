@@ -272,6 +272,7 @@ export default function Dashboard() {
             })}
           </div>
         </div>
+        
 
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
@@ -281,7 +282,7 @@ export default function Dashboard() {
             <h2 className="section-title">Recent activity</h2>
           </div>
           <div className="card-elevated p-5">
-            <ActivityFeed items={RECENT_ACTIVITY} />
+            <ActivityFeed items= {RECENT_ACTIVITY} />
           </div>
         </div>
       </div>
