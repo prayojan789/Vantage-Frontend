@@ -58,6 +58,17 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { setHydrated(true) }, [])
 
+  /**
+   * Called by descendants (rendered inside the Router) when the route
+   * changes. We use this to clear the session on the public landing
+   * route so the page never auto-resumes a previous login.
+   */
+  const notifyRouteChange = useCallback((pathname) => {
+    if (pathname === '/') {
+      setUser(null)
+    }
+  }, [])
+
   const signIn = useCallback(async ({ email, password, remember = true }) => {
     const normalizedEmail = (email || '').trim().toLowerCase()
     if (!normalizedEmail) return { ok: false, error: 'Please enter your email.' }
@@ -147,8 +158,8 @@ export function AuthProvider({ children }) {
   }, [])
 
   const value = useMemo(
-    () => ({ user, hydrated, signIn, signUp, signOut }),
-    [user, hydrated, signIn, signUp, signOut],
+    () => ({ user, hydrated, signIn, signUp, signOut, notifyRouteChange }),
+    [user, hydrated, signIn, signUp, signOut, notifyRouteChange],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
@@ -164,6 +175,7 @@ export function useAuth() {
       signIn: async () => ({ ok: false, error: 'Auth not available' }),
       signUp: async () => ({ ok: false, error: 'Auth not available' }),
       signOut: () => {},
+      notifyRouteChange: () => {},
     }
   }
   return ctx

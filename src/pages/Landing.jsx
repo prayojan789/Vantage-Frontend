@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ArrowRight,
@@ -65,8 +66,14 @@ const TIMELINE = [
 ]
 
 export default function Landing() {
-  const { user, signOut } = useAuth()
+  const { user, signOut, notifyRouteChange } = useAuth()
   const navigate = useNavigate()
+
+  // Tell the auth provider we're on the public landing route so it
+  // never auto-resumes a previous session here.
+  useEffect(() => {
+    notifyRouteChange('/')
+  }, [notifyRouteChange])
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <PageMetadata
