@@ -512,7 +512,7 @@ export default function Landing() {
         id="use-cases"
         className="py-20"
       >
-        <div className="mx-auto max-w-[1280px] px-6">
+        <div className="mx-auto mgax-w-[1280px] px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow text-[var(--brand-700)]">
               Use cases
