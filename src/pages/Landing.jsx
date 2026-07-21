@@ -307,6 +307,7 @@ export default function Landing() {
                 to="/playground"
                 size="lg"
                 variant="outline"
+                className="btn-landing-playground"
               >
                 Try the AI playground
               </Button>

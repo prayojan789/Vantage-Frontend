@@ -187,6 +187,14 @@
     color: var(--text);
     transform: translateY(-1px);
   }
+  /* Landing-page override: inverted hover so the button is
+     clearly visible on both light and dark surfaces. */
+  .btn-outline.btn-landing-playground:hover:not(:disabled) {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--surface);
+    transform: translateY(-1px);
+  }
   .btn-outline:active:not(:disabled) { transform: translateY(0); }
 
   .btn-ghost {
