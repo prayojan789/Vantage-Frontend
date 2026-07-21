@@ -50,18 +50,11 @@ export const UTILITY_NAV = [
 ]
 
 /**
- * Pages surfaced in the sidebar footer for quick access.
- * These are the routes not promoted into the main nav groups.
+ * Footer link groups used by the workspace Footer (in AppLayout).
+ * Note: routes promoted into the sidebar are intentionally not duplicated
+ * here as standalone link lists — see the workspace Footer for the
+ * actual rendered groups.
  */
-export const FOOTER_PAGES = [
-  { to: '/analytics',  label: 'Analytics' },
-  { to: '/graphs',     label: 'Knowledge Graph' },
-  { to: '/insights',   label: 'AI Insights' },
-  { to: '/live',       label: 'Live Analysis' },
-  { to: '/notifications', label: 'Notifications' },
-  { to: '/settings',   label: 'Settings' },
-]
-
 export const FOOTER_LINKS = [
   {
     title: 'Platform',
@@ -104,6 +97,7 @@ export const SIDEBAR_GROUPS = [
   { id: 'workspace', label: 'Workspace', items: PRIMARY_NAV },
   { id: 'analytics', label: 'Analytics', items: ANALYTICS_NAV },
   { id: 'ai',        label: 'AI Tools',  items: AI_NAV },
+  { id: 'utility',   label: 'Account',   items: UTILITY_NAV },
 ]
 
 export const TRACKED_SOURCES = [

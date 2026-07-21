@@ -3,7 +3,7 @@ import { NavLink, Link } from 'react-router-dom'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import { cn } from '../../lib/utils.js'
 import Logo from '../Logo.jsx'
-import { SIDEBAR_GROUPS, FOOTER_PAGES } from '../../layouts/navConfig.jsx'
+import { SIDEBAR_GROUPS } from '../../layouts/navConfig.jsx'
 
 /**
  * Sidebar — Chakra-style navigation
@@ -125,29 +125,10 @@ export default function Sidebar({ className }) {
         ))}
       </nav>
 
-      {/* Footer — page shortcuts */}
+      {/* Version footer (only when expanded) */}
       {!collapsed ? (
         <div className="border-t border-[var(--border-subtle)] px-4 py-3">
-          <p className="mb-2 px-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-muted)]">
-            More pages
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {FOOTER_PAGES.map(p => (
-              <NavLink
-                key={p.to}
-                to={p.to}
-                className={({ isActive }) => cn(
-                  'rounded-[var(--radius-md)] px-2 py-1 text-[11px] font-semibold transition-colors',
-                  isActive
-                    ? 'bg-[var(--brand-50)] text-[var(--brand-700)]'
-                    : 'text-[var(--text-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--text)]',
-                )}
-              >
-                {p.label}
-              </NavLink>
-            ))}
-          </div>
-          <div className="mt-3 flex items-center justify-between text-[10px] text-[var(--text-muted)]">
+          <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)]">
             <span>v1.0 · vantage</span>
             <span className="font-mono">distilbert-v1</span>
           </div>
