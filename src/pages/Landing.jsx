@@ -15,6 +15,24 @@ import {
   ScanSearch,
   Layers3,
   ChevronRight,
+  Cpu,
+  ShieldCheck,
+  Database,
+  Server,
+  Code2,
+  Brain,
+  BookOpen,
+  GraduationCap,
+  Newspaper,
+  Lightbulb,
+  CheckCircle2,
+  XCircle,
+  Plus,
+  Minus,
+  Github,
+  Linkedin,
+  Mail,
+  Twitter,
 } from 'lucide-react'
 
 import PageMetadata from '../components/PageMetadata.jsx'
@@ -140,6 +158,54 @@ const STATS = [
   },
 ]
 
+const TRUST_POINTS = [
+  { icon: Cpu,         label: 'AI-powered NLP pipeline' },
+  { icon: Zap,         label: 'Real-time news analysis' },
+  { icon: Layers,      label: 'Multi-source comparison' },
+  { icon: GraduationCap, label: 'Research-grade outputs' },
+]
+
+const PROBLEMS = [
+  { title: 'Every publisher frames the story differently.', desc: 'Tone, word choice, and emphasis vary even when reporting the same event.' },
+  { title: 'Hidden bias shapes public opinion.',           desc: 'Subtle framing can mislead readers and distort debates.' },
+  { title: 'Comparing dozens of articles takes hours.',     desc: 'Manual cross-publisher analysis is slow, repetitive, and error-prone.' },
+  { title: 'Analysts lack objective, reusable tools.',      desc: 'Most tools stop at keyword search — they don’t measure sentiment or framing.' },
+]
+
+const SOLUTION_STEPS = [
+  { icon: Newspaper,   title: 'Collect articles',  desc: 'Ingest articles from 50+ Nepali news publishers automatically.' },
+  { icon: Layers,      title: 'Cluster events',     desc: 'Group related coverage into unified story clusters.' },
+  { icon: ScanSearch,  title: 'Extract entities',   desc: 'Identify people, organizations, parties, and locations.' },
+  { icon: Brain,       title: 'Score sentiment',    desc: 'Run aspect-based sentiment analysis on every article.' },
+  { icon: BarChart3,   title: 'Detect bias',        desc: 'Compare framing and tone across publishers.' },
+  { icon: Workflow,    title: 'Visualize insights', desc: 'Expose findings through interactive dashboards and reports.' },
+]
+
+const BENEFITS = [
+  'Save hours of manual cross-publisher comparison',
+  'Compare how every outlet frames the same event',
+  'Detect hidden sentiment shifts in real time',
+  'Identify framing differences backed by evidence',
+  'Export research-ready reports and citations',
+  'Make editorial and policy decisions with confidence',
+]
+
+const TECH_STACK = [
+  { group: 'Frontend',   items: ['React', 'Vite', 'Tailwind CSS'] },
+  { group: 'Backend',    items: ['FastAPI', 'Python'] },
+  { group: 'AI / ML',    items: ['DistilBERT', 'spaCy', 'Hugging Face Transformers'] },
+  { group: 'Data',       items: ['PostgreSQL', 'Redis'] },
+  { group: 'Infra',      items: ['Docker', 'Render / Vercel'] },
+]
+
+const FAQ_ITEMS = [
+  { q: 'How does bias detection work?', a: 'Vantage combines aspect-based sentiment analysis, entity recognition, and cross-publisher comparison to surface framing, tone, and coverage differences. Every insight links back to source articles for transparency.' },
+  { q: 'Which publishers are supported?', a: 'The platform ingests 50+ Nepali English-language news outlets and is being expanded to include Nepali-language sources and additional regional publishers.' },
+  { q: 'Is the analysis real-time?', a: 'Yes. The pipeline continuously ingests new articles, re-clusters events, and re-scores sentiment so dashboards reflect the latest coverage.' },
+  { q: 'Can I export reports?', a: 'All dashboards and bias reports can be exported as PDF or CSV for research, briefing, and publication.' },
+  { q: 'Is Vantage suitable for academic research?', a: 'Yes. The system is designed for research-grade analysis with traceable sources, reproducible metrics, and citation-ready outputs.' },
+]
+
 const TIMELINE = [
   {
     date: 'Q1 2025',
@@ -200,14 +266,14 @@ export default function Landing() {
         <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-6">
             <Link
               to="/"
-              className="flex items-center gap-2.5"
+               className="flex items-center gap-2.5"
               aria-label="Go to Vantage homepage"
             >
               <Logo size={36} />
             </Link>
 
           <nav className="hidden items-center gap-1 md:flex">
-            {['Features', 'Use cases', 'Workflow'].map((item) => (
+            {['Features', 'Use cases', 'Workflow', 'Technology', 'FAQ'].map((item) => (
               <a
                 key={item}
                 href={`#${item.toLowerCase().replace(/\s+/g, '-')}`}
@@ -334,6 +400,113 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Trust indicators */}
+      <section className="border-y border-[var(--border-subtle)] bg-[var(--surface)] py-10">
+        <div className="mx-auto max-w-[1280px] px-6">
+          <p className="text-center text-xs font-semibold uppercase tracking-widest text-[var(--text-subtle)]">
+            Built for research-grade analysis
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {TRUST_POINTS.map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                className="flex items-center justify-center gap-2.5 text-sm font-semibold text-[var(--text-muted)]"
+              >
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-md)] bg-[var(--brand-50)] text-[var(--brand-600)]">
+                  <Icon size={16} />
+                </span>
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Problem section */}
+      <section
+        id="problem"
+        className="py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              The problem
+            </p>
+            <h2 className="mt-3 h-display">
+              News is everywhere. <br className="hidden sm:block" />
+              But understanding it is hard.
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+              Modern newsrooms produce more coverage than any analyst can read.
+              Hidden in that volume is the story of how the same event gets
+              framed, softened, or sharpened by different publishers.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2">
+            {PROBLEMS.map(({ title, desc }) => (
+              <div
+                key={title}
+                className="card-elevated flex gap-4 p-5"
+              >
+                <span className="mt-0.5 inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--red-50)] text-[var(--red-600)]">
+                  <XCircle size={18} />
+                </span>
+                <div>
+                  <h3 className="text-base font-bold text-[var(--text)]">
+                    {title}
+                  </h3>
+                  <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
+                    {desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Solution section */}
+      <section
+        id="solution"
+        className="bg-[var(--surface-muted)]/50 py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              The solution
+            </p>
+            <h2 className="mt-3 h-display">
+              Vantage turns coverage into clarity
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+              A single workspace that automatically collects, clusters, scores,
+              and compares how every story is reported — so you can move
+              from raw articles to evidence-based insight in minutes.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SOLUTION_STEPS.map(({ icon: Icon, title, desc }) => (
+              <div
+                key={title}
+                className="card-elevated p-6"
+              >
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-lg)] bg-gradient-to-br from-[var(--brand-50)] to-[var(--purple-50)] text-[var(--brand-600)]">
+                  <Icon size={20} />
+                </span>
+                <h3 className="mt-4 text-base font-bold text-[var(--text)]">
+                  {title}
+                </h3>
+                <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Use cases section */}
       <section
         id="use-cases"
@@ -441,7 +614,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Workflow and roadmap section */}
+      {/* How it works - process flow */}
       <section
         id="workflow"
         className="py-20"
@@ -449,50 +622,368 @@ export default function Landing() {
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow text-[var(--brand-700)]">
-              Development roadmap
+              How it works
             </p>
-
             <h2 className="mt-3 h-display">
-              From foundation to research-ready intelligence
+              From raw articles to evidence in minutes
             </h2>
-
             <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
-              Vantage continues to evolve through improvements in data
-              processing, artificial intelligence, publisher coverage, and
-              analytical reporting.
+              The Vantage pipeline continuously ingests, organizes, and
+              analyzes news so you can focus on what the data is telling you.
             </p>
           </div>
 
-          <div className="mx-auto mt-12 max-w-3xl">
-            {TIMELINE.map((step, index) => (
-              <div
-                key={`${step.date}-${step.title}`}
-                className="relative flex gap-6 pb-8 last:pb-0"
-              >
-                <div className="flex flex-col items-center">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--brand-600)] text-sm font-bold text-white">
-                    {index + 1}
+          <div className="mx-auto mt-12 max-w-5xl">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {SOLUTION_STEPS.map(({ icon: Icon, title, desc }, index) => (
+                <div
+                  key={title}
+                  className="card-elevated relative p-5"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--brand-600)] text-xs font-bold text-white">
+                      {index + 1}
+                    </span>
+                    <span className="inline-flex h-10 w-10 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--brand-50)] text-[var(--brand-600)]">
+                      <Icon size={18} />
+                    </span>
                   </div>
-
-                  {index < TIMELINE.length - 1 && (
-                    <div className="mt-2 w-px flex-1 bg-[var(--border)]" />
-                  )}
-                </div>
-
-                <div className="flex-1 pb-2">
-                  <p className="eyebrow text-[var(--brand-700)]">
-                    {step.date}
-                  </p>
-
-                  <h3 className="mt-1 text-lg font-bold text-[var(--text)]">
-                    {step.title}
+                  <h3 className="mt-4 text-base font-bold text-[var(--text)]">
+                    {title}
                   </h3>
-
                   <p className="mt-1 text-sm leading-relaxed text-[var(--text-muted)]">
-                    {step.text}
+                    {desc}
                   </p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard preview - CSS mockups */}
+      <section
+        id="preview"
+        className="bg-[var(--surface-muted)]/50 py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              Inside the workspace
+            </p>
+            <h2 className="mt-3 h-display">
+              See bias, sentiment, and coverage at a glance
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+              Every dashboard is built around the questions analysts actually
+              ask — with the evidence one click away.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            {/* Mockup 1: Bias graph */}
+            <div className="card-elevated overflow-hidden p-5">
+              <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-subtle)]">
+                    Dashboard
+                  </p>
+                  <p className="text-base font-bold text-[var(--text)]">
+                    Cross-publisher bias
+                  </p>
+                </div>
+                <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-[var(--green-50)] px-2.5 text-xs font-semibold text-[var(--green-700)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--green-600)]" />
+                  Live
+                </span>
               </div>
+
+              <div className="mt-4 space-y-3">
+                {[
+                  { name: 'Republica',   pct: 72, color: 'bg-[var(--brand-500)]' },
+                  { name: 'The Himalayan', pct: 58, color: 'bg-[var(--brand-400)]' },
+                  { name: 'Kathmandu Post', pct: 46, color: 'bg-[var(--brand-300)]' },
+                  { name: 'Nepali Times', pct: 34, color: 'bg-[var(--brand-200)]' },
+                ].map((row) => (
+                  <div key={row.name}>
+                    <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+                      <span className="font-semibold text-[var(--text)]">
+                        {row.name}
+                      </span>
+                      <span>{row.pct}%</span>
+                    </div>
+                    <div className="mt-1 h-2 w-full rounded-full bg-[var(--surface-muted)]">
+                      <div
+                        className={`h-2 rounded-full ${row.color}`}
+                        style={{ width: `${row.pct}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mockup 2: Sentiment distribution */}
+            <div className="card-elevated overflow-hidden p-5">
+              <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-subtle)]">
+                    Entity
+                  </p>
+                  <p className="text-base font-bold text-[var(--text)]">
+                    Sentiment over time
+                  </p>
+                </div>
+                <span className="text-xs text-[var(--text-muted)]">
+                  Last 30 days
+                </span>
+              </div>
+
+              <div className="mt-4 flex h-40 items-end gap-1.5">
+                {[40, 55, 48, 62, 58, 70, 65, 72, 68, 75, 60, 66, 78, 82, 74, 80, 72, 68, 75, 80, 84, 78, 82, 88, 76, 80, 84, 90, 82, 86].map((h, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-t bg-gradient-to-t from-[#f59e0b] to-[#fdba74]"
+                    style={{ height: `${h}%` }}
+                  />
+                ))}
+              </div>
+              <div className="mt-3 flex items-center justify-between text-xs text-[var(--text-muted)]">
+                <span>Apr 1</span>
+                <span>Apr 15</span>
+                <span>Apr 30</span>
+              </div>
+            </div>
+
+            {/* Mockup 3: Event cluster */}
+            <div className="card-elevated overflow-hidden p-5">
+              <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-subtle)]">
+                    Event cluster
+                  </p>
+                  <p className="text-base font-bold text-[var(--text)]">
+                    Federal budget 2026
+                  </p>
+                </div>
+                <span className="inline-flex h-7 items-center gap-1.5 rounded-full bg-[var(--brand-50)] px-2.5 text-xs font-semibold text-[var(--brand-700)]">
+                  42 articles
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-2.5">
+                {[
+                  { pub: 'Republica',     tone: 'Critical',   dot: 'bg-[var(--red-500)]' },
+                  { pub: 'The Himalayan', tone: 'Analytical', dot: 'bg-[var(--brand-500)]' },
+                  { pub: 'Kathmandu Post', tone: 'Neutral',    dot: 'bg-[var(--text-subtle)]' },
+                  { pub: 'Nepali Times',  tone: 'Supportive', dot: 'bg-[var(--green-500)]' },
+                ].map((row) => (
+                  <div
+                    key={row.pub}
+                    className="flex items-center justify-between rounded-[var(--radius-md)] bg-[var(--surface-muted)] px-3 py-2 text-sm"
+                  >
+                    <span className="font-semibold text-[var(--text)]">
+                      {row.pub}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
+                      <span className={`h-2 w-2 rounded-full ${row.dot}`} />
+                      {row.tone}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mockup 4: KPI cards */}
+            <div className="card-elevated overflow-hidden p-5">
+              <div className="border-b border-[var(--border-subtle)] pb-3">
+                <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-subtle)]">
+                  Today
+                </p>
+                <p className="text-base font-bold text-[var(--text)]">
+                  Pipeline summary
+                </p>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                {[
+                  { label: 'New articles',  value: '128', delta: '+12%' },
+                  { label: 'New clusters',   value: '7',   delta: '+2' },
+                  { label: 'Entities found', value: '342', delta: '+18%' },
+                  { label: 'Bias flags',     value: '5',   delta: '-1' },
+                ].map((kpi) => (
+                  <div
+                    key={kpi.label}
+                    className="rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-3"
+                  >
+                    <p className="text-xs text-[var(--text-muted)]">
+                      {kpi.label}
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-[var(--text)]">
+                      {kpi.value}
+                    </p>
+                    <p className="mt-0.5 text-xs font-semibold text-[var(--brand-600)]">
+                      {kpi.delta}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits section */}
+      <section
+        id="benefits"
+        className="py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="grid items-center gap-10 lg:grid-cols-2">
+            <div>
+              <p className="eyebrow text-[var(--brand-700)]">
+                Why Vantage
+              </p>
+              <h2 className="mt-3 h-display">
+                Better questions, backed by evidence
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+                Vantage is built for the people who have to answer
+                “why is coverage so different?” — and need to show
+                their work.
+              </p>
+            </div>
+
+            <ul className="space-y-3">
+              {BENEFITS.map((benefit) => (
+                <li
+                  key={benefit}
+                  className="card-elevated flex items-start gap-3 p-4"
+                >
+                  <span className="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[var(--green-50)] text-[var(--green-600)]">
+                    <CheckCircle2 size={14} />
+                  </span>
+                  <span className="text-sm font-semibold text-[var(--text)]">
+                    {benefit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Technology stack section */}
+      <section
+        id="technology"
+        className="bg-[var(--surface-muted)]/50 py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              Technology
+            </p>
+            <h2 className="mt-3 h-display">
+              Built on a modern, research-grade stack
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+              Open tooling, proven models, and a clean separation between the
+              web workspace and the AI pipeline.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {TECH_STACK.map(({ group, items }) => (
+              <div
+                key={group}
+                className="card-elevated p-5"
+              >
+                <p className="eyebrow text-[var(--brand-700)]">
+                  {group}
+                </p>
+                <ul className="mt-3 space-y-2">
+                  {items.map((tech) => (
+                    <li
+                      key={tech}
+                      className="flex items-center gap-2 text-sm font-semibold text-[var(--text)]"
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-500)]" />
+                      {tech}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Statistics section - moved here as part of social proof */}
+      <section
+        id="stats"
+        className="py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              By the numbers
+            </p>
+            <h2 className="mt-3 h-display">
+              Already processing news at scale
+            </h2>
+          </div>
+          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
+            {STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="card-elevated p-4 text-center"
+              >
+                <p className="h-lg bg-gradient-to-br from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-xs text-[var(--text-muted)]">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ section */}
+      <section
+        id="faq"
+        className="bg-[var(--surface-muted)]/50 py-20"
+      >
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="eyebrow text-[var(--brand-700)]">
+              FAQ
+            </p>
+            <h2 className="mt-3 h-display">
+              Frequently asked questions
+            </h2>
+            <p className="mt-3 text-base leading-relaxed text-[var(--text-muted)]">
+              Quick answers to the most common questions about how Vantage
+              works.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-10 max-w-2xl space-y-3">
+            {FAQ_ITEMS.map((item) => (
+              <details
+                key={item.q}
+                className="card-elevated group p-5"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-base font-bold text-[var(--text)]">
+                  <span>{item.q}</span>
+                  <span className="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-[var(--brand-50)] text-[var(--brand-600)] transition-transform group-open:rotate-180">
+                    {item.open ? <Minus size={14} /> : <Plus size={14} />}
+                  </span>
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
+                  {item.a}
+                </p>
+              </details>
             ))}
           </div>
         </div>
@@ -538,9 +1029,135 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--border-subtle)] bg-[var(--surface)] py-8">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-center px-6 text-center text-xs text-[var(--text-mut ed)]">
-          <span>© 2026 Vantage · Nepal News Intelligence</span>
+      <footer className="border-t border-[var(--border-subtle)] bg-[var(--surface)] py-12">
+        <div className="mx-auto max-w-[1280px] px-6">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+            <div>
+              <div className="flex items-center gap-2.5">
+                <Logo size={32} />
+              </div>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted)]">
+                AI-powered event clustering, entity-level sentiment analysis,
+                and media bias detection for Nepali news.
+              </p>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-subtle)]">
+                Product
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-[var(--text-muted)]">
+                <li>
+                  <a
+                    href="#features"
+                    className="hover:text-[var(--text)]"
+                  >
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#use-cases"
+                    className="hover:text-[var(--text)]"
+                  >
+                    Use cases
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#technology"
+                    className="hover:text-[var(--text)]"
+                  >
+                    Technology
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#faq"
+                    className="hover:text-[var(--text)]"
+                  >
+                    FAQ
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-subtle)]">
+                Resources
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-[var(--text-muted)]">
+                <li>
+                  <a
+                    href="#workflow"
+                    className="hover:text-[var(--text)]"
+                  >
+                    How it works
+                  </a>
+                </li>
+                <li>
+                  <Link
+                    to="/playground"
+                    className="hover:text-[var(--text)]"
+                  >
+                    AI playground
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href="#preview"
+                    className="hover:text-[var(--text)]"
+                  >
+                    Dashboard preview
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-[var(--text-subtle)]">
+                Contact
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-[var(--text-muted)]">
+                <li className="flex items-center gap-2">
+                  <Mail size={14} />
+                  <a
+                    href="mailto:hello@vantage.np"
+                    className="hover:text-[var(--text)]"
+                  >
+                    hello@vantage.np
+                  </a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Github size={14} />
+                  <a
+                    href="https://github.com/prayojan789"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-[var(--text)]"
+                  >
+                    GitHub
+                  </a>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Linkedin size={14} />
+                  <a
+                    href="https://linkedin.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="hover:text-[var(--text)]"
+                  >
+                    LinkedIn
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-6 text-xs text-[var(--text-muted)] sm:flex-row">
+            <span>© 2026 Vantage · AI-Powered News Intelligence</span>
+            <span className="font-mono">v1.0 · distilbert-vantage-v1</span>
+          </div>
         </div>
       </footer>
     </div>
