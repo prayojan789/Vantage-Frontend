@@ -344,7 +344,7 @@ export default function Landing() {
           <div className="flex flex-col items-center text-center">
             <h1 className="h-display max-w-4xl">
               AI-Powered News Intelligence for{' '}
-              <span className="bg-gradient-to-r from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[var(--brand-500)] to-[var(--brand-400)] bg-clip-text text-transparent">
                 Smarter Media Analysis
               </span>
             </h1>
@@ -387,7 +387,7 @@ export default function Landing() {
                 key={stat.label}
                 className="card-elevated p-4 text-center"
               >
-                <p className="h-lg bg-gradient-to-br from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
+                <p className="h-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--brand-400)] bg-clip-text text-transparent">
                   {stat.value}
                 </p>
 
@@ -512,7 +512,7 @@ export default function Landing() {
         id="use-cases"
         className="py-20"
       >
-      <div className="mx-auto mgax-w-[1280px] px-6">
+      <div className="mx-auto max-w-[1280px] px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="eyebrow text-[var(--brand-700)]">
               Use cases
@@ -743,7 +743,7 @@ export default function Landing() {
                 {[40, 55, 48, 62, 58, 70, 65, 72, 68, 75, 60, 66, 78, 82, 74, 80, 72, 68, 75, 80, 84, 78, 82, 88, 76, 80, 84, 90, 82, 86].map((h, i) => (
                   <div
                     key={i}
-                    className="flex-1 rounded-t bg-gradient-to-t from-[#f59e0b] to-[#fdba74]"
+                    className="flex-1 rounded-t bg-gradient-to-t from-[var(--brand-500)] to-[var(--brand-400)]"
                     style={{ height: `${h}%` }}
                   />
                 ))}
@@ -937,7 +937,7 @@ export default function Landing() {
                 key={stat.label}
                 className="card-elevated p-4 text-center"
               >
-                <p className="h-lg bg-gradient-to-br from-[#f59e0b] to-[#fdba74] bg-clip-text text-transparent">
+                <p className="h-lg bg-gradient-to-br from-[var(--brand-500)] to-[var(--brand-400)] bg-clip-text text-transparent">
                   {stat.value}
                 </p>
                 <p className="mt-1 text-xs text-[var(--text-muted)]">
