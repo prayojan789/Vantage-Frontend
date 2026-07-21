@@ -1156,7 +1156,6 @@ export default function Landing() {
 
           <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-6 text-xs text-[var(--text-muted)] sm:flex-row">
             <span>© 2026 Vantage · AI-Powered News Intelligence</span>
-            <span className="font-mono">v1.0 · distilbert-vantage-v1</span>
           </div>
         </div>
       </footer>

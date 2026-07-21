@@ -125,16 +125,6 @@ export default function Sidebar({ className }) {
         ))}
       </nav>
 
-      {/* Version footer (only when expanded) */}
-      {!collapsed ? (
-        <div className="border-t border-[var(--border-subtle)] px-4 py-3">
-          <div className="flex items-center justify-between text-[10px] text-[var(--text-muted)]">
-            <span>v1.0 · vantage</span>
-            <span className="font-mono">distilbert-v1</span>
-          </div>
-        </div>
-      ) : null}
-
       {/* Collapse toggle */}
       <button
         type="button"

@@ -73,12 +73,9 @@ export default function Footer({ className }) {
       </div>
 
       <div className="border-t border-[var(--border-subtle)]">
-        <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col items-start justify-between gap-2 text-xs sm:flex-row sm:items-center">
+        <div className="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col items-start gap-2 text-xs sm:flex-row sm:items-center">
           <span className="inline-flex items-center gap-1.5">
             © 2026 Vantage · Nepal News Intelligence · Built with <Heart size={11} className="text-[var(--red-500)]" /> in Kathmandu
-          </span>
-          <span className="font-mono tracking-wide text-[var(--text-muted)]">
-            v1.0 · distilbert-vantage-v1
           </span>
         </div>
       </div>
